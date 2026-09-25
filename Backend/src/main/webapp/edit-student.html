@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Student</title>
+    <link rel="stylesheet" href="assets/css/student-form.css">
+</head>
+<body><main>
+    <div class="topbar"><h1>Edit Student</h1><a class="button" href="students/list">Student list</a></div>
+    <p id="error-message" class="error" hidden></p>
+    <section class="panel">
+        <form id="edit-student-form" method="post" action="students/update">
+            <input type="hidden" name="studentId">
+            <div class="form-grid">
+                <label>Admission number *<input name="admissionNumber" required></label><label>Roll number<input name="rollNumber"></label>
+                <label>First name *<input name="firstName" required></label><label>Last name<input name="lastName"></label>
+                <label>Gender<input name="gender"></label><label>Date of birth<input type="date" name="dateOfBirth"></label>
+                <label>Email<input type="email" name="email"></label><label>Phone<input name="phone"></label>
+                <label>Department ID *<input type="number" name="departmentId" min="1" required></label><label>Course ID *<input type="number" name="courseId" min="1" required></label>
+                <label>Semester number *<input type="number" name="semesterId" min="1" required></label><label>Admission date<input type="date" name="admissionDate"></label>
+                <label>City<input name="city"></label><label>State<input name="state"></label>
+                <label>Guardian name<input name="guardianName"></label><label>Guardian phone<input name="guardianPhone"></label>
+                <label class="wide">Address<textarea name="address"></textarea></label><label>PIN code<input name="pincode"></label>
+                <label>Blood group<input name="bloodGroup"></label><label>Status<input name="status"></label>
+            </div>
+            <p><button type="submit">Update student</button></p>
+        </form>
+    </section>
+</main>
++<script>
++const root = window.location.pathname.includes('/students/') ? window.location.pathname.split('/students/')[0] + '/' : './';
++const form = document.getElementById('edit-student-form');
++form.action = root + 'students/update';
++const id = new URLSearchParams(window.location.search).get('id');
+const error = new URLSearchParams(window.location.search).get('error');
+if (error) {
+    const message = document.getElementById('error-message');
+    message.textContent = error;
+    message.hidden = false;
+}
++fetch(root + 'api/students/' + encodeURIComponent(id)).then(response => { if (!response.ok) throw new Error('Student not found.'); return response.json(); }).then(student => {
++    Object.keys(student).forEach(name => { const field = form.elements[name]; if (field) field.value = student[name] ?? ''; });
++}).catch(error => { const message = document.getElementById('error-message'); message.textContent = error.message; message.hidden = false; });
++</script>
++</body></html>

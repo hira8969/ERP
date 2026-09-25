@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Student Details</title>
+    <link rel="stylesheet" href="assets/css/student-form.css">
+</head>
+<body><main>
+    <div class="topbar"><h1>Student Details</h1><a class="button" href="students/list">Back to list</a></div>
+    <section id="student-details" class="panel"><p>Loading student...</p></section>
+</main>
+<script>
+const root = window.location.pathname.includes('/students/') ? window.location.pathname.split('/students/')[0] + '/' : './';
+const id = new URLSearchParams(window.location.search).get('id');
+const details = document.getElementById('student-details');
+const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
+fetch(root + 'api/students/' + encodeURIComponent(id)).then(response => { if (!response.ok) throw new Error('Student not found.'); return response.json(); }).then(student => {
+    details.innerHTML = `<p><strong>Student ID:</strong> ${student.studentId}</p><p><strong>Admission number:</strong> ${escapeHtml(student.admissionNumber)}</p><p><strong>Name:</strong> ${escapeHtml([student.firstName, student.lastName].filter(Boolean).join(' '))}</p><p><strong>Gender:</strong> ${escapeHtml(student.gender)}</p><p><strong>Date of birth:</strong> ${escapeHtml(student.dateOfBirth)}</p><p><strong>Email:</strong> ${escapeHtml(student.email)}</p><p><strong>Phone:</strong> ${escapeHtml(student.phone)}</p><p><strong>Department ID:</strong> ${student.departmentId}</p><p><strong>Course ID:</strong> ${student.courseId}</p><p><strong>Semester:</strong> ${student.semesterId}</p><p><strong>Address:</strong> ${escapeHtml([student.address, student.city, student.state, student.pincode].filter(Boolean).join(', '))}</p><p><strong>Guardian:</strong> ${escapeHtml(student.guardianName)} (${escapeHtml(student.guardianPhone)})</p><p><strong>Status:</strong> ${escapeHtml(student.status)}</p><a class="button" href="${root}students/edit?id=${student.studentId}">Edit student</a>`;
+}).catch(error => { details.innerHTML = `<p class="error">${escapeHtml(error.message)}</p>`; });
+</script>
+</body></html>

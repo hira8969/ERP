@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <link rel="stylesheet" href="assets/css/student-form.css">
+</head>
+<body>
+<main>
+    <section class="panel">
+        <h1>Centurion University ERP</h1>
+        <p id="message" class="muted"></p>
+        <form method="post" action="login">
+            <div class="form-grid">
+                <label>Email<input type="email" name="email" required></label>
+                <label>Password<input type="password" name="password" required></label>
+            </div>
+            <p><button type="submit">Login</button></p>
+        </form>
+        <p>New student? <a href="register.html">Create an account</a></p>
+        <p><a href="forgot-password.html">Forgot password?</a></p>
+    </section>
+</main>
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const message = document.getElementById('message');
+    if (params.get('error')) message.textContent = params.get('error');
+    if (params.get('registered') === 'true') message.textContent = 'Registration successful. Please log in.';
+    if (params.get('loggedOut') === 'true') message.textContent = 'You have been logged out.';
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Student</title>
+    <link id="student-form-styles" rel="stylesheet" href="assets/css/student-form.css">
+</head>
+<body><main>
+    <div class="topbar"><h1>Add Student</h1><a id="student-list-link" class="button" href="students/list">Student list</a></div>
+    <section class="panel">
+        <p id="error-message" class="error" hidden></p>
+        <p class="muted">Required fields are marked by the browser. Department, course and semester use numeric database IDs.</p>
+        <form id="add-student-form" method="post" action="students/add">
+            <div class="form-grid">
+                <label>Admission number *<input name="admissionNumber" required maxlength="50"></label>
+                <label>Roll number<input name="rollNumber" maxlength="50"></label>
+                <label>First name *<input name="firstName" required maxlength="100"></label>
+                <label>Last name<input name="lastName" maxlength="100"></label>
+                <label>Gender<select name="gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></label>
+                <label>Date of birth<input type="date" name="dateOfBirth"></label>
+                <label>Email<input type="email" name="email" maxlength="150"></label>
+                <label>Phone<input name="phone" maxlength="20"></label>
+                <label>Department ID *<input type="number" name="departmentId" min="1" required></label>
+                <label>Course ID *<input type="number" name="courseId" min="1" required></label>
+                <label>Semester number *<input type="number" name="semesterId" min="1" required></label>
+                <label>Admission date<input type="date" name="admissionDate"></label>
+                <label>City<input name="city" maxlength="100"></label>
+                <label>State<input name="state" maxlength="100"></label>
+                <label>Guardian name<input name="guardianName" maxlength="150"></label>
+                <label>Guardian phone<input name="guardianPhone" maxlength="20"></label>
+                <label class="wide">Address<textarea name="address" maxlength="255"></textarea></label>
+                <label>PIN code<input name="pincode" maxlength="10"></label>
+                <label>Blood group<input name="bloodGroup" maxlength="10"></label>
+            </div>
+            <p><button type="submit">Save student</button></p>
+        </form>
+    </section>
+</main>
+<script>
+    const applicationRoot = window.location.pathname.includes('/students/')
+        ? window.location.pathname.split('/students/')[0] + '/'
+        : './';
+    document.getElementById('student-form-styles').href = applicationRoot + 'assets/css/student-form.css';
+    document.getElementById('student-list-link').href = applicationRoot + 'students/list';
+    document.getElementById('add-student-form').action = applicationRoot + 'students/add';
+
+    const error = new URLSearchParams(window.location.search).get('error');
+    if (error) {
+        const errorMessage = document.getElementById('error-message');
+        errorMessage.textContent = error;
+        errorMessage.hidden = false;
+    }
+</script>
+</body></html>
