@@ -1,21 +1,48 @@
 package com.college.erp.entity;
 
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "enrollments")
 public class Enrollment {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "enrollment_id")
     private int enrollmentId;
+
+    @Column(name = "student_id", nullable = false)
     private int studentId;
+
+    @Column(name = "course_id", nullable = false)
     private int courseId;
+
+    @Column(name = "semester_id", nullable = false)
     private int semesterId;
 
+    @Column(name = "academic_year", nullable = false, length = 20)
     private String academicYear;
+
+    @Column(name = "enrollment_date", nullable = false)
     private LocalDate enrollmentDate;
+
+    @Column(name = "status", nullable = false, length = 30)
     private String status;
+
+
+    // =========================
+    // Default Constructor
+    // =========================
 
     public Enrollment() {
     }
+
+
+    // =========================
+    // Getters & Setters
+    // =========================
 
     public int getEnrollmentId() {
         return enrollmentId;

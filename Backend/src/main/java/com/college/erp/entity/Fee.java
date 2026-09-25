@@ -1,25 +1,63 @@
 package com.college.erp.entity;
 
+import jakarta.persistence.*;
+
+import java.math.BigDecimal;
+
+@Entity
+@Table(name = "fees")
 public class Fee {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "fee_id")
     private int feeId;
+
+    @Column(name = "student_id", nullable = false)
     private int studentId;
+
+    @Column(name = "semester_id", nullable = false)
     private int semesterId;
 
-    private double tuitionFee;
-    private double examinationFee;
-    private double libraryFee;
-    private double hostelFee;
-    private double otherFee;
+    @Column(name = "tuition_fee", precision = 12, scale = 2)
+    private BigDecimal tuitionFee;
 
-    private double totalAmount;
-    private double paidAmount;
-    private double dueAmount;
+    @Column(name = "examination_fee", precision = 12, scale = 2)
+    private BigDecimal examinationFee;
 
+    @Column(name = "library_fee", precision = 12, scale = 2)
+    private BigDecimal libraryFee;
+
+    @Column(name = "hostel_fee", precision = 12, scale = 2)
+    private BigDecimal hostelFee;
+
+    @Column(name = "other_fee", precision = 12, scale = 2)
+    private BigDecimal otherFee;
+
+    @Column(name = "total_amount", precision = 12, scale = 2)
+    private BigDecimal totalAmount;
+
+    @Column(name = "paid_amount", precision = 12, scale = 2)
+    private BigDecimal paidAmount;
+
+    @Column(name = "due_amount", precision = 12, scale = 2)
+    private BigDecimal dueAmount;
+
+    @Column(name = "status", nullable = false, length = 30)
     private String status;
+
+
+    // =========================
+    // Default Constructor
+    // =========================
 
     public Fee() {
     }
+
+
+    // =========================
+    // Getters & Setters
+    // =========================
 
     public int getFeeId() {
         return feeId;
@@ -45,67 +83,67 @@ public class Fee {
         this.semesterId = semesterId;
     }
 
-    public double getTuitionFee() {
+    public BigDecimal getTuitionFee() {
         return tuitionFee;
     }
 
-    public void setTuitionFee(double tuitionFee) {
+    public void setTuitionFee(BigDecimal tuitionFee) {
         this.tuitionFee = tuitionFee;
     }
 
-    public double getExaminationFee() {
+    public BigDecimal getExaminationFee() {
         return examinationFee;
     }
 
-    public void setExaminationFee(double examinationFee) {
+    public void setExaminationFee(BigDecimal examinationFee) {
         this.examinationFee = examinationFee;
     }
 
-    public double getLibraryFee() {
+    public BigDecimal getLibraryFee() {
         return libraryFee;
     }
 
-    public void setLibraryFee(double libraryFee) {
+    public void setLibraryFee(BigDecimal libraryFee) {
         this.libraryFee = libraryFee;
     }
 
-    public double getHostelFee() {
+    public BigDecimal getHostelFee() {
         return hostelFee;
     }
 
-    public void setHostelFee(double hostelFee) {
+    public void setHostelFee(BigDecimal hostelFee) {
         this.hostelFee = hostelFee;
     }
 
-    public double getOtherFee() {
+    public BigDecimal getOtherFee() {
         return otherFee;
     }
 
-    public void setOtherFee(double otherFee) {
+    public void setOtherFee(BigDecimal otherFee) {
         this.otherFee = otherFee;
     }
 
-    public double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(double totalAmount) {
+    public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
-    public double getPaidAmount() {
+    public BigDecimal getPaidAmount() {
         return paidAmount;
     }
 
-    public void setPaidAmount(double paidAmount) {
+    public void setPaidAmount(BigDecimal paidAmount) {
         this.paidAmount = paidAmount;
     }
 
-    public double getDueAmount() {
+    public BigDecimal getDueAmount() {
         return dueAmount;
     }
 
-    public void setDueAmount(double dueAmount) {
+    public void setDueAmount(BigDecimal dueAmount) {
         this.dueAmount = dueAmount;
     }
 

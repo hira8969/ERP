@@ -1,22 +1,55 @@
 package com.college.erp.entity;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "subjects")
 public class Subject {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "subject_id")
     private int subjectId;
+
+    @Column(name = "subject_code", unique = true, nullable = false, length = 50)
     private String subjectCode;
+
+    @Column(name = "subject_name", nullable = false, length = 150)
     private String subjectName;
+
+    @Column(name = "course_id", nullable = false)
     private int courseId;
+
+    @Column(name = "semester_id", nullable = false)
     private int semesterId;
+
+    @Column(name = "faculty_id")
     private int facultyId;
 
+    @Column(name = "credits", nullable = false)
     private int credits;
+
+    @Column(name = "max_marks", nullable = false)
     private int maxMarks;
+
+    @Column(name = "pass_marks", nullable = false)
     private int passMarks;
 
+    @Column(name = "active", nullable = false)
     private boolean active;
+
+
+    // =========================
+    // Default Constructor
+    // =========================
 
     public Subject() {
     }
+
+
+    // =========================
+    // Getters & Setters
+    // =========================
 
     public int getSubjectId() {
         return subjectId;

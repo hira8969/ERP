@@ -1,44 +1,94 @@
 package com.college.erp.entity;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "faculty")
 public class Faculty {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "faculty_id")
     private int facultyId;
+
+    @Column(name = "user_id", nullable = false)
     private int userId;
 
+    @Column(name = "employee_number", unique = true, nullable = false, length = 50)
     private String employeeNumber;
+
+    @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
+
+    @Column(name = "last_name", length = 100)
     private String lastName;
 
+    @Column(name = "gender", length = 20)
     private String gender;
+
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
+    @Column(name = "email", unique = true, length = 150)
     private String email;
+
+    @Column(name = "phone", length = 20)
     private String phone;
 
+    @Column(name = "department_id", nullable = false)
     private int departmentId;
 
+    @Column(name = "designation", length = 100)
     private String designation;
+
+    @Column(name = "qualification", length = 200)
     private String qualification;
+
+    @Column(name = "specialization", length = 200)
     private String specialization;
 
+    @Column(name = "joining_date")
     private LocalDate joiningDate;
 
+    @Column(name = "address", length = 255)
     private String address;
+
+    @Column(name = "city", length = 100)
     private String city;
+
+    @Column(name = "state", length = 100)
     private String state;
+
+    @Column(name = "pincode", length = 10)
     private String pincode;
 
+    @Column(name = "profile_image", length = 500)
     private String profileImage;
+
+    @Column(name = "status", length = 30)
     private String status;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+
+    // =========================
+    // Default Constructor
+    // =========================
 
     public Faculty() {
     }
+
+
+    // =========================
+    // Getters & Setters
+    // =========================
 
     public int getFacultyId() {
         return facultyId;
@@ -165,7 +215,7 @@ public class Faculty {
     }
 
     public void setCity(String city) {
-        this.city = city;
+        this.city = state;
     }
 
     public String getState() {

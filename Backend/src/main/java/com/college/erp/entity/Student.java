@@ -1,60 +1,123 @@
 package com.college.erp.entity;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "students")
 public class Student {
 
-    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "student_id")
     private int studentId;
+
+    @Column(name = "user_id")
     private int userId;
+
+    @Column(name = "admission_number", unique = true, nullable = false, length = 50)
     private String admissionNumber;
+
+    @Column(name = "roll_number", unique = true, length = 50)
     private String rollNumber;
 
+    @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
+
+    @Column(name = "last_name", length = 100)
     private String lastName;
+
+    @Column(name = "gender", length = 20)
     private String gender;
+
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
+    @Column(name = "email", unique = true, length = 150)
     private String email;
+
+    @Column(name = "phone", length = 20)
     private String phone;
 
+    @Column(name = "address", length = 255)
     private String address;
+
+    @Column(name = "city", length = 100)
     private String city;
+
+    @Column(name = "state", length = 100)
     private String state;
+
+    @Column(name = "pincode", length = 10)
     private String pincode;
 
+    @Column(name = "department_id")
     private int departmentId;
+
+    @Column(name = "course_id")
     private int courseId;
+
+    @Column(name = "semester_id")
     private int semesterId;
 
+    @Column(name = "admission_date")
     private LocalDate admissionDate;
+
+    @Column(name = "guardian_name", length = 150)
     private String guardianName;
+
+    @Column(name = "guardian_phone", length = 20)
     private String guardianPhone;
 
+    @Column(name = "blood_group", length = 10)
     private String bloodGroup;
+
+    @Column(name = "profile_image", length = 500)
     private String profileImage;
 
+    @Column(name = "status", length = 30)
     private String status;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+
 
     public Student() {
     }
 
-    public Student(int studentId, int userId, String admissionNumber,
-                   String rollNumber, String firstName, String lastName,
-                   String gender, LocalDate dateOfBirth, String email,
-                   String phone, String address, String city, String state,
-                   String pincode, int departmentId, int courseId,
-                   int semesterId, LocalDate admissionDate,
-                   String guardianName, String guardianPhone,
-                   String bloodGroup, String profileImage,
-                   String status, LocalDateTime createdAt,
-                   LocalDateTime updatedAt) {
-
+    public Student(
+            int studentId,
+            int userId,
+            String admissionNumber,
+            String rollNumber,
+            String firstName,
+            String lastName,
+            String gender,
+            LocalDate dateOfBirth,
+            String email,
+            String phone,
+            String address,
+            String city,
+            String state,
+            String pincode,
+            int departmentId,
+            int courseId,
+            int semesterId,
+            LocalDate admissionDate,
+            String guardianName,
+            String guardianPhone,
+            String bloodGroup,
+            String profileImage,
+            String status,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt
+    ) {
         this.studentId = studentId;
         this.userId = userId;
         this.admissionNumber = admissionNumber;
@@ -81,6 +144,7 @@ public class Student {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
 
     public int getStudentId() {
         return studentId;

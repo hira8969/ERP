@@ -1,22 +1,52 @@
 package com.college.erp.entity;
 
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "timetables")
 public class Timetable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "timetable_id")
     private int timetableId;
+
+    @Column(name = "course_id", nullable = false)
     private int courseId;
+
+    @Column(name = "semester_id", nullable = false)
     private int semesterId;
+
+    @Column(name = "subject_id", nullable = false)
     private int subjectId;
+
+    @Column(name = "faculty_id", nullable = false)
     private int facultyId;
 
+    @Column(name = "day_of_week", nullable = false, length = 20)
     private String dayOfWeek;
+
+    @Column(name = "start_time", nullable = false, length = 20)
     private String startTime;
+
+    @Column(name = "end_time", nullable = false, length = 20)
     private String endTime;
 
+    @Column(name = "room_number", length = 50)
     private String roomNumber;
+
+
+    // =========================
+    // Default Constructor
+    // =========================
 
     public Timetable() {
     }
+
+
+    // =========================
+    // Getters & Setters
+    // =========================
 
     public int getTimetableId() {
         return timetableId;

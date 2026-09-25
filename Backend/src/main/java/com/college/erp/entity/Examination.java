@@ -1,26 +1,57 @@
 package com.college.erp.entity;
 
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "examinations")
 public class Examination {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "exam_id")
     private int examId;
+
+    @Column(name = "exam_name", nullable = false, length = 150)
     private String examName;
+
+    @Column(name = "exam_type", nullable = false, length = 50)
     private String examType;
 
+    @Column(name = "semester_id", nullable = false)
     private int semesterId;
+
+    @Column(name = "subject_id", nullable = false)
     private int subjectId;
 
+    @Column(name = "exam_date", nullable = false)
     private LocalDate examDate;
+
+    @Column(name = "start_time", nullable = false, length = 20)
     private String startTime;
+
+    @Column(name = "end_time", nullable = false, length = 20)
     private String endTime;
 
+    @Column(name = "room_number", length = 50)
     private String roomNumber;
+
+    @Column(name = "max_marks", nullable = false)
     private int maxMarks;
+
+
+    // =========================
+    // Default Constructor
+    // =========================
 
     public Examination() {
     }
+
+
+    // =========================
+    // Getters & Setters
+    // =========================
 
     public int getExamId() {
         return examId;

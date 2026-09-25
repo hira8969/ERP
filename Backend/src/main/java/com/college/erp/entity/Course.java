@@ -1,18 +1,49 @@
 package com.college.erp.entity;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "courses")
 public class Course {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "course_id")
     private int courseId;
+
+    @Column(name = "course_code", unique = true, nullable = false, length = 50)
     private String courseCode;
+
+    @Column(name = "course_name", nullable = false, length = 150)
     private String courseName;
+
+    @Column(name = "department_id", nullable = false)
     private int departmentId;
+
+    @Column(name = "duration", length = 50)
     private String duration;
+
+    @Column(name = "total_semesters", nullable = false)
     private int totalSemesters;
+
+    @Column(name = "description", length = 500)
     private String description;
+
+    @Column(name = "active", nullable = false)
     private boolean active;
+
+
+    // =========================
+    // Default Constructor
+    // =========================
 
     public Course() {
     }
+
+
+    // =========================
+    // Getters & Setters
+    // =========================
 
     public int getCourseId() {
         return courseId;
