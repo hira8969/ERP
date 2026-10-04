@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Accounts &amp; Credentials - Centurion ERP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/student-form.css">
+</head>
+<body>
+    <!-- Main Navigation Bar -->
+    <header class="erp-navbar">
+        <div class="erp-navbar-inner">
+            <a href="dashboard.html" class="erp-brand">
+                <span class="erp-brand-icon">&#127891;</span>
+                Centurion <span>ERP</span>
+            </a>
+            <nav>
+                <ul class="erp-nav-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="student-list.html">Students</a></li>
+                    <li><a href="faculty-list.html">Faculty</a></li>
+                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
+                    <li><a href="attendance.html">Attendance</a></li>
+                    <li><a href="results.html">Results &amp; Grades</a></li>
+                    <li><a href="timetable.html">Timetable</a></li>
+                    <li><a href="notices.html">Notices</a></li>
+                    <li><a href="users.html" class="active">Users</a></li>
+                </ul>
+            </nav>
+            <div>
+                <a class="button button-danger button-small" href="logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="topbar" style="margin-top: 24px;">
+            <div>
+                <h1 style="margin: 0;">User Accounts &amp; Credentials</h1>
+                <p class="muted" style="margin: 4px 0 0 0;">System Administration: Manage user logins, readable credentials, and role privileges</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a class="button button-outline button-small" href="dashboard.html">Dashboard</a>
+                <button class="button button-primary button-small" onclick="openCreateModal()">+ Create New User</button>
+            </div>
+        </div>
+
+        <div id="alertBox" class="alert" style="display: none; margin-bottom: 20px;"></div>
+
+        <!-- Filter Bar -->
+        <section class="panel filter-bar" style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 240px;">
+                    <input type="text" id="searchInput" placeholder="Search by username or email..." oninput="applyFilters()">
+                </div>
+                <div>
+                    <select id="roleFilter" onchange="applyFilters()" style="min-width: 170px;">
+                        <option value="ALL">All Roles</option>
+                        <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+                        <option value="ADMIN">ADMIN</option>
+                        <option value="FACULTY">FACULTY</option>
+                        <option value="STUDENT">STUDENT</option>
+                    </select>
+                </div>
+                <button class="button button-outline button-small" onclick="loadUsers()">&#8635; Refresh</button>
+            </div>
+        </section>
+
+        <!-- Users Table -->
+        <section class="panel" style="overflow-x: auto; padding: 0;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Username / Roll No</th>
+                        <th>Email Address</th>
+                        <th>System Role</th>
+                        <th>Readable Password</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr><td colspan="8" style="padding: 28px; text-align: center; color: var(--text-muted);">Loading user credentials...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Create User Modal -->
+    <div class="modal-overlay" id="userModal" style="display: none;">
+        <div class="modal-content">
+            <div class="topbar" style="margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 19px;">Create New User Account</h3>
+                <button class="link-button" onclick="closeCreateModal()">&times; Close</button>
+            </div>
+            <form id="userForm" onsubmit="handleCreateUser(event)">
+                <div class="form-grid single-col">
+                    <label>
+                        Username / Identifier *
+                        <input type="text" id="newUsername" required placeholder="e.g. 24CSE0105 or fac_sharma">
+                    </label>
+                    <label>
+                        Email Address (Login ID) *
+                        <input type="email" id="newEmail" required placeholder="user@college.edu">
+                    </label>
+                    <label>
+                        Normal Readable Password *
+                        <input type="text" id="newPassword" required value="Welcome@123" placeholder="Set readable password">
+                        <small class="muted">Saved in normal readable text in the database.</small>
+                    </label>
+                    <label>
+                        Assigned Role *
+                        <select id="newRole" required>
+                            <option value="STUDENT" selected>STUDENT (Student Portal)</option>
+                            <option value="FACULTY">FACULTY (Faculty / Teacher Portal)</option>
+                            <option value="ADMIN">ADMIN (Full Admin Access)</option>
+                            <option value="SUPER_ADMIN">SUPER_ADMIN (Super Administrator)</option>
+                        </select>
+                    </label>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+                    <button type="button" class="button button-outline" onclick="closeCreateModal()">Cancel</button>
+                    <button type="submit" class="button button-primary">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let allUsers = [];
+
+        function checkSession() {
+            fetch('api/auth/me')
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.authenticated || !data.user) {
+                        window.location.href = 'login.html?error=Please%20login%20first';
+                        return;
+                    }
+                    if (data.user.role !== 'SUPER_ADMIN' && data.user.role !== 'ADMIN') {
+                        alert('Access restricted: Only Admin or Super Admin can manage user credentials.');
+                        window.location.href = 'dashboard.html';
+                        return;
+                    }
+                    loadUsers();
+                })
+                .catch(() => {
+                    window.location.href = 'login.html';
+                });
+        }
+
+        function loadUsers() {
+            fetch('api/users')
+                .then(r => {
+                    if (!r.ok) throw new Error('Failed to load user list');
+                    return r.json();
+                })
+                .then(data => {
+                    allUsers = data;
+                    renderUsers(allUsers);
+                })
+                .catch(err => {
+                    showAlert(err.message, 'error');
+                });
+        }
+
+        function renderUsers(list) {
+            const tbody = document.getElementById('usersTableBody');
+            if (!list || list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="padding: 24px; text-align: center; color: var(--text-muted);">No user records found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = list.map(u => `
+                <tr>
+                    <td style="font-weight: 700; color: var(--text-main);">#${u.userId}</td>
+                    <td><strong>${escapeHtml(u.username)}</strong></td>
+                    <td style="color: var(--primary); font-weight: 500;">${escapeHtml(u.email)}</td>
+                    <td><span class="role-badge role-${u.role}">${u.role}</span></td>
+                    <td><span class="pass-cell">${escapeHtml(u.password || '')}</span></td>
+                    <td>
+                        <span class="badge ${u.active ? 'badge-success' : 'badge-danger'}">
+                            ${u.active ? 'ACTIVE' : 'INACTIVE'}
+                        </span>
+                    </td>
+                    <td style="font-size: 12.5px; color: var(--text-muted);">${u.createdAt ? u.createdAt.substring(0, 10) : '-'}</td>
+                    <td>
+                        ${u.role === 'SUPER_ADMIN' ? '<span class="muted" style="font-size: 12px;">Protected</span>' : `
+                            <button class="button button-danger button-small" style="padding: 3px 8px; font-size: 11.5px;" onclick="deleteUser(${u.userId}, '${escapeHtml(u.username)}')">Delete</button>
+                        `}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function applyFilters() {
+            const query = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+            const role = document.getElementById('roleFilter').value;
+
+            const filtered = allUsers.filter(u => {
+                const matchQuery = !query || 
+                    (u.username && u.username.toLowerCase().includes(query)) ||
+                    (u.email && u.email.toLowerCase().includes(query));
+                const matchRole = role === 'ALL' || u.role === role;
+                return matchQuery && matchRole;
+            });
+            renderUsers(filtered);
+        }
+
+        function openCreateModal() {
+            document.getElementById('userForm').reset();
+            document.getElementById('newPassword').value = 'Welcome@123';
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        function closeCreateModal() {
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        function handleCreateUser(e) {
+            e.preventDefault();
+            const username = document.getElementById('newUsername').value.trim();
+            const email = document.getElementById('newEmail').value.trim();
+            const password = document.getElementById('newPassword').value.trim();
+            const role = document.getElementById('newRole').value;
+
+            fetch('api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password, role })
+            })
+            .then(async r => {
+                const res = await r.json();
+                if (!r.ok) throw new Error(res.error || 'Failed to create user');
+                return res;
+            })
+            .then(res => {
+                closeCreateModal();
+                showAlert('User account created successfully! The user can now log in.', 'success');
+                loadUsers();
+            })
+            .catch(err => {
+                alert('Error: ' + err.message);
+            });
+        }
+
+        function deleteUser(userId, username) {
+            if (!confirm(`Are you sure you want to delete account for user "${username}" (ID: ${userId})?`)) {
+                return;
+            }
+
+            fetch(`api/users/${userId}`, { method: 'DELETE' })
+                .then(async r => {
+                    const res = await r.json();
+                    if (!r.ok) throw new Error(res.error || 'Failed to delete user');
+                    return res;
+                })
+                .then(() => {
+                    showAlert(`User "${username}" deleted successfully.`, 'success');
+                    loadUsers();
+                })
+                .catch(err => {
+                    showAlert(err.message, 'error');
+                });
+        }
+
+        function showAlert(msg, type) {
+            const box = document.getElementById('alertBox');
+            box.textContent = msg;
+            box.className = 'alert ' + (type === 'success' ? 'success' : 'error');
+            box.style.display = 'flex';
+            setTimeout(() => { box.style.display = 'none'; }, 4000);
+        }
+
+        function escapeHtml(s) {
+            if (!s) return '';
+            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // Initialize on page load
+        checkSession();
+    </script>
+</body>
+</html>

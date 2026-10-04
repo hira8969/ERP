@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 public class StudentAddServlet extends HttpServlet {
 
     private final StudentService studentService = new StudentServiceImpl();
+    private final com.college.erp.dao.UserDAO userDAO = new com.college.erp.dao.impl.UserDAOImpl();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -30,8 +31,35 @@ public class StudentAddServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             Student student = StudentFormSupport.fromRequest(request);
+            String rawPass = request.getParameter("password");
+            if (rawPass == null || rawPass.isBlank()) {
+                rawPass = "student123";
+            }
+
+            String studentEmail = student.getEmail();
+            if (studentEmail != null && !studentEmail.isBlank()) {
+                com.college.erp.entity.User existingUser = userDAO.findByEmail(studentEmail.trim());
+                if (existingUser == null) {
+                    com.college.erp.entity.User newUser = new com.college.erp.entity.User();
+                    String username = (student.getRollNumber() != null && !student.getRollNumber().isBlank())
+                            ? student.getRollNumber()
+                            : student.getAdmissionNumber();
+                    newUser.setUsername(username != null && !username.isBlank() ? username : "student_" + System.currentTimeMillis() % 10000);
+                    newUser.setEmail(studentEmail.trim().toLowerCase());
+                    newUser.setPassword(com.college.erp.util.PasswordUtil.hash(rawPass));
+                    newUser.setRole("STUDENT");
+                    newUser.setActive(true);
+                    newUser.setCreatedAt(java.time.LocalDateTime.now());
+                    newUser.setUpdatedAt(java.time.LocalDateTime.now());
+                    userDAO.save(newUser);
+                    student.setUserId(newUser.getUserId());
+                } else {
+                    student.setUserId(existingUser.getUserId());
+                }
+            }
+
             studentService.saveStudent(student);
-            response.sendRedirect(request.getContextPath() + "/students/list");
+            response.sendRedirect(request.getContextPath() + "/student-list.html?added=true");
         } catch (RuntimeException exception) {
                 String message = URLEncoder.encode(userMessage(exception), StandardCharsets.UTF_8);
                 response.sendRedirect(request.getContextPath() + "/add-student.html?error=" + message);

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Centurion University - Add Faculty</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/student-form.css">
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <header class="erp-navbar">
+        <div class="erp-navbar-inner">
+            <a href="dashboard.html" class="erp-brand">
+                <span class="erp-brand-icon">&#127891;</span>
+                Centurion <span>ERP</span>
+            </a>
+            <nav>
+                <ul class="erp-nav-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="student-list.html">Students</a></li>
+                    <li><a href="faculty-list.html" class="active">Faculty</a></li>
+                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
+                    <li><a href="attendance.html">Attendance</a></li>
+                    <li><a href="results.html">Results &amp; Grades</a></li>
+                    <li><a href="timetable.html">Timetable</a></li>
+                    <li><a href="notices.html">Notices</a></li>
+                </ul>
+            </nav>
+            <div>
+                <a class="button button-danger" style="padding: 6px 14px; font-size: 13px;" href="logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+<main>
+    <div class="topbar" style="margin-top: 20px;">
+        <div>
+            <h1>Add Faculty Member</h1>
+            <p class="muted" style="margin: 4px 0 0 0;">Register new academic professor or departmental lecturer</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a class="button button-outline" href="faculty-list.html">&larr; Back to Directory</a>
+        </div>
+    </div>
+
+    <p id="error-message" class="alert error" hidden></p>
+    <p id="success-message" class="alert success" hidden></p>
+
+    <form id="addFacultyForm" onsubmit="submitFaculty(event)">
+        <section class="panel">
+            <h3 style="margin-top: 0; margin-bottom: 16px;">Personal &amp; Contact Information</h3>
+            <div class="form-grid">
+                <label>
+                    First Name *
+                    <input type="text" name="firstName" required placeholder="e.g. Rajesh">
+                </label>
+                <label>
+                    Last Name
+                    <input type="text" name="lastName" placeholder="e.g. Kumar">
+                </label>
+                <label>
+                    Email Address *
+                    <input type="email" name="email" required placeholder="rajesh@college.edu">
+                </label>
+                <label>
+                    Initial Login Password *
+                    <input type="text" name="password" required value="faculty123" placeholder="Set faculty password">
+                </label>
+                <label>
+                    Phone Number
+                    <input type="tel" name="phone" placeholder="9876543210">
+                </label>
+                <label>
+                    Gender
+                    <select name="gender">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </label>
+                <label>
+                    Employee Number / Code
+                    <input type="text" name="employeeNumber" placeholder="Leave blank to auto-generate">
+                </label>
+            </div>
+        </section>
+
+        <section class="panel" style="margin-top: 16px;">
+            <h3 style="margin-top: 0; margin-bottom: 16px;">Academic &amp; Departmental Profile</h3>
+            <div class="form-grid">
+                <label>
+                    Department *
+                    <select name="departmentId" id="deptSelect" required>
+                        <option value="">Select Department...</option>
+                    </select>
+                </label>
+                <label>
+                    Designation *
+                    <select name="designation" required>
+                        <option value="Professor">Professor</option>
+                        <option value="Associate Professor & HOD">Associate Professor &amp; HOD</option>
+                        <option value="Associate Professor">Associate Professor</option>
+                        <option value="Assistant Professor" selected>Assistant Professor</option>
+                        <option value="Lecturer">Lecturer</option>
+                    </select>
+                </label>
+                <label>
+                    Highest Qualification
+                    <input type="text" name="qualification" placeholder="e.g. Ph.D in Computer Science">
+                </label>
+                <label>
+                    Specialization
+                    <input type="text" name="specialization" placeholder="e.g. Artificial Intelligence & Cloud Systems">
+                </label>
+            </div>
+            
+            <p style="margin-top: 24px;">
+                <button type="submit" class="button button-primary" id="btnSubmit">Save Faculty Member</button>
+                <a class="button button-outline" href="faculty-list.html" style="margin-left: 8px;">Cancel</a>
+            </p>
+        </section>
+    </form>
+</main>
+
+<script>
+    const root = window.location.pathname.includes('/add-faculty') 
+        ? window.location.pathname.split('/add-faculty')[0] + '/' 
+        : './';
+
+    // Populate departments
+    fetch(root + 'api/departments').then(r => r.json()).then(depts => {
+        const select = document.getElementById('deptSelect');
+        if (depts) {
+            select.innerHTML = depts.map(d => `<option value="${d.departmentId}">${d.departmentCode} - ${d.departmentName}</option>`).join('');
+        }
+    }).catch(() => {});
+
+    function submitFaculty(e) {
+        e.preventDefault();
+        const form = document.getElementById('addFacultyForm');
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((val, key) => data[key] = val);
+
+        const btn = document.getElementById('btnSubmit');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        fetch(root + 'api/faculty', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(result => {
+            btn.disabled = false;
+            btn.textContent = 'Save Faculty Member';
+            if (result.status === 'success') {
+                const s = document.getElementById('success-message');
+                s.textContent = 'Faculty member saved successfully! Redirecting...';
+                s.hidden = false;
+                setTimeout(() => window.location.href = 'faculty-list.html', 1500);
+            } else {
+                const err = document.getElementById('error-message');
+                err.textContent = result.error || 'Failed to save faculty.';
+                err.hidden = false;
+            }
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.textContent = 'Save Faculty Member';
+            const errEl = document.getElementById('error-message');
+            errEl.textContent = 'Network or server error.';
+            errEl.hidden = false;
+        });
+    }
+</script>
+</body>
+</html>

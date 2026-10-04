@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Centurion University - Academic Courses &amp; Curriculum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/student-form.css">
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <header class="erp-navbar">
+        <div class="erp-navbar-inner">
+            <a href="dashboard.html" class="erp-brand">
+                <span class="erp-brand-icon">&#127891;</span>
+                Centurion <span>ERP</span>
+            </a>
+            <nav>
+                <ul class="erp-nav-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="student-list.html">Students</a></li>
+                    <li><a href="faculty-list.html">Faculty</a></li>
+                    <li><a href="courses.html" class="active">Courses &amp; Syllabus</a></li>
+                    <li><a href="attendance.html">Attendance</a></li>
+                    <li><a href="results.html">Results &amp; Grades</a></li>
+                    <li><a href="timetable.html">Timetable</a></li>
+                    <li><a href="notices.html">Notices</a></li>
+                </ul>
+            </nav>
+            <div>
+                <a class="button button-danger button-small" href="logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+<main>
+    <div class="topbar" style="margin-top: 24px;">
+        <div>
+            <h1 style="margin: 0;">Academic Programs &amp; Syllabus</h1>
+            <p class="muted" style="margin: 4px 0 0 0;">Browse university academic structure, departments, degree tracks, and semester curriculum</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="button button-primary button-small" id="btnAddSubjectBtn" onclick="openSubjectModal()">+ Add Course Subject</button>
+        </div>
+    </div>
+
+    <p id="error-message" class="alert error" hidden></p>
+    <p id="success-message" class="alert success" hidden></p>
+
+    <!-- Departments & Courses Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 26px;">
+        <!-- Departments Panel -->
+        <section class="panel">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 18px;">&#127970; Academic Departments</h3>
+                <span class="badge badge-primary">Schools</span>
+            </div>
+            <ul id="deptList" style="list-style: none; padding: 0; margin: 0;">
+                <li style="padding: 12px; text-align: center; color: var(--text-muted);">Loading departments...</li>
+            </ul>
+        </section>
+
+        <!-- Courses Panel -->
+        <section class="panel">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 18px;">&#127891; Enrolled Degree Programs</h3>
+                <span class="badge badge-info">Degrees</span>
+            </div>
+            <ul id="courseList" style="list-style: none; padding: 0; margin: 0;">
+                <li style="padding: 12px; text-align: center; color: var(--text-muted);">Loading degree courses...</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- Subjects & Curriculum Table -->
+    <section class="panel" style="overflow-x: auto; padding: 0;">
+        <div class="topbar" style="padding: 18px 22px 14px 22px; margin: 0; border-bottom: 1px solid var(--border-color);">
+            <div>
+                <h3 style="margin: 0; font-size: 18px;">Curriculum Subjects &amp; Syllabus</h3>
+                <small class="muted">Subject credit weights and passing examination standards</small>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Subject Code</th>
+                    <th>Subject Title</th>
+                    <th>Credits</th>
+                    <th>Maximum Marks</th>
+                    <th>Pass Marks</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="subjectRows">
+                <tr><td colspan="6" style="padding: 28px; text-align: center; color: var(--text-muted);">Loading curriculum subjects...</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Modal for Adding Subject -->
+    <div class="modal-overlay" id="subjectModal" style="display: none;">
+        <div class="modal-content">
+            <div class="topbar" style="margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 19px;">Add Curriculum Subject</h3>
+                <button class="link-button" onclick="closeSubjectModal()">&times; Close</button>
+            </div>
+            <form id="addSubjectForm" onsubmit="submitSubject(event)">
+                <div class="form-grid single-col">
+                    <label>
+                        Subject Code *
+                        <input type="text" id="subCode" required placeholder="e.g. CS401">
+                    </label>
+                    <label>
+                        Subject Title *
+                        <input type="text" id="subName" required placeholder="e.g. Artificial Intelligence & Machine Learning">
+                    </label>
+                    <label>
+                        Course Program *
+                        <select id="modalCourseSelect" required></select>
+                    </label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <label>
+                            Credits *
+                            <input type="number" id="subCredits" value="4" min="1" max="10" required>
+                        </label>
+                        <label>
+                            Pass Marks (out of 100) *
+                            <input type="number" id="subPassMarks" value="40" min="20" max="80" required>
+                        </label>
+                    </div>
+                </div>
+                <div style="margin-top: 24px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="button button-outline" onclick="closeSubjectModal()">Cancel</button>
+                    <button type="submit" class="button button-primary" id="btnSaveSub">Save Subject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+    const root = window.location.pathname.includes('/courses') 
+        ? window.location.pathname.split('/courses')[0] + '/' 
+        : './';
+
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    // Check user role
+    fetch(root + 'api/auth/me').then(r => r.json()).then(data => {
+        if (!data.authenticated) {
+            window.location.href = root + 'login.html';
+        } else if (data.user.role !== 'ADMIN' && data.user.role !== 'SUPER_ADMIN') {
+            const btn = document.getElementById('btnAddSubjectBtn');
+            if (btn) btn.style.display = 'none';
+        }
+    }).catch(() => {});
+
+    // Load Departments
+    fetch(root + 'api/departments').then(r => r.json()).then(depts => {
+        const list = document.getElementById('deptList');
+        if (depts && depts.length > 0) {
+            list.innerHTML = depts.map(d => `
+                <li style="padding: 12px; margin-bottom: 8px; border-radius: var(--radius-sm); background: #f8fafc; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: var(--primary); font-family: 'JetBrains Mono', monospace;">${escapeHtml(d.departmentCode)}</strong> &bull; <span style="font-weight: 600;">${escapeHtml(d.departmentName)}</span>
+                        <br><small class="muted">${escapeHtml(d.description || 'Active academic division')}</small>
+                    </div>
+                    <span class="badge badge-success">ACTIVE</span>
+                </li>
+            `).join('');
+        } else {
+            list.innerHTML = '<li style="padding: 12px; color: var(--text-muted);">No departments found.</li>';
+        }
+    }).catch(() => {});
+
+    // Load Courses
+    fetch(root + 'api/courses').then(r => r.json()).then(courses => {
+        const list = document.getElementById('courseList');
+        const modalSelect = document.getElementById('modalCourseSelect');
+        if (courses && courses.length > 0) {
+            list.innerHTML = courses.map(c => `
+                <li style="padding: 12px; margin-bottom: 8px; border-radius: var(--radius-sm); background: #f8fafc; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: var(--primary); font-family: 'JetBrains Mono', monospace;">${escapeHtml(c.courseCode)}</strong> &bull; <span style="font-weight: 600;">${escapeHtml(c.courseName)}</span>
+                        <br><small class="muted">Duration: ${escapeHtml(c.duration || 'N/A')} &bull; Semesters: ${c.totalSemesters}</small>
+                    </div>
+                    <span class="badge badge-primary">PROGRAM</span>
+                </li>
+            `).join('');
+            if (modalSelect) {
+                modalSelect.innerHTML = courses.map(c => `<option value="${c.courseId}">${c.courseCode} - ${c.courseName}</option>`).join('');
+            }
+        } else {
+            list.innerHTML = '<li style="padding: 12px; color: var(--text-muted);">No courses found.</li>';
+        }
+    }).catch(() => {});
+
+    // Load Subjects
+    function loadSubjects() {
+        fetch(root + 'api/subjects').then(r => r.json()).then(subjects => {
+            const tbody = document.getElementById('subjectRows');
+            if (subjects && subjects.length > 0) {
+                tbody.innerHTML = subjects.map(s => `
+                    <tr>
+                        <td><strong style="color: var(--primary); font-family: 'JetBrains Mono', monospace;">${escapeHtml(s.subjectCode)}</strong></td>
+                        <td><strong style="color: var(--text-main); font-weight: 600;">${escapeHtml(s.subjectName)}</strong></td>
+                        <td><span class="badge badge-info">${s.credits} Credits</span></td>
+                        <td>${s.maxMarks}</td>
+                        <td>${s.passMarks}</td>
+                        <td><span class="badge badge-success">ACTIVE</span></td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 28px; color: var(--text-muted);">No curriculum subjects found.</td></tr>';
+            }
+        }).catch(() => {});
+    }
+
+    function openSubjectModal() {
+        document.getElementById('subjectModal').style.display = 'flex';
+    }
+
+    function closeSubjectModal() {
+        document.getElementById('subjectModal').style.display = 'none';
+    }
+
+    function submitSubject(e) {
+        e.preventDefault();
+        const code = document.getElementById('subCode').value;
+        const name = document.getElementById('subName').value;
+        const cId = document.getElementById('modalCourseSelect').value;
+        const credits = document.getElementById('subCredits').value;
+        const passMarks = document.getElementById('subPassMarks').value;
+
+        const btn = document.getElementById('btnSaveSub');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        fetch(root + 'api/subjects', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                subjectCode: code,
+                subjectName: name,
+                courseId: cId,
+                semesterId: 3,
+                credits: credits,
+                maxMarks: 100,
+                passMarks: passMarks
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.textContent = 'Save Subject';
+            closeSubjectModal();
+            const sMsg = document.getElementById('success-message');
+            sMsg.textContent = 'Subject added to academic curriculum successfully!';
+            sMsg.hidden = false;
+            setTimeout(() => sMsg.hidden = true, 3000);
+            loadSubjects();
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.textContent = 'Save Subject';
+            alert('Failed to add subject.');
+        });
+    }
+
+    loadSubjects();
+</script>
+</body>
+</html>

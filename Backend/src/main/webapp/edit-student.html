@@ -3,44 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Edit Student</title>
+    <title>Edit Student - Centurion University ERP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/student-form.css">
 </head>
-<body><main>
-    <div class="topbar"><h1>Edit Student</h1><a class="button" href="students/list">Student list</a></div>
-    <p id="error-message" class="error" hidden></p>
+<body>
+    <!-- Main Navigation Bar -->
+    <header class="erp-navbar">
+        <div class="erp-navbar-inner">
+            <a href="dashboard.html" class="erp-brand">
+                <span class="erp-brand-icon">&#127891;</span>
+                Centurion <span>ERP</span>
+            </a>
+            <nav>
+                <ul class="erp-nav-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="student-list.html" class="active">Students</a></li>
+                    <li><a href="faculty-list.html">Faculty</a></li>
+                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
+                    <li><a href="attendance.html">Attendance</a></li>
+                    <li><a href="results.html">Results &amp; Grades</a></li>
+                    <li><a href="timetable.html">Timetable</a></li>
+                    <li><a href="notices.html">Notices</a></li>
+                </ul>
+            </nav>
+            <div>
+                <a class="button button-danger button-small" href="logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+<main>
+    <div class="topbar" style="margin-top: 24px;">
+        <div>
+            <h1 style="margin: 0;">Edit Student Record</h1>
+            <p class="muted" style="margin: 4px 0 0 0;">Update student details and academic enrolment</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a class="button button-outline button-small" href="student-list.html">&larr; Back to List</a>
+            <a class="button button-outline button-small" href="dashboard.html">Dashboard</a>
+        </div>
+    </div>
+
+    <p id="error-message" class="alert error" hidden></p>
+
     <section class="panel">
         <form id="edit-student-form" method="post" action="students/update">
             <input type="hidden" name="studentId">
+
+            <h3 style="margin-top: 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Basic &amp; Academic Info</h3>
             <div class="form-grid">
-                <label>Admission number *<input name="admissionNumber" required></label><label>Roll number<input name="rollNumber"></label>
-                <label>First name *<input name="firstName" required></label><label>Last name<input name="lastName"></label>
-                <label>Gender<input name="gender"></label><label>Date of birth<input type="date" name="dateOfBirth"></label>
-                <label>Email<input type="email" name="email"></label><label>Phone<input name="phone"></label>
-                <label>Department ID *<input type="number" name="departmentId" min="1" required></label><label>Course ID *<input type="number" name="courseId" min="1" required></label>
-                <label>Semester number *<input type="number" name="semesterId" min="1" required></label><label>Admission date<input type="date" name="admissionDate"></label>
-                <label>City<input name="city"></label><label>State<input name="state"></label>
-                <label>Guardian name<input name="guardianName"></label><label>Guardian phone<input name="guardianPhone"></label>
-                <label class="wide">Address<textarea name="address"></textarea></label><label>PIN code<input name="pincode"></label>
-                <label>Blood group<input name="bloodGroup"></label><label>Status<input name="status"></label>
+                <label>Admission Number *<input name="admissionNumber" required></label>
+                <label>Roll Number<input name="rollNumber"></label>
+                <label>First Name *<input name="firstName" required></label>
+                <label>Last Name<input name="lastName"></label>
+                <label>Gender
+                    <select name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </label>
+                <label>Date of Birth<input type="date" name="dateOfBirth"></label>
+                <label>Department *
+                    <select name="departmentId" id="departmentSelect" required>
+                        <option value="1">1 - Computer Science and Engineering (CSE)</option>
+                    </select>
+                </label>
+                <label>Course *
+                    <select name="courseId" id="courseSelect" required>
+                        <option value="1">1 - Bachelor of Computer Applications (BCA)</option>
+                    </select>
+                </label>
+                <label>Semester Number *
+                    <select name="semesterId" required>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                </label>
+                <label>Admission Date<input type="date" name="admissionDate"></label>
             </div>
-            <p><button type="submit">Update student</button></p>
+
+            <h3 style="border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-top: 24px;">Contact &amp; Personal Info</h3>
+            <div class="form-grid">
+                <label>Email<input type="email" name="email"></label>
+                <label>Phone<input name="phone"></label>
+                <label>Guardian Name<input name="guardianName"></label>
+                <label>Guardian Phone<input name="guardianPhone"></label>
+                <label>City<input name="city"></label>
+                <label>State<input name="state"></label>
+                <label>PIN Code<input name="pincode"></label>
+                <label>Blood Group
+                    <select name="bloodGroup">
+                        <option value="">Select</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                </label>
+                <label>Status
+                    <select name="status">
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="INACTIVE">INACTIVE</option>
+                        <option value="GRADUATED">GRADUATED</option>
+                        <option value="SUSPENDED">SUSPENDED</option>
+                    </select>
+                </label>
+                <label class="wide">Address<textarea name="address"></textarea></label>
+            </div>
+
+            <p style="margin-top: 24px;"><button type="submit" class="button button-primary">Update Student</button></p>
         </form>
     </section>
 </main>
-+<script>
-+const root = window.location.pathname.includes('/students/') ? window.location.pathname.split('/students/')[0] + '/' : './';
-+const form = document.getElementById('edit-student-form');
-+form.action = root + 'students/update';
-+const id = new URLSearchParams(window.location.search).get('id');
+<script>
+const root = window.location.pathname.includes('/students/') ? window.location.pathname.split('/students/')[0] + '/' : './';
+const form = document.getElementById('edit-student-form');
+form.action = root + 'students/update';
+const id = new URLSearchParams(window.location.search).get('id');
 const error = new URLSearchParams(window.location.search).get('error');
 if (error) {
     const message = document.getElementById('error-message');
     message.textContent = error;
     message.hidden = false;
 }
-+fetch(root + 'api/students/' + encodeURIComponent(id)).then(response => { if (!response.ok) throw new Error('Student not found.'); return response.json(); }).then(student => {
-+    Object.keys(student).forEach(name => { const field = form.elements[name]; if (field) field.value = student[name] ?? ''; });
-+}).catch(error => { const message = document.getElementById('error-message'); message.textContent = error.message; message.hidden = false; });
-+</script>
-+</body></html>
+
+// First load departments & courses, then load student data
+Promise.all([
+    fetch(root + 'api/departments').then(r => r.ok ? r.json() : []).catch(() => []),
+    fetch(root + 'api/courses').then(r => r.ok ? r.json() : []).catch(() => [])
+]).then(([depts, courses]) => {
+    if (depts && depts.length > 0) {
+        document.getElementById('departmentSelect').innerHTML = 
+            depts.map(d => `<option value="${d.departmentId}">${d.departmentId} - ${d.departmentName} (${d.departmentCode})</option>`).join('');
+    }
+    if (courses && courses.length > 0) {
+        document.getElementById('courseSelect').innerHTML = 
+            courses.map(c => `<option value="${c.courseId}">${c.courseId} - ${c.courseName} (${c.courseCode})</option>`).join('');
+    }
+
+    if (id) {
+        return fetch(root + 'api/students/' + encodeURIComponent(id))
+            .then(res => {
+                if (!res.ok) throw new Error('Student not found.');
+                return res.json();
+            }).then(student => {
+                Object.keys(student).forEach(name => {
+                    const field = form.elements[name];
+                    if (field) field.value = student[name] ?? '';
+                });
+            });
+    }
+}).catch(err => {
+    const message = document.getElementById('error-message');
+    message.textContent = err.message;
+    message.hidden = false;
+});
+</script>
+</body></html>

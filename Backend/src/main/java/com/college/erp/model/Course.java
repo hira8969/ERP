@@ -33,17 +33,10 @@ public class Course {
     private boolean active;
 
 
-    // =========================
-    // Default Constructor
-    // =========================
 
     public Course() {
     }
 
-
-    // =========================
-    // Getters & Setters
-    // =========================
 
     public int getCourseId() {
         return courseId;

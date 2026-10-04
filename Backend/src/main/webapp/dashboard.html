@@ -1,3 +1,332 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dashboard</title><link rel="stylesheet" href="assets/css/student-form.css"></head>
-<body><main><div class="topbar"><h1 id="title">Dashboard</h1><a class="button" href="logout">Logout</a></div><section class="panel"><p id="message"></p><div id="links"></div></section></main><script>const role = (new URLSearchParams(location.search).get('role') || 'USER').toUpperCase(); const title = document.getElementById('title'); const message = document.getElementById('message'); const links = document.getElementById('links'); const root = location.pathname.includes('/') ? location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1) : './'; title.textContent = role + ' Dashboard'; message.textContent = 'You are signed in with the ' + role + ' role.'; if (role === 'ADMIN') links.innerHTML = '<p><a class="button" href="students/list">Manage students</a></p>'; else if (role === 'FACULTY') links.innerHTML = '<p><a class="button" href="students/list">View students</a></p>'; else links.innerHTML = '<p>Student dashboard is ready.</p>';</script></body></html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Centurion University ERP - Portal Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/student-form.css">
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <header class="erp-navbar">
+        <div class="erp-navbar-inner">
+            <a href="dashboard.html" class="erp-brand">
+                <span class="erp-brand-icon">&#127891;</span>
+                Centurion <span>ERP</span>
+            </a>
+            <nav>
+                <ul class="erp-nav-links">
+                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="student-list.html">Students</a></li>
+                    <li id="navFaculty"><a href="faculty-list.html">Faculty</a></li>
+                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
+                    <li><a href="attendance.html">Attendance</a></li>
+                    <li><a href="results.html">Results &amp; Grades</a></li>
+                    <li><a href="timetable.html">Timetable</a></li>
+                    <li><a href="notices.html">Notices</a></li>
+                    <li id="navUsers" style="display: none;"><a href="users.html">Users</a></li>
+                </ul>
+            </nav>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a class="button button-danger button-small" href="logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+<main>
+    <div class="topbar" style="margin-top: 24px;">
+        <div>
+            <h1 id="title" style="margin: 0;">University Dashboard</h1>
+            <p class="muted" id="userSubtext" style="margin: 4px 0 0 0;">Loading active session...</p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a class="button button-outline button-small" href="index.html">&#8962; Portal Home</a>
+            <button class="button button-primary button-small" onclick="refreshDashboard()">&#8635; Refresh Data</button>
+        </div>
+    </div>
+
+    <!-- Active User & Session Status Banner -->
+    <section class="session-banner" style="margin-bottom: 24px;">
+        <div class="session-info">
+            <span class="user-avatar" id="userAvatar">U</span>
+            <div>
+                <h3 id="userName" style="margin: 0 0 4px 0; font-size: 18px;">Signed in User</h3>
+                <p id="userEmail" class="muted" style="margin: 0; font-size: 13.5px;">user@college.edu</p>
+            </div>
+        </div>
+        <div class="session-meta">
+            <span id="roleBadge" class="badge badge-primary">ROLE</span>
+            <span class="badge badge-success">&#10004; Authenticated Session</span>
+        </div>
+    </section>
+
+    <!-- Dynamic Live Statistics Cards -->
+    <div class="stats-grid" id="statsGrid">
+        <!-- Rendered dynamically by JavaScript based on Role -->
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #e0e7ff; color: #4338ca;">&#128101;</div>
+            <div>
+                <div class="stat-val" id="stat1Val">--</div>
+                <div class="stat-lbl" id="stat1Lbl">Loading...</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #e0f2fe; color: #0284c7;">&#128104;&#8205;&#127979;</div>
+            <div>
+                <div class="stat-val" id="stat2Val">--</div>
+                <div class="stat-lbl" id="stat2Lbl">Loading...</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #ecfdf5; color: #059669;">&#128218;</div>
+            <div>
+                <div class="stat-val" id="stat3Val">--</div>
+                <div class="stat-lbl" id="stat3Lbl">Loading...</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #fef3c7; color: #d97706;">&#128227;</div>
+            <div>
+                <div class="stat-val" id="stat4Val">--</div>
+                <div class="stat-lbl" id="stat4Lbl">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Role-Specific Action Panels -->
+    <!-- Student Summary Card (Shown for STUDENT) -->
+    <section class="panel" id="studentSummaryPanel" style="display: none; margin-bottom: 26px;">
+        <div class="topbar" style="margin-bottom: 16px;">
+            <h3 style="margin: 0; font-size: 19px;">Academic Standing &amp; Exam Eligibility</h3>
+            <span id="examEligibilityBadge" class="badge badge-success">ELIGIBLE FOR EXAMS</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; align-items: center;">
+            <div>
+                <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 14px; margin-bottom: 6px;">
+                    <span>Overall Attendance:</span>
+                    <span id="attPercentText" style="color: var(--primary); font-weight: 700;">0.0%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="attProgressBar" style="width: 0%;"></div>
+                </div>
+                <small class="muted">Minimum mandatory requirement: 75% for university semester exams.</small>
+            </div>
+            <div>
+                <div style="font-size: 13.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Current SGPA / Grade Scale:</div>
+                <div style="font-size: 32px; font-weight: 800; color: var(--primary); font-family: 'Outfit', sans-serif;" id="sgpaText">0.00</div>
+                <small class="muted" id="statusText">First Class with Distinction</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation / Quick Modules Cards -->
+    <div class="topbar" style="margin: 28px 0 14px 0;">
+        <div>
+            <h2 style="margin: 0; font-size: 20px;">University ERP Modules</h2>
+            <p class="muted" style="margin: 3px 0 0 0;">Quick shortcuts to essential academic operations</p>
+        </div>
+    </div>
+
+    <div class="cards-grid" id="moduleCards">
+        <!-- Student Directory Card -->
+        <div class="card">
+            <div class="card-icon" style="background: #e0e7ff; color: #4338ca;">&#128101;</div>
+            <h3>Student Directory</h3>
+            <p class="muted">Access student admissions, roll numbers, department profiles, and personal dossiers.</p>
+            <div class="card-actions">
+                <a class="button button-primary button-small" href="student-list.html">Student Directory</a>
+                <a class="button button-outline button-small" id="btnAddStudentCard" href="add-student.html">+ Add Student</a>
+            </div>
+        </div>
+
+        <!-- Faculty Directory Card -->
+        <div class="card" id="cardFaculty">
+            <div class="card-icon" style="background: #e0f2fe; color: #0284c7;">&#128104;&#8205;&#127979;</div>
+            <h3>Faculty &amp; Staff</h3>
+            <p class="muted">Manage professors, department heads, designations, and academic qualifications.</p>
+            <div class="card-actions">
+                <a class="button button-primary button-small" href="faculty-list.html">Faculty Directory</a>
+                <a class="button button-outline button-small" id="btnAddFacultyCard" href="add-faculty.html">+ Add Faculty</a>
+            </div>
+        </div>
+
+        <!-- Attendance Card -->
+        <div class="card">
+            <div class="card-icon" style="background: #ecfdf5; color: #059669;">&#128197;</div>
+            <h3>Attendance Management</h3>
+            <p class="muted">Mark class attendance for students, calculate percentages, and verify eligibility.</p>
+            <div class="card-actions">
+                <a class="button button-primary button-small" href="attendance.html">Open Attendance</a>
+            </div>
+        </div>
+
+        <!-- Results Card -->
+        <div class="card">
+            <div class="card-icon" style="background: #fef3c7; color: #d97706;">&#127941;</div>
+            <h3>Examinations &amp; Results</h3>
+            <p class="muted">View semester grade cards, upload marks, and review UGC 10-point SGPA scales.</p>
+            <div class="card-actions">
+                <a class="button button-primary button-small" href="results.html">View Grade Sheets</a>
+            </div>
+        </div>
+
+        <!-- Timetable Card -->
+        <div class="card">
+            <div class="card-icon" style="background: #f1f5f9; color: #475569;">&#9200;</div>
+            <h3>Class Timetable</h3>
+            <p class="muted">Review weekly schedules, lectures, lab sessions, and classroom assignments.</p>
+            <div class="card-actions">
+                <a class="button button-primary button-small" href="timetable.html">Weekly Schedule</a>
+            </div>
+        </div>
+
+        <!-- Notice Board Card -->
+        <div class="card">
+            <div class="card-icon" style="background: #fee2e2; color: #dc2626;">&#128227;</div>
+            <h3>Campus Notice Board</h3>
+            <p class="muted">Read official announcements, examination circulars, events, and deadlines.</p>
+            <div class="card-actions">
+                <a class="button button-primary button-small" href="notices.html">Notice Board</a>
+            </div>
+        </div>
+
+        <!-- User Accounts & Credentials (Admin Only) -->
+        <div class="card" id="cardUsers">
+            <div class="card-icon" style="background: #fae8ff; color: #9333ea;">&#128273;</div>
+            <h3>User Credentials</h3>
+            <p class="muted">Administer login accounts, passwords (stored in readable text), and permissions.</p>
+            <div class="card-actions">
+                <a class="button button-primary button-small" href="users.html">Manage Users</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    const root = window.location.pathname.includes('/dashboard') 
+        ? window.location.pathname.split('/dashboard')[0] + '/' 
+        : './';
+
+    let currentUser = null;
+
+    function initDashboard() {
+        fetch(root + 'api/auth/me')
+            .then(res => res.json())
+            .then(data => {
+                if (!data.authenticated || !data.user) {
+                    window.location.href = root + 'login.html?error=Session%20expired.%20Please%20login.';
+                    return;
+                }
+                currentUser = data.user;
+                applyUserSession(currentUser);
+                loadStatistics(currentUser);
+            })
+            .catch(() => {
+                window.location.href = root + 'login.html?error=Unable%20to%20connect%20to%20server';
+            });
+    }
+
+    function applyUserSession(user) {
+        document.getElementById('title').textContent = (user.role || 'User') + ' Dashboard';
+        document.getElementById('userSubtext').textContent = 'Signed in as ' + user.username + ' (' + user.role + ')';
+        document.getElementById('userName').textContent = user.username;
+        document.getElementById('userEmail').textContent = user.email;
+        document.getElementById('userAvatar').textContent = (user.username || 'U').substring(0, 1).toUpperCase();
+        
+        const badge = document.getElementById('roleBadge');
+        badge.textContent = user.role;
+        badge.className = 'badge ' + ((user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') ? 'badge-primary' : (user.role === 'FACULTY' ? 'badge-info' : 'badge-warning'));
+
+        // Hide admin-only controls for non-admins
+        const isAdmin = user.role === 'ADMIN' || user.role === 'SUPER_ADMIN';
+        if (isAdmin) {
+            const navU = document.getElementById('navUsers');
+            if (navU) navU.style.display = 'inline-block';
+        } else {
+            const btnAddS = document.getElementById('btnAddStudentCard');
+            if (btnAddS) btnAddS.style.display = 'none';
+            const btnAddF = document.getElementById('btnAddFacultyCard');
+            if (btnAddF) btnAddF.style.display = 'none';
+            const cardUsers = document.getElementById('cardUsers');
+            if (cardUsers) cardUsers.style.display = 'none';
+        }
+
+        // Show student specific panel
+        if (user.role === 'STUDENT') {
+            document.getElementById('studentSummaryPanel').style.display = 'block';
+        }
+    }
+
+    function loadStatistics(user) {
+        fetch(root + 'api/dashboard/stats')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (!data || !data.stats) return;
+                const s = data.stats;
+
+                if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
+                    document.getElementById('stat1Val').textContent = s.totalStudents ?? '0';
+                    document.getElementById('stat1Lbl').textContent = 'Total Students';
+                    document.getElementById('stat2Val').textContent = s.totalFaculty ?? '0';
+                    document.getElementById('stat2Lbl').textContent = 'Total Faculty';
+                    document.getElementById('stat3Val').textContent = s.totalCourses ?? '0';
+                    document.getElementById('stat3Lbl').textContent = 'Active Courses';
+                    document.getElementById('stat4Val').textContent = s.recentNotices ?? '0';
+                    document.getElementById('stat4Lbl').textContent = 'Campus Notices';
+                } else if (user.role === 'FACULTY') {
+                    document.getElementById('stat1Val').textContent = s.mySubjectsCount ?? '0';
+                    document.getElementById('stat1Lbl').textContent = 'Allocated Subjects';
+                    document.getElementById('stat2Val').textContent = s.departmentStudentsCount ?? '0';
+                    document.getElementById('stat2Lbl').textContent = 'Students in Dept';
+                    document.getElementById('stat3Val').textContent = s.designation ?? 'Professor';
+                    document.getElementById('stat3Lbl').textContent = 'Designation';
+                    document.getElementById('stat4Val').textContent = s.recentNotices ?? '0';
+                    document.getElementById('stat4Lbl').textContent = 'Faculty Circulars';
+                } else if (user.role === 'STUDENT') {
+                    document.getElementById('stat1Val').textContent = (s.attendancePercentage ?? 0) + '%';
+                    document.getElementById('stat1Lbl').textContent = 'My Attendance';
+                    document.getElementById('stat2Val').textContent = s.sgpa ?? '0.00';
+                    document.getElementById('stat2Lbl').textContent = 'Current SGPA';
+                    document.getElementById('stat3Val').textContent = (s.attendedClasses ?? 0) + ' / ' + (s.totalClasses ?? 0);
+                    document.getElementById('stat3Lbl').textContent = 'Classes Attended';
+                    document.getElementById('stat4Val').textContent = s.recentNotices ?? '0';
+                    document.getElementById('stat4Lbl').textContent = 'Campus Notices';
+
+                    // Update Student Standing Panel
+                    const pct = s.attendancePercentage ?? 0;
+                    document.getElementById('attPercentText').textContent = pct + '%';
+                    const fill = document.getElementById('attProgressBar');
+                    fill.style.width = Math.min(pct, 100) + '%';
+                    if (pct < 75.0) {
+                        fill.className = 'progress-bar-fill danger';
+                        document.getElementById('examEligibilityBadge').textContent = 'ATTENDANCE SHORTAGE (< 75%)';
+                        document.getElementById('examEligibilityBadge').className = 'badge badge-danger';
+                    } else {
+                        fill.className = 'progress-bar-fill';
+                        document.getElementById('examEligibilityBadge').textContent = 'ELIGIBLE FOR EXAMS (>= 75%)';
+                        document.getElementById('examEligibilityBadge').className = 'badge badge-success';
+                    }
+
+                    document.getElementById('sgpaText').textContent = s.sgpa ?? '0.00';
+                    document.getElementById('statusText').textContent = s.overallStatus ?? 'Regular';
+                }
+            })
+            .catch(() => {});
+    }
+
+    function refreshDashboard() {
+        if (currentUser) {
+            loadStatistics(currentUser);
+        } else {
+            initDashboard();
+        }
+    }
+
+    initDashboard();
+</script>
+</body>
+</html>

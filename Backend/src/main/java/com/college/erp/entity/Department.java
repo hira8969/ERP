@@ -21,7 +21,7 @@ public class Department {
     private String description;
 
     @Column(name = "hod_faculty_id")
-    private int hodFacultyId;
+    private Integer hodFacultyId;
 
     @Column(name = "active", nullable = false)
     private boolean active;
@@ -71,11 +71,11 @@ public class Department {
         this.description = description;
     }
 
-    public int getHodFacultyId() {
+    public Integer getHodFacultyId() {
         return hodFacultyId;
     }
 
-    public void setHodFacultyId(int hodFacultyId) {
+    public void setHodFacultyId(Integer hodFacultyId) {
         this.hodFacultyId = hodFacultyId;
     }
 

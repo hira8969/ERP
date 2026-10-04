@@ -3,8 +3,280 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
+
     <display-name>Centurion University College ERP</display-name>
+
+    <!-- Start Point / Welcome Files -->
     <welcome-file-list>
-        <welcome-file>students/list</welcome-file>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>login.html</welcome-file>
     </welcome-file-list>
+
+    <!-- Session & Cookie Configuration -->
+    <session-config>
+        <session-timeout>60</session-timeout>
+        <cookie-config>
+            <name>JSESSIONID</name>
+            <http-only>true</http-only>
+            <secure>false</secure>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+    <!-- Auth Filter -->
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>com.college.erp.filter.AuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/dashboard</url-pattern>
+        <url-pattern>/dashboard.html</url-pattern>
+        <url-pattern>/students/*</url-pattern>
+        <url-pattern>/student-list.html</url-pattern>
+        <url-pattern>/add-student.html</url-pattern>
+        <url-pattern>/edit-student.html</url-pattern>
+        <url-pattern>/student-details.html</url-pattern>
+        <url-pattern>/faculty-list.html</url-pattern>
+        <url-pattern>/add-faculty.html</url-pattern>
+        <url-pattern>/attendance.html</url-pattern>
+        <url-pattern>/results.html</url-pattern>
+        <url-pattern>/timetable.html</url-pattern>
+        <url-pattern>/courses.html</url-pattern>
+        <url-pattern>/notices.html</url-pattern>
+        <url-pattern>/users.html</url-pattern>
+        <url-pattern>/api/students</url-pattern>
+        <url-pattern>/api/students/*</url-pattern>
+        <url-pattern>/api/faculty</url-pattern>
+        <url-pattern>/api/faculty/*</url-pattern>
+        <url-pattern>/api/departments</url-pattern>
+        <url-pattern>/api/departments/*</url-pattern>
+        <url-pattern>/api/courses</url-pattern>
+        <url-pattern>/api/courses/*</url-pattern>
+        <url-pattern>/api/subjects</url-pattern>
+        <url-pattern>/api/subjects/*</url-pattern>
+        <url-pattern>/api/attendance</url-pattern>
+        <url-pattern>/api/attendance/*</url-pattern>
+        <url-pattern>/api/results</url-pattern>
+        <url-pattern>/api/results/*</url-pattern>
+        <url-pattern>/api/timetables</url-pattern>
+        <url-pattern>/api/timetables/*</url-pattern>
+        <url-pattern>/api/notices</url-pattern>
+        <url-pattern>/api/notices/*</url-pattern>
+        <url-pattern>/api/dashboard/stats</url-pattern>
+        <url-pattern>/api/users</url-pattern>
+        <url-pattern>/api/users/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Core Authentication Servlets -->
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DashboardServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.DashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DashboardServlet</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <!-- API Servlets -->
+    <servlet>
+        <servlet-name>AuthApiServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.AuthApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AuthApiServlet</servlet-name>
+        <url-pattern>/api/auth/me</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DashboardStatsServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.DashboardStatsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DashboardStatsServlet</servlet-name>
+        <url-pattern>/api/dashboard/stats</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StudentApiServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.StudentApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StudentApiServlet</servlet-name>
+        <url-pattern>/api/students</url-pattern>
+        <url-pattern>/api/students/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FacultyApiServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.FacultyApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FacultyApiServlet</servlet-name>
+        <url-pattern>/api/faculty</url-pattern>
+        <url-pattern>/api/faculty/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DepartmentApiServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.DepartmentApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DepartmentApiServlet</servlet-name>
+        <url-pattern>/api/departments</url-pattern>
+        <url-pattern>/api/departments/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CourseApiServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.CourseApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CourseApiServlet</servlet-name>
+        <url-pattern>/api/courses</url-pattern>
+        <url-pattern>/api/courses/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>SubjectApiServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.SubjectApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SubjectApiServlet</servlet-name>
+        <url-pattern>/api/subjects</url-pattern>
+        <url-pattern>/api/subjects/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AttendanceApiServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.AttendanceApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AttendanceApiServlet</servlet-name>
+        <url-pattern>/api/attendance</url-pattern>
+        <url-pattern>/api/attendance/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ResultApiServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.ResultApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ResultApiServlet</servlet-name>
+        <url-pattern>/api/results</url-pattern>
+        <url-pattern>/api/results/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TimetableApiServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.TimetableApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TimetableApiServlet</servlet-name>
+        <url-pattern>/api/timetables</url-pattern>
+        <url-pattern>/api/timetables/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>NoticeApiServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.NoticeApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>NoticeApiServlet</servlet-name>
+        <url-pattern>/api/notices</url-pattern>
+        <url-pattern>/api/notices/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UserApiServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.UserApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserApiServlet</servlet-name>
+        <url-pattern>/api/users</url-pattern>
+        <url-pattern>/api/users/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Student Action Servlets -->
+    <servlet>
+        <servlet-name>StudentListServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.StudentListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StudentListServlet</servlet-name>
+        <url-pattern>/students/list</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StudentAddServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.StudentAddServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StudentAddServlet</servlet-name>
+        <url-pattern>/students/add</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StudentEditServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.StudentEditServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StudentEditServlet</servlet-name>
+        <url-pattern>/students/edit</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StudentUpdateServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.StudentUpdateServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StudentUpdateServlet</servlet-name>
+        <url-pattern>/students/update</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StudentDeleteServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.StudentDeleteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StudentDeleteServlet</servlet-name>
+        <url-pattern>/students/delete</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StudentDetailsServlet</servlet-name>
+        <servlet-class>com.college.erp.controller.StudentDetailsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StudentDetailsServlet</servlet-name>
+        <url-pattern>/students/details</url-pattern>
+    </servlet-mapping>
+
 </web-app>

@@ -32,17 +32,10 @@ public class Enrollment {
     private String status;
 
 
-    // =========================
-    // Default Constructor
-    // =========================
 
     public Enrollment() {
     }
 
-
-    // =========================
-    // Getters & Setters
-    // =========================
 
     public int getEnrollmentId() {
         return enrollmentId;

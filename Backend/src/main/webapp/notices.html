@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Centurion University - Campus Notice Board</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/student-form.css">
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <header class="erp-navbar">
+        <div class="erp-navbar-inner">
+            <a href="dashboard.html" class="erp-brand">
+                <span class="erp-brand-icon">&#127891;</span>
+                Centurion <span>ERP</span>
+            </a>
+            <nav>
+                <ul class="erp-nav-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="student-list.html">Students</a></li>
+                    <li><a href="faculty-list.html">Faculty</a></li>
+                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
+                    <li><a href="attendance.html">Attendance</a></li>
+                    <li><a href="results.html">Results &amp; Grades</a></li>
+                    <li><a href="timetable.html">Timetable</a></li>
+                    <li><a href="notices.html" class="active">Notices</a></li>
+                </ul>
+            </nav>
+            <div>
+                <a class="button button-danger" style="padding: 6px 14px; font-size: 13px;" href="logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+<main>
+    <div class="topbar" style="margin-top: 20px;">
+        <div>
+            <h1>Campus Notice Board &amp; Circulars</h1>
+            <p class="muted" style="margin: 4px 0 0 0;">Official university bulletins, examination notifications, and departmental announcements</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="button button-primary" id="btnPostNotice" onclick="openNoticeModal()">+ Publish Announcement</button>
+        </div>
+    </div>
+
+    <p id="error-message" class="alert error" hidden></p>
+    <p id="success-message" class="alert success" hidden></p>
+
+    <!-- Filter Buttons -->
+    <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+        <button class="button button-primary" id="btnFilterAll" onclick="filterNotices('ALL')">All Circulars</button>
+        <button class="button button-outline" id="btnFilterStudent" onclick="filterNotices('STUDENT')">Student Notices</button>
+        <button class="button button-outline" id="btnFilterFaculty" onclick="filterNotices('FACULTY')">Faculty Bulletins</button>
+    </div>
+
+    <!-- Notices Container -->
+    <div id="noticesContainer">
+        <section class="panel">
+            <p style="color: var(--text-muted); text-align: center;">Loading campus announcements...</p>
+        </section>
+    </div>
+
+    <!-- Modal for Posting Notice -->
+    <div class="modal-overlay" id="noticeModal" style="display: none;">
+        <div class="modal-content">
+            <div class="topbar">
+                <h3 style="margin: 0;">Publish Campus Announcement</h3>
+                <button class="link-button" onclick="closeNoticeModal()">&times; Close</button>
+            </div>
+            <form id="noticeForm" onsubmit="submitNotice(event)">
+                <div class="form-grid single-col" style="margin-top: 16px;">
+                    <label>
+                        Announcement Title *
+                        <input type="text" id="noticeTitle" required placeholder="e.g. Mid-Semester Theory Exam Dates">
+                    </label>
+                    <label>
+                        Target Audience *
+                        <select id="noticeRole" required>
+                            <option value="ALL">Entire Campus (All Students &amp; Faculty)</option>
+                            <option value="STUDENT">Students Only</option>
+                            <option value="FACULTY">Faculty &amp; Staff Only</option>
+                        </select>
+                    </label>
+                    <label>
+                        Notice Description / Content *
+                        <textarea id="noticeContent" rows="5" required placeholder="Type the complete circular text here..."></textarea>
+                    </label>
+                </div>
+                <p style="margin-top: 20px; display: flex; gap: 8px;">
+                    <button type="submit" class="button button-primary" id="btnSaveNotice">Publish Notice</button>
+                    <button type="button" class="button button-outline" onclick="closeNoticeModal()">Cancel</button>
+                </p>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+    const root = window.location.pathname.includes('/notices') 
+        ? window.location.pathname.split('/notices')[0] + '/' 
+        : './';
+
+    let allNotices = [];
+    let currentFilter = 'ALL';
+
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    // Check auth
+    fetch(root + 'api/auth/me').then(r => r.json()).then(data => {
+        if (!data.authenticated) {
+            window.location.href = root + 'login.html';
+        } else if (data.user.role === 'STUDENT') {
+            const btn = document.getElementById('btnPostNotice');
+            if (btn) btn.style.display = 'none';
+        }
+    }).catch(() => {});
+
+    function loadNotices() {
+        fetch(root + 'api/notices')
+            .then(res => res.json())
+            .then(data => {
+                allNotices = data || [];
+                renderNotices(allNotices);
+            })
+            .catch(() => {
+                document.getElementById('noticesContainer').innerHTML = '<section class="panel"><p>Unable to load notices from server.</p></section>';
+            });
+    }
+
+    function renderNotices(list) {
+        const container = document.getElementById('noticesContainer');
+        if (!list || list.length === 0) {
+            container.innerHTML = '<section class="panel"><p style="text-align: center; color: var(--text-muted);">No campus announcements in this category.</p></section>';
+            return;
+        }
+
+        container.innerHTML = list.map(n => {
+            const dateStr = n.publishDate ? n.publishDate.substring(0, 10) : 'Recent';
+            return `
+                <div class="notice-item">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+                        <h4>${escapeHtml(n.title)}</h4>
+                        <span class="badge ${n.targetRole === 'STUDENT' ? 'badge-primary' : (n.targetRole === 'FACULTY' ? 'badge-warning' : 'badge-info')}">
+                            ${escapeHtml(n.targetRole)}
+                        </span>
+                    </div>
+                    <div class="notice-meta">
+                        <span>&#128197; Published: <strong>${escapeHtml(dateStr)}</strong></span>
+                        <span>&bull; Author: <strong>University Administration</strong></span>
+                    </div>
+                    <p style="margin: 0; line-height: 1.6; color: #334155;">${escapeHtml(n.content)}</p>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function filterNotices(role) {
+        currentFilter = role;
+        document.getElementById('btnFilterAll').className = role === 'ALL' ? 'button button-primary' : 'button button-outline';
+        document.getElementById('btnFilterStudent').className = role === 'STUDENT' ? 'button button-primary' : 'button button-outline';
+        document.getElementById('btnFilterFaculty').className = role === 'FACULTY' ? 'button button-primary' : 'button button-outline';
+
+        if (role === 'ALL') {
+            renderNotices(allNotices);
+        } else {
+            renderNotices(allNotices.filter(n => n.targetRole === 'ALL' || n.targetRole === role));
+        }
+    }
+
+    function openNoticeModal() {
+        document.getElementById('noticeModal').style.display = 'flex';
+    }
+
+    function closeNoticeModal() {
+        document.getElementById('noticeModal').style.display = 'none';
+    }
+
+    function submitNotice(e) {
+        e.preventDefault();
+        const title = document.getElementById('noticeTitle').value;
+        const role = document.getElementById('noticeRole').value;
+        const content = document.getElementById('noticeContent').value;
+
+        const btn = document.getElementById('btnSaveNotice');
+        btn.disabled = true;
+        btn.textContent = 'Publishing...';
+
+        fetch(root + 'api/notices', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title: title,
+                content: content,
+                targetRole: role
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.textContent = 'Publish Notice';
+            closeNoticeModal();
+            const sMsg = document.getElementById('success-message');
+            sMsg.textContent = 'Notice published successfully to campus board!';
+            sMsg.hidden = false;
+            setTimeout(() => sMsg.hidden = true, 3000);
+            loadNotices();
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.textContent = 'Publish Notice';
+            alert('Failed to publish announcement.');
+        });
+    }
+
+    loadNotices();
+</script>
+</body>
+</html>

@@ -3,20 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Student Details</title>
+    <title>Student Profile - Centurion University ERP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/student-form.css">
 </head>
-<body><main>
-    <div class="topbar"><h1>Student Details</h1><a class="button" href="students/list">Back to list</a></div>
-    <section id="student-details" class="panel"><p>Loading student...</p></section>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <header class="erp-navbar">
+        <div class="erp-navbar-inner">
+            <a href="dashboard.html" class="erp-brand">
+                <span class="erp-brand-icon">&#127891;</span>
+                Centurion <span>ERP</span>
+            </a>
+            <nav>
+                <ul class="erp-nav-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="student-list.html" class="active">Students</a></li>
+                    <li><a href="faculty-list.html">Faculty</a></li>
+                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
+                    <li><a href="attendance.html">Attendance</a></li>
+                    <li><a href="results.html">Results &amp; Grades</a></li>
+                    <li><a href="timetable.html">Timetable</a></li>
+                    <li><a href="notices.html">Notices</a></li>
+                </ul>
+            </nav>
+            <div>
+                <a class="button button-danger button-small" href="logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+<main>
+    <div class="topbar" style="margin-top: 24px;">
+        <div>
+            <h1 style="margin: 0;">Student Profile Details</h1>
+            <p class="muted" style="margin: 4px 0 0 0;">Comprehensive student academic record, personal information, and guardian dossier</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a class="button button-outline button-small" href="student-list.html">&larr; Back to List</a>
+            <a class="button button-outline button-small" href="dashboard.html">Dashboard</a>
+        </div>
+    </div>
+
+    <section id="student-details" class="panel" style="margin-top: 20px;">
+        <p style="text-align: center; color: var(--text-muted); padding: 24px;">Loading student profile...</p>
+    </section>
 </main>
+
 <script>
 const root = window.location.pathname.includes('/students/') ? window.location.pathname.split('/students/')[0] + '/' : './';
 const id = new URLSearchParams(window.location.search).get('id');
 const details = document.getElementById('student-details');
-const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
-fetch(root + 'api/students/' + encodeURIComponent(id)).then(response => { if (!response.ok) throw new Error('Student not found.'); return response.json(); }).then(student => {
-    details.innerHTML = `<p><strong>Student ID:</strong> ${student.studentId}</p><p><strong>Admission number:</strong> ${escapeHtml(student.admissionNumber)}</p><p><strong>Name:</strong> ${escapeHtml([student.firstName, student.lastName].filter(Boolean).join(' '))}</p><p><strong>Gender:</strong> ${escapeHtml(student.gender)}</p><p><strong>Date of birth:</strong> ${escapeHtml(student.dateOfBirth)}</p><p><strong>Email:</strong> ${escapeHtml(student.email)}</p><p><strong>Phone:</strong> ${escapeHtml(student.phone)}</p><p><strong>Department ID:</strong> ${student.departmentId}</p><p><strong>Course ID:</strong> ${student.courseId}</p><p><strong>Semester:</strong> ${student.semesterId}</p><p><strong>Address:</strong> ${escapeHtml([student.address, student.city, student.state, student.pincode].filter(Boolean).join(', '))}</p><p><strong>Guardian:</strong> ${escapeHtml(student.guardianName)} (${escapeHtml(student.guardianPhone)})</p><p><strong>Status:</strong> ${escapeHtml(student.status)}</p><a class="button" href="${root}students/edit?id=${student.studentId}">Edit student</a>`;
-}).catch(error => { details.innerHTML = `<p class="error">${escapeHtml(error.message)}</p>`; });
+const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+if (!id) {
+    details.innerHTML = '<p class="alert error">No student ID provided in request URL.</p>';
+} else {
+    fetch(root + 'api/students/' + encodeURIComponent(id))
+        .then(response => {
+            if (!response.ok) throw new Error('Student record not found.');
+            return response.json();
+        })
+        .then(student => {
+            const fullName = [student.firstName, student.lastName].filter(Boolean).join(' ');
+            details.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
+                    <div>
+                        <h2 style="margin: 0 0 8px 0; font-size: 24px;">${escapeHtml(fullName)}</h2>
+                        <span class="badge badge-primary">Admission No: ${escapeHtml(student.admissionNumber)}</span>
+                        <span class="badge badge-info">Roll No: ${escapeHtml(student.rollNumber || 'N/A')}</span>
+                        <span class="badge badge-success">${escapeHtml(student.status || 'ACTIVE')}</span>
+                    </div>
+                    <div>
+                        <a class="button button-primary button-small" href="edit-student.html?id=${student.studentId}">Edit Student Record</a>
+                    </div>
+                </div>
+
+                <div class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                    <div class="card" style="padding: 20px;">
+                        <h4 style="margin: 0 0 14px 0; color: var(--primary); font-size: 17px;">Academic Details</h4>
+                        <p style="margin-bottom: 8px;"><strong>Department ID:</strong> ${student.departmentId}</p>
+                        <p style="margin-bottom: 8px;"><strong>Course ID:</strong> ${student.courseId}</p>
+                        <p style="margin-bottom: 8px;"><strong>Current Semester:</strong> Semester ${student.semesterId}</p>
+                        <p style="margin-bottom: 0;"><strong>Admission Date:</strong> ${escapeHtml(student.admissionDate || 'N/A')}</p>
+                    </div>
+
+                    <div class="card" style="padding: 20px;">
+                        <h4 style="margin: 0 0 14px 0; color: var(--accent-sky); font-size: 17px;">Personal Information</h4>
+                        <p style="margin-bottom: 8px;"><strong>Gender:</strong> ${escapeHtml(student.gender || 'N/A')}</p>
+                        <p style="margin-bottom: 8px;"><strong>Date of Birth:</strong> ${escapeHtml(student.dateOfBirth || 'N/A')}</p>
+                        <p style="margin-bottom: 8px;"><strong>Blood Group:</strong> ${escapeHtml(student.bloodGroup || 'N/A')}</p>
+                        <p style="margin-bottom: 8px;"><strong>Email:</strong> ${escapeHtml(student.email || 'N/A')}</p>
+                        <p style="margin-bottom: 0;"><strong>Phone:</strong> ${escapeHtml(student.phone || 'N/A')}</p>
+                    </div>
+
+                    <div class="card" style="padding: 20px;">
+                        <h4 style="margin: 0 0 14px 0; color: var(--success); font-size: 17px;">Guardian &amp; Address</h4>
+                        <p style="margin-bottom: 8px;"><strong>Guardian Name:</strong> ${escapeHtml(student.guardianName || 'N/A')}</p>
+                        <p style="margin-bottom: 8px;"><strong>Guardian Phone:</strong> ${escapeHtml(student.guardianPhone || 'N/A')}</p>
+                        <p style="margin-bottom: 8px;"><strong>City / State:</strong> ${escapeHtml([student.city, student.state].filter(Boolean).join(', ') || 'N/A')}</p>
+                        <p style="margin-bottom: 8px;"><strong>PIN Code:</strong> ${escapeHtml(student.pincode || 'N/A')}</p>
+                        <p style="margin-bottom: 0;"><strong>Address:</strong> ${escapeHtml(student.address || 'N/A')}</p>
+                    </div>
+                </div>
+            `;
+        })
+        .catch(error => {
+            details.innerHTML = `<p class="alert error">${escapeHtml(error.message)}</p>`;
+        });
+}
 </script>
-</body></html>
+</body>
+</html>

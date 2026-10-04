@@ -5,22 +5,22 @@
     <predefined_log_file id="Tomcat Catalina Log" />
     <predefined_log_file id="Tomcat Manager Log" />
     <predefined_log_file id="Tomcat Host Manager Log" />
-    <option name="catalinaBase" value="E:\Advance-java\Servers" />
+    <option name="catalinaBase" value="" />
     <option name="contextPath" value="/Backend" />
     <option name="docBase" value="$PROJECT_DIR$/Backend/src/main/webapp" />
     <option name="envOptions">
       <map />
     </option>
-    <option name="extraClassPath" value="" />
+    <option name="extraClassPath" value="$PROJECT_DIR$/Backend/target/classes" />
     <option name="tomcatInfo">
       <TomcatInfo>
-        <option name="name" value="Apache Tomcat/9.0.118" />
-        <option name="path" value="$PROJECT_DIR$/../Program Files/apache-tomcat-9.0.118" />
-        <option name="version" value="9.0.118.0" />
+        <option name="name" value="Apache Tomcat/10.1.52" />
+        <option name="path" value="D:/apache-tomcat-10.1.52" />
+        <option name="version" value="10.1.52.0" />
       </TomcatInfo>
     </option>
     <option name="vmOptions" value="" />
-    <module name="ERP" />
+    <module name="Backend" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

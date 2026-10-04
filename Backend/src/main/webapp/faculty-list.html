@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Centurion University - Faculty Directory</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/student-form.css">
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <header class="erp-navbar">
+        <div class="erp-navbar-inner">
+            <a href="dashboard.html" class="erp-brand">
+                <span class="erp-brand-icon">&#127891;</span>
+                Centurion <span>ERP</span>
+            </a>
+            <nav>
+                <ul class="erp-nav-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="student-list.html">Students</a></li>
+                    <li><a href="faculty-list.html" class="active">Faculty</a></li>
+                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
+                    <li><a href="attendance.html">Attendance</a></li>
+                    <li><a href="results.html">Results &amp; Grades</a></li>
+                    <li><a href="timetable.html">Timetable</a></li>
+                    <li><a href="notices.html">Notices</a></li>
+                </ul>
+            </nav>
+            <div>
+                <a class="button button-danger button-small" href="logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+<main>
+    <div class="topbar" style="margin-top: 24px;">
+        <div>
+            <h1 style="margin: 0;">Faculty &amp; Academic Staff</h1>
+            <p class="muted" style="margin: 4px 0 0 0;">Browse professors, lecturers, and departmental coordinators</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a class="button button-outline button-small" href="dashboard.html">Dashboard</a>
+            <a class="button button-primary button-small" id="btnAddFaculty" href="add-faculty.html">+ Add Faculty</a>
+        </div>
+    </div>
+
+    <p id="error-message" class="alert error" hidden></p>
+    <p id="success-message" class="alert success" hidden></p>
+
+    <!-- Search & Filter Controls -->
+    <section class="panel filter-bar" style="margin-bottom: 20px;">
+        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 260px;">
+                <input type="text" id="searchInput" placeholder="Search by name, employee code, designation, or email..." oninput="filterFaculty()">
+            </div>
+            <div>
+                <select id="departmentFilter" onchange="filterFaculty()" style="min-width: 200px;">
+                    <option value="">All Departments</option>
+                </select>
+            </div>
+            <div>
+                <span class="badge badge-primary" id="facultyCount">0 Members</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Faculty Table -->
+    <section class="panel" style="overflow-x: auto; padding: 0;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Emp Code</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Department</th>
+                    <th>Email Address</th>
+                    <th>Phone</th>
+                    <th>Qualification</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="faculty-rows">
+                <tr><td colspan="8" style="padding: 28px; text-align: center; color: var(--text-muted);">Loading faculty directory...</td></tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<script>
+    const root = window.location.pathname.includes('/faculty') 
+        ? window.location.pathname.split('/faculty')[0] + '/' 
+        : './';
+
+    let allFaculty = [];
+    let allDepts = [];
+
+    const rows = document.getElementById('faculty-rows');
+    const countBadge = document.getElementById('facultyCount');
+    const searchInput = document.getElementById('searchInput');
+    const deptFilter = document.getElementById('departmentFilter');
+
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    // Check user session
+    fetch(root + 'api/auth/me').then(r => r.json()).then(data => {
+        if (!data.authenticated) {
+            window.location.href = root + 'login.html';
+        } else if (data.user.role !== 'ADMIN' && data.user.role !== 'SUPER_ADMIN') {
+            const addBtn = document.getElementById('btnAddFaculty');
+            if (addBtn) addBtn.style.display = 'none';
+        }
+    }).catch(() => {});
+
+    // Load departments
+    fetch(root + 'api/departments').then(r => r.ok ? r.json() : []).then(depts => {
+        allDepts = depts || [];
+        deptFilter.innerHTML = '<option value="">All Departments</option>' + 
+            allDepts.map(d => `<option value="${d.departmentId}">${escapeHtml(d.departmentCode)} - ${escapeHtml(d.departmentName)}</option>`).join('');
+    }).catch(() => {});
+
+    function loadFaculty() {
+        fetch(root + 'api/faculty')
+            .then(res => res.json())
+            .then(data => {
+                allFaculty = data || [];
+                renderTable(allFaculty);
+            })
+            .catch(err => {
+                rows.innerHTML = '<tr><td colspan="8" style="padding: 24px; text-align: center;">Unable to load faculty directory.</td></tr>';
+            });
+    }
+
+    function getDeptName(id) {
+        const found = allDepts.find(d => d.departmentId === id);
+        return found ? found.departmentCode : 'Dept #' + id;
+    }
+
+    function renderTable(list) {
+        countBadge.textContent = list.length + (list.length === 1 ? ' Member' : ' Members');
+        if (list.length === 0) {
+            rows.innerHTML = '<tr><td colspan="8" style="padding: 28px; text-align: center; color: var(--text-muted);">No faculty members found matching search.</td></tr>';
+            return;
+        }
+
+        rows.innerHTML = list.map(f => `
+            <tr>
+                <td><strong style="font-family: 'JetBrains Mono', monospace; color: var(--primary);">${escapeHtml(f.employeeNumber)}</strong></td>
+                <td><strong style="color: var(--text-main); font-weight: 600;">${escapeHtml(f.firstName)} ${escapeHtml(f.lastName || '')}</strong></td>
+                <td><span class="badge badge-info">${escapeHtml(f.designation || 'Faculty')}</span></td>
+                <td><span class="badge badge-primary">${escapeHtml(getDeptName(f.departmentId))}</span></td>
+                <td style="color: var(--text-secondary);">${escapeHtml(f.email || '—')}</td>
+                <td>${escapeHtml(f.phone || '—')}</td>
+                <td><small class="muted">${escapeHtml(f.qualification || '—')}</small></td>
+                <td>
+                    <button class="button button-danger button-small" style="padding: 3px 8px; font-size: 11.5px;" onclick="deleteFaculty(${f.facultyId})">Delete</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function filterFaculty() {
+        const q = searchInput.value.toLowerCase().trim();
+        const dId = deptFilter.value;
+
+        const filtered = allFaculty.filter(f => {
+            const matchesText = !q || 
+                (f.employeeNumber && f.employeeNumber.toLowerCase().includes(q)) ||
+                (f.firstName && f.firstName.toLowerCase().includes(q)) ||
+                (f.lastName && f.lastName.toLowerCase().includes(q)) ||
+                (f.email && f.email.toLowerCase().includes(q)) ||
+                (f.designation && f.designation.toLowerCase().includes(q));
+
+            const matchesDept = !dId || String(f.departmentId) === dId;
+            return matchesText && matchesDept;
+        });
+
+        renderTable(filtered);
+    }
+
+    function deleteFaculty(id) {
+        if (!confirm('Are you sure you want to remove this faculty member?')) return;
+        fetch(root + 'api/faculty/' + id, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(data => {
+                const s = document.getElementById('success-message');
+                s.textContent = 'Faculty member removed successfully.';
+                s.hidden = false;
+                setTimeout(() => s.hidden = true, 3000);
+                loadFaculty();
+            })
+            .catch(() => {
+                alert('Unable to delete faculty member.');
+            });
+    }
+
+    loadFaculty();
+</script>
+</body>
+</html>

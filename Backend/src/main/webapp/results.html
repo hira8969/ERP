@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Centurion University - Examination Results &amp; Grade Card</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/student-form.css">
+    <style>
+        @media print {
+            .erp-navbar, .topbar, #resultControls, #studentSelectPanel, .button { display: none !important; }
+            main { margin: 0; padding: 0; max-width: 100%; }
+            .panel { border: none; box-shadow: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <header class="erp-navbar">
+        <div class="erp-navbar-inner">
+            <a href="dashboard.html" class="erp-brand">
+                <span class="erp-brand-icon">&#127891;</span>
+                Centurion <span>ERP</span>
+            </a>
+            <nav>
+                <ul class="erp-nav-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="student-list.html">Students</a></li>
+                    <li><a href="faculty-list.html">Faculty</a></li>
+                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
+                    <li><a href="attendance.html">Attendance</a></li>
+                    <li><a href="results.html" class="active">Results &amp; Grades</a></li>
+                    <li><a href="timetable.html">Timetable</a></li>
+                    <li><a href="notices.html">Notices</a></li>
+                </ul>
+            </nav>
+            <div>
+                <a class="button button-danger button-small" href="logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+<main>
+    <div class="topbar" style="margin-top: 24px;">
+        <div>
+            <h1 style="margin: 0;">Academic Results &amp; Grade Cards</h1>
+            <p class="muted" style="margin: 4px 0 0 0;">Semester grade evaluation based on UGC 10-Point Grading System &amp; SGPA calculation</p>
+        </div>
+        <div style="display: flex; gap: 10px;" id="resultControls">
+            <button class="button button-outline button-small" onclick="window.print()">&#128438; Print Grade Sheet</button>
+            <button class="button button-primary button-small" id="btnUploadMarks" onclick="openMarksModal()">+ Enter Marks</button>
+        </div>
+    </div>
+
+    <p id="error-message" class="alert error" hidden></p>
+    <p id="success-message" class="alert success" hidden></p>
+
+    <!-- Student Select for Admin / Faculty -->
+    <section class="panel filter-bar" id="studentSelectPanel" style="margin-bottom: 20px;">
+        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <label style="font-weight: 700; font-size: 13.5px; margin: 0; color: var(--text-main);">Select Student to View Result Card:</label>
+            <select id="studentSelect" onchange="loadStudentResults(this.value)" style="min-width: 320px;">
+                <option value="">Loading students...</option>
+            </select>
+        </div>
+    </section>
+
+    <!-- Official Grade Sheet Dossier Panel -->
+    <section class="panel" id="gradeSheetPanel" style="box-shadow: var(--shadow-md);">
+        <div style="text-align: center; border-bottom: 2px solid var(--border-color); padding-bottom: 20px; margin-bottom: 24px;">
+            <div class="portal-badge">CENTURION UNIVERSITY OF TECHNOLOGY &amp; MANAGEMENT</div>
+            <h2 style="margin: 8px 0 4px 0; font-size: 24px;">Official Semester Grade Sheet</h2>
+            <p class="muted" style="margin: 0; font-size: 14px;">Academic Year 2025-2026 &bull; Undergraduate / Postgraduate Degree Examination</p>
+        </div>
+
+        <!-- Student Meta Header -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 24px; background: #f8fafc; padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+            <div>
+                <small class="muted" style="font-weight: 700; text-transform: uppercase;">Student Name</small>
+                <div style="font-weight: 700; font-size: 17px; color: var(--text-main);" id="metaStudentName">--</div>
+            </div>
+            <div>
+                <small class="muted" style="font-weight: 700; text-transform: uppercase;">Roll Number</small>
+                <div style="font-weight: 700; font-size: 16px; color: var(--primary);" id="metaRollNo">--</div>
+            </div>
+            <div>
+                <small class="muted" style="font-weight: 700; text-transform: uppercase;">Admission Number</small>
+                <div style="font-weight: 700; font-size: 16px; color: var(--text-secondary);" id="metaAdmNo">--</div>
+            </div>
+            <div>
+                <small class="muted" style="font-weight: 700; text-transform: uppercase;">Overall Standing</small>
+                <div style="margin-top: 2px;"><span class="badge badge-success" id="metaStanding">PASS</span></div>
+            </div>
+        </div>
+
+        <!-- Results Table -->
+        <div style="overflow-x: auto; margin-bottom: 24px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject Title &amp; Code</th>
+                        <th>Exam Assessment</th>
+                        <th>Maximum Marks</th>
+                        <th>Marks Obtained</th>
+                        <th>Letter Grade</th>
+                        <th>Grade Point</th>
+                        <th>Result Status</th>
+                    </tr>
+                </thead>
+                <tbody id="resultRows">
+                    <tr><td colspan="7" style="padding: 28px; text-align: center; color: var(--text-muted);">Loading grade card records...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Summary & SGPA Score Box -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px; border-top: 2px solid var(--border-color); padding-top: 20px;">
+            <div style="text-align: center; padding: 16px; background: #f8fafc; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                <small class="muted" style="font-weight: 700; text-transform: uppercase;">Total Marks Obtained</small>
+                <div style="font-size: 26px; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--text-main);" id="totalMarksVal">0</div>
+            </div>
+            <div style="text-align: center; padding: 16px; background: #f8fafc; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                <small class="muted" style="font-weight: 700; text-transform: uppercase;">Aggregate Percentage</small>
+                <div style="font-size: 26px; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--primary);" id="percentageVal">0.0%</div>
+            </div>
+            <div style="text-align: center; padding: 16px; background: #eef2ff; border-radius: var(--radius-sm); border: 1px solid #c7d2fe;">
+                <small style="color: #4338ca; font-weight: 700; text-transform: uppercase;">Semester SGPA</small>
+                <div style="font-size: 32px; font-weight: 900; font-family: 'Outfit', sans-serif; color: #4338ca;" id="sgpaVal">0.00</div>
+            </div>
+            <div style="text-align: center; padding: 16px; background: #ecfdf5; border-radius: var(--radius-sm); border: 1px solid #a7f3d0;">
+                <small style="color: #065f46; font-weight: 700; text-transform: uppercase;">Academic Division</small>
+                <div style="font-size: 18px; font-weight: 800; font-family: 'Outfit', sans-serif; color: #065f46; margin-top: 6px;" id="divisionVal">Pass</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal for Uploading / Recording Marks -->
+    <div class="modal-overlay" id="marksModal" style="display: none;">
+        <div class="modal-content">
+            <div class="topbar" style="margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 19px;">Record Student Marks</h3>
+                <button class="link-button" onclick="closeMarksModal()">&times; Close</button>
+            </div>
+            <form id="recordMarksForm" onsubmit="submitMarks(event)">
+                <div class="form-grid single-col">
+                    <label>
+                        Select Student *
+                        <select id="modalStudentSelect" required></select>
+                    </label>
+                    <label>
+                        Select Subject *
+                        <select id="modalSubjectSelect" required></select>
+                    </label>
+                    <label>
+                        Examination Type *
+                        <select id="modalExamSelect">
+                            <option value="1">Mid-Semester Examination 2026</option>
+                            <option value="2">End-Semester Final Examination 2026</option>
+                            <option value="3">Practical &amp; Lab Assessment</option>
+                        </select>
+                    </label>
+                    <label>
+                        Marks Obtained (out of 100) *
+                        <input type="number" step="0.5" min="0" max="100" id="marksInput" required placeholder="e.g. 88.5" oninput="previewGrade(this.value)">
+                    </label>
+                    <div style="background: #f8fafc; padding: 12px 16px; border-radius: var(--radius-sm); font-size: 14px; border: 1px solid var(--border-color);">
+                        Grade Preview: <strong id="gradePreview" style="color: var(--primary);">--</strong> &bull; Grade Point: <strong id="gpPreview" style="color: var(--primary);">--</strong>
+                    </div>
+                </div>
+                <div style="margin-top: 24px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="button button-outline" onclick="closeMarksModal()">Cancel</button>
+                    <button type="submit" class="button button-primary" id="btnSaveMarks">Save &amp; Publish Marks</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+    const root = window.location.pathname.includes('/results') 
+        ? window.location.pathname.split('/results')[0] + '/' 
+        : './';
+
+    let currentUser = null;
+    let studentList = [];
+    let subjectList = [];
+
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    // Check auth
+    fetch(root + 'api/auth/me').then(r => r.json()).then(data => {
+        if (!data.authenticated) {
+            window.location.href = root + 'login.html';
+            return;
+        }
+        currentUser = data.user;
+
+        if (currentUser.role === 'STUDENT') {
+            document.getElementById('btnUploadMarks').style.display = 'none';
+            document.getElementById('studentSelectPanel').style.display = 'none';
+            loadOwnStudentResult();
+        } else {
+            loadStudentsList();
+        }
+    }).catch(() => {});
+
+    // Load subjects for modal
+    fetch(root + 'api/subjects').then(r => r.json()).then(subjects => {
+        subjectList = subjects || [];
+        const sel = document.getElementById('modalSubjectSelect');
+        if (sel) {
+            sel.innerHTML = subjectList.map(s => `<option value="${s.subjectId}">${s.subjectCode} - ${s.subjectName}</option>`).join('');
+        }
+    }).catch(() => {});
+
+    function loadStudentsList() {
+        fetch(root + 'api/students').then(r => r.json()).then(students => {
+            studentList = students || [];
+            const sel = document.getElementById('studentSelect');
+            const modalSel = document.getElementById('modalStudentSelect');
+            if (students && students.length > 0) {
+                const options = students.map(s => `<option value="${s.studentId}">${s.rollNumber || s.admissionNumber} - ${s.firstName} ${s.lastName || ''}</option>`).join('');
+                sel.innerHTML = options;
+                modalSel.innerHTML = options;
+                loadStudentResults(students[0].studentId);
+            } else {
+                sel.innerHTML = '<option value="">No students found</option>';
+            }
+        }).catch(() => {});
+    }
+
+    function loadOwnStudentResult() {
+        fetch(root + 'api/students').then(r => r.json()).then(students => {
+            studentList = students || [];
+            const me = students.find(s => s.email === currentUser.email) || students[0];
+            if (me) {
+                loadStudentResults(me.studentId);
+            }
+        }).catch(() => {});
+    }
+
+    function loadStudentResults(studentId) {
+        if (!studentId) return;
+
+        // Set student header info
+        const student = studentList.find(s => String(s.studentId) === String(studentId));
+        if (student) {
+            document.getElementById('metaStudentName').textContent = student.firstName + ' ' + (student.lastName || '');
+            document.getElementById('metaRollNo').textContent = student.rollNumber || '—';
+            document.getElementById('metaAdmNo').textContent = student.admissionNumber || '—';
+        }
+
+        fetch(root + 'api/results?studentId=' + studentId)
+            .then(res => res.json())
+            .then(data => {
+                const results = data.results || [];
+                document.getElementById('totalMarksVal').textContent = (data.totalMarks ?? 0) + ' / ' + (data.maxMarks ?? 0);
+                document.getElementById('percentageVal').textContent = (data.percentage ?? 0) + '%';
+                document.getElementById('sgpaVal').textContent = data.sgpa ?? '0.00';
+                document.getElementById('divisionVal').textContent = data.overallStatus ?? 'Pass';
+                
+                const metaStanding = document.getElementById('metaStanding');
+                if (data.overallStatus === 'FAIL') {
+                    metaStanding.textContent = 'FAIL';
+                    metaStanding.className = 'badge badge-danger';
+                } else {
+                    metaStanding.textContent = 'PASS';
+                    metaStanding.className = 'badge badge-success';
+                }
+
+                const tbody = document.getElementById('resultRows');
+                if (results.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 28px; color: var(--text-muted);">No examination marks uploaded for this student yet.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = results.map(r => {
+                    const subj = subjectList.find(s => s.subjectId === r.subjectId);
+                    const subjTitle = subj ? `${subj.subjectCode} - ${subj.subjectName}` : `Subject #${r.subjectId}`;
+                    return `
+                        <tr>
+                            <td><strong style="color: var(--text-main); font-weight: 600;">${escapeHtml(subjTitle)}</strong></td>
+                            <td>Exam #${r.examinationId}</td>
+                            <td>100</td>
+                            <td><strong style="font-family: 'JetBrains Mono', monospace;">${r.marksObtained}</strong></td>
+                            <td><span class="badge ${r.grade === 'F' ? 'badge-danger' : 'badge-primary'}">${escapeHtml(r.grade)}</span></td>
+                            <td style="font-weight: 600;">${r.gradePoint}</td>
+                            <td><span class="badge ${r.resultStatus === 'PASS' ? 'badge-success' : 'badge-danger'}">${escapeHtml(r.resultStatus)}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            })
+            .catch(() => {
+                document.getElementById('resultRows').innerHTML = '<tr><td colspan="7" style="padding: 24px; text-align: center;">Unable to load grade sheet.</td></tr>';
+            });
+    }
+
+    function previewGrade(val) {
+        const m = parseFloat(val) || 0;
+        let grade = 'F', gp = '0.00';
+        if (m >= 90) { grade = 'O'; gp = '10.00'; }
+        else if (m >= 80) { grade = 'A+'; gp = '9.00'; }
+        else if (m >= 70) { grade = 'A'; gp = '8.00'; }
+        else if (m >= 60) { grade = 'B+'; gp = '7.00'; }
+        else if (m >= 50) { grade = 'B'; gp = '6.00'; }
+        else if (m >= 40) { grade = 'C'; gp = '5.00'; }
+        document.getElementById('gradePreview').textContent = grade;
+        document.getElementById('gpPreview').textContent = gp;
+    }
+
+    function openMarksModal() {
+        document.getElementById('marksModal').style.display = 'flex';
+    }
+
+    function closeMarksModal() {
+        document.getElementById('marksModal').style.display = 'none';
+    }
+
+    function submitMarks(e) {
+        e.preventDefault();
+        const sId = document.getElementById('modalStudentSelect').value;
+        const subId = document.getElementById('modalSubjectSelect').value;
+        const examId = document.getElementById('modalExamSelect').value;
+        const marks = document.getElementById('marksInput').value;
+
+        const btn = document.getElementById('btnSaveMarks');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        fetch(root + 'api/results', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                studentId: sId,
+                subjectId: subId,
+                examinationId: examId,
+                marksObtained: marks
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.textContent = 'Save & Publish Marks';
+            closeMarksModal();
+            const sMsg = document.getElementById('success-message');
+            sMsg.textContent = 'Marks saved and published successfully!';
+            sMsg.hidden = false;
+            setTimeout(() => sMsg.hidden = true, 3000);
+            loadStudentResults(sId);
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.textContent = 'Save & Publish Marks';
+            alert('Failed to save marks.');
+        });
+    }
+</script>
+</body>
+</html>

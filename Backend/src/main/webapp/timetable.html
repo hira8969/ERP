@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Centurion University - Class Timetable &amp; Schedule</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/student-form.css">
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <header class="erp-navbar">
+        <div class="erp-navbar-inner">
+            <a href="dashboard.html" class="erp-brand">
+                <span class="erp-brand-icon">&#127891;</span>
+                Centurion <span>ERP</span>
+            </a>
+            <nav>
+                <ul class="erp-nav-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="student-list.html">Students</a></li>
+                    <li><a href="faculty-list.html">Faculty</a></li>
+                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
+                    <li><a href="attendance.html">Attendance</a></li>
+                    <li><a href="results.html">Results &amp; Grades</a></li>
+                    <li><a href="timetable.html" class="active">Timetable</a></li>
+                    <li><a href="notices.html">Notices</a></li>
+                </ul>
+            </nav>
+            <div>
+                <a class="button button-danger button-small" href="logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+<main>
+    <div class="topbar" style="margin-top: 24px;">
+        <div>
+            <h1 style="margin: 0;">Weekly Class Schedule &amp; Timetable</h1>
+            <p class="muted" style="margin: 4px 0 0 0;">View lecture hours, tutorial sessions, laboratory assignments, and room allocations</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="button button-primary button-small" id="btnAddSlotBtn" onclick="openSlotModal()">+ Add Schedule Slot</button>
+        </div>
+    </div>
+
+    <p id="error-message" class="alert error" hidden></p>
+    <p id="success-message" class="alert success" hidden></p>
+
+    <!-- Day Filter -->
+    <section class="panel filter-bar" style="margin-bottom: 20px;">
+        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <label style="font-weight: 700; font-size: 13.5px; margin: 0; color: var(--text-main);">Filter by Day:</label>
+            <select id="dayFilter" onchange="filterSchedule(this.value)" style="min-width: 220px;">
+                <option value="">All Days (Mon - Sat)</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+            </select>
+        </div>
+    </section>
+
+    <!-- Timetable Grid Table -->
+    <section class="panel" style="overflow-x: auto; padding: 0;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Time Slot</th>
+                    <th>Subject ID / Title</th>
+                    <th>Faculty In-Charge</th>
+                    <th>Classroom / Lab</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="timetableRows">
+                <tr><td colspan="6" style="padding: 28px; text-align: center; color: var(--text-muted);">Loading schedule...</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Modal for Adding Schedule Slot -->
+    <div class="modal-overlay" id="slotModal" style="display: none;">
+        <div class="modal-content">
+            <div class="topbar" style="margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 19px;">Add Class Schedule Slot</h3>
+                <button class="link-button" onclick="closeSlotModal()">&times; Close</button>
+            </div>
+            <form id="slotForm" onsubmit="submitSlot(event)">
+                <div class="form-grid single-col">
+                    <label>
+                        Day of Week *
+                        <select id="slotDay" required>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                        </select>
+                    </label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <label>
+                            Start Time *
+                            <input type="text" id="slotStart" required placeholder="e.g. 09:30 AM">
+                        </label>
+                        <label>
+                            End Time *
+                            <input type="text" id="slotEnd" required placeholder="e.g. 10:30 AM">
+                        </label>
+                    </div>
+                    <label>
+                        Subject *
+                        <select id="slotSubject" required></select>
+                    </label>
+                    <label>
+                        Faculty *
+                        <select id="slotFaculty" required></select>
+                    </label>
+                    <label>
+                        Classroom / Hall / Lab *
+                        <input type="text" id="slotRoom" required placeholder="e.g. Room 201 or Computer Lab 3">
+                    </label>
+                </div>
+                <div style="margin-top: 24px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="button button-outline" onclick="closeSlotModal()">Cancel</button>
+                    <button type="submit" class="button button-primary" id="btnSaveSlot">Save Schedule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+    const root = window.location.pathname.includes('/timetable') 
+        ? window.location.pathname.split('/timetable')[0] + '/' 
+        : './';
+
+    let allSlots = [];
+    let subjectList = [];
+    let facultyList = [];
+
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    // Check auth
+    fetch(root + 'api/auth/me').then(r => r.json()).then(data => {
+        if (!data.authenticated) {
+            window.location.href = root + 'login.html';
+        } else if (data.user.role === 'STUDENT') {
+            const btn = document.getElementById('btnAddSlotBtn');
+            if (btn) btn.style.display = 'none';
+        }
+    }).catch(() => {});
+
+    // Load subjects & faculty for modal
+    fetch(root + 'api/subjects').then(r => r.json()).then(subs => {
+        subjectList = subs || [];
+        const sel = document.getElementById('slotSubject');
+        if (sel) sel.innerHTML = subjectList.map(s => `<option value="${s.subjectId}">${s.subjectCode} - ${s.subjectName}</option>`).join('');
+    }).catch(() => {});
+
+    fetch(root + 'api/faculty').then(r => r.json()).then(fac => {
+        facultyList = fac || [];
+        const sel = document.getElementById('slotFaculty');
+        if (sel) sel.innerHTML = facultyList.map(f => `<option value="${f.facultyId}">${f.firstName} ${f.lastName || ''} (${f.designation || 'Faculty'})</option>`).join('');
+    }).catch(() => {});
+
+    function loadSchedule() {
+        fetch(root + 'api/timetables')
+            .then(res => res.json())
+            .then(data => {
+                allSlots = data || [];
+                renderTable(allSlots);
+            })
+            .catch(() => {
+                document.getElementById('timetableRows').innerHTML = '<tr><td colspan="6" style="padding: 24px; text-align: center;">Unable to load timetable schedule.</td></tr>';
+            });
+    }
+
+    function renderTable(list) {
+        const tbody = document.getElementById('timetableRows');
+        if (!list || list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 28px; color: var(--text-muted);">No timetable scheduled for this selection.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = list.map(t => {
+            const subj = subjectList.find(s => s.subjectId === t.subjectId);
+            const fac = facultyList.find(f => f.facultyId === t.facultyId);
+            return `
+                <tr>
+                    <td><strong style="color: var(--primary);">${escapeHtml(t.dayOfWeek)}</strong></td>
+                    <td><span class="badge badge-info">${escapeHtml(t.startTime)} - ${escapeHtml(t.endTime)}</span></td>
+                    <td><strong style="color: var(--text-main); font-weight: 600;">${escapeHtml(subj ? subj.subjectName : 'Subject #' + t.subjectId)}</strong></td>
+                    <td style="color: var(--text-secondary);">${escapeHtml(fac ? (fac.firstName + ' ' + (fac.lastName || '')) : 'Faculty #' + t.facultyId)}</td>
+                    <td><span class="pass-cell">${escapeHtml(t.roomNumber || 'TBD')}</span></td>
+                    <td>
+                        <button class="button button-danger button-small" style="padding: 3px 8px; font-size: 11.5px;" onclick="deleteSlot(${t.timetableId})">&#128465; Remove</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function filterSchedule(day) {
+        if (!day) {
+            renderTable(allSlots);
+        } else {
+            renderTable(allSlots.filter(t => t.dayOfWeek.toLowerCase() === day.toLowerCase()));
+        }
+    }
+
+    function openSlotModal() {
+        document.getElementById('slotModal').style.display = 'flex';
+    }
+
+    function closeSlotModal() {
+        document.getElementById('slotModal').style.display = 'none';
+    }
+
+    function submitSlot(e) {
+        e.preventDefault();
+        const day = document.getElementById('slotDay').value;
+        const start = document.getElementById('slotStart').value;
+        const end = document.getElementById('slotEnd').value;
+        const sId = document.getElementById('slotSubject').value;
+        const fId = document.getElementById('slotFaculty').value;
+        const room = document.getElementById('slotRoom').value;
+
+        const btn = document.getElementById('btnSaveSlot');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        fetch(root + 'api/timetables', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                courseId: 1,
+                semesterId: 3,
+                subjectId: sId,
+                facultyId: fId,
+                dayOfWeek: day,
+                startTime: start,
+                endTime: end,
+                roomNumber: room
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.textContent = 'Save Schedule';
+            closeSlotModal();
+            const sMsg = document.getElementById('success-message');
+            sMsg.textContent = 'Schedule slot added successfully!';
+            sMsg.hidden = false;
+            setTimeout(() => sMsg.hidden = true, 3000);
+            loadSchedule();
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.textContent = 'Save Schedule';
+            alert('Failed to save slot.');
+        });
+    }
+
+    function deleteSlot(id) {
+        if (!confirm('Remove this schedule slot?')) return;
+        fetch(root + 'api/timetables/' + id, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(() => loadSchedule())
+            .catch(() => alert('Failed to delete slot.'));
+    }
+
+    loadSchedule();
+</script>
+</body>
+</html>

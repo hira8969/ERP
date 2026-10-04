@@ -3,10 +3,345 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Centurion University ERP</title>
+    <title>Centurion University - College ERP Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/student-form.css">
+    <style>
+        .api-tester {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-top: 36px;
+            box-shadow: var(--shadow-sm);
+        }
+        .api-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+        .api-pill {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 7px 14px;
+            border-radius: var(--radius-full);
+            font-size: 12.5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', Consolas, monospace;
+            transition: all var(--transition-fast);
+            color: #334155;
+            box-shadow: none;
+        }
+        .api-pill:hover, .api-pill.active {
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+            transform: translateY(-1px);
+        }
+        .api-url-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .api-method {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: #ffffff;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+        }
+        .api-response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 13.5px;
+        }
+    </style>
 </head>
 <body>
-<h1>Centurion University College ERP</h1>
-<p><a href="students/list">Open Student Management</a></p>
+
+    <!-- Main Navigation Bar -->
+    <header class="erp-navbar">
+        <div class="erp-navbar-inner">
+            <a href="index.html" class="erp-brand">
+                <span class="erp-brand-icon">&#127891;</span>
+                Centurion <span>ERP</span>
+            </a>
+            <nav>
+                <ul class="erp-nav-links">
+                    <li><a href="index.html" class="active">Portal Home</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="student-list.html">Students</a></li>
+                    <li><a href="faculty-list.html">Faculty</a></li>
+                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
+                    <li><a href="attendance.html">Attendance</a></li>
+                    <li><a href="results.html">Results &amp; Grades</a></li>
+                    <li><a href="timetable.html">Timetable</a></li>
+                    <li><a href="notices.html">Notices</a></li>
+                </ul>
+            </nav>
+            <div id="navAuthBtn">
+                <a class="button button-primary button-small" href="login.html">Sign In</a>
+            </div>
+        </div>
+    </header>
+
+<main>
+    <!-- Welcome Session Indicator -->
+    <section class="session-banner" style="margin-bottom: 24px;">
+        <div class="session-info">
+            <span class="user-avatar" id="avatarIcon">&#127979;</span>
+            <div>
+                <h3 id="sessionGreeting" style="margin: 0 0 4px 0; font-size: 18px;">Centurion University Enterprise Resource Planning</h3>
+                <p id="sessionSubtext" class="muted" style="margin: 0; font-size: 13.5px;">Checking active session &amp; persistent cookies...</p>
+            </div>
+        </div>
+        <div class="session-meta" id="sessionButtons">
+            <a href="login.html" class="button button-small button-primary">Sign In</a>
+            <a href="register.html" class="button button-small button-outline">Register</a>
+        </div>
+    </section>
+
+    <!-- Hero Banner -->
+    <div class="hero">
+        <div class="portal-badge" style="background: rgba(255, 255, 255, 0.15); color: #ffffff; border-color: rgba(255, 255, 255, 0.3);">CENTURION UNIVERSITY ERP PORTAL</div>
+        <h1>Unified Academic &amp; Campus ERP</h1>
+        <p>A comprehensive university management system supporting role-based dashboards for Administrators, Faculty, and Students, complete with attendance tracking, examination grade sheets, curriculum scheduling, and campus bulletins.</p>
+        <div class="hero-actions">
+            <a href="login.html" class="button button-hero-primary">&#128274; Portal Login</a>
+            <a href="dashboard.html" class="button button-hero-outline">&#128202; Role Dashboard</a>
+            <a href="#api-explorer" class="button button-hero-outline">&#9881; API Explorer</a>
+        </div>
+    </div>
+
+    <!-- Complete ERP Modules Grid -->
+    <div class="topbar" style="margin: 32px 0 16px 0;">
+        <div>
+            <h2 style="margin: 0; font-size: 22px;">Integrated Campus Modules</h2>
+            <p class="muted" style="margin: 4px 0 0 0;">Unified portals and services across administrative and student workflows</p>
+        </div>
+        <span class="badge badge-primary">8 Integrated Modules</span>
+    </div>
+
+    <div class="cards-grid">
+        <!-- Module 1: Student Management -->
+        <div class="card">
+            <div class="card-icon" style="background: #e0e7ff; color: #4338ca;">&#128100;</div>
+            <h3>Student Directory</h3>
+            <p class="muted">Manage student admissions, personal dossiers, guardian contacts, roll numbers, and department profiles.</p>
+            <div class="card-actions">
+                <a href="student-list.html" class="button button-primary button-small">View Students</a>
+                <a href="add-student.html" class="button button-outline button-small">+ Add Student</a>
+            </div>
+        </div>
+
+        <!-- Module 2: Faculty Management -->
+        <div class="card">
+            <div class="card-icon" style="background: #e0f2fe; color: #0284c7;">&#128104;&#8205;&#127979;</div>
+            <h3>Faculty Directory</h3>
+            <p class="muted">Faculty personnel records, departmental designations, educational qualifications, and course allocations.</p>
+            <div class="card-actions">
+                <a href="faculty-list.html" class="button button-primary button-small">View Faculty</a>
+                <a href="add-faculty.html" class="button button-outline button-small">+ Add Faculty</a>
+            </div>
+        </div>
+
+        <!-- Module 3: Attendance Tracker -->
+        <div class="card">
+            <div class="card-icon" style="background: #ecfdf5; color: #059669;">&#128197;</div>
+            <h3>Attendance Tracker</h3>
+            <p class="muted">Track student attendance rates, monitor 75% exam eligibility criteria, and mark daily class logs.</p>
+            <div class="card-actions">
+                <a href="attendance.html" class="button button-primary button-small">Attendance</a>
+            </div>
+        </div>
+
+        <!-- Module 4: Results & Grade Cards -->
+        <div class="card">
+            <div class="card-icon" style="background: #fef3c7; color: #d97706;">&#127941;</div>
+            <h3>Results &amp; Grade Cards</h3>
+            <p class="muted">Official semester grade sheets with UGC 10-point scale letter grading, SGPA calculations, and print layouts.</p>
+            <div class="card-actions">
+                <a href="results.html" class="button button-primary button-small">Grade Cards</a>
+            </div>
+        </div>
+
+        <!-- Module 5: Courses & Syllabus -->
+        <div class="card">
+            <div class="card-icon" style="background: #fae8ff; color: #a21caf;">&#128218;</div>
+            <h3>Courses &amp; Syllabus</h3>
+            <p class="muted">Academic programs, departments, degree curricula, subject credits, and passing criteria.</p>
+            <div class="card-actions">
+                <a href="courses.html" class="button button-primary button-small">Curriculum</a>
+            </div>
+        </div>
+
+        <!-- Module 6: Class Timetable -->
+        <div class="card">
+            <div class="card-icon" style="background: #f1f5f9; color: #475569;">&#9200;</div>
+            <h3>Timetable Schedule</h3>
+            <p class="muted">Weekly lecture timetables, laboratory practicals, and room assignments organized by day of week.</p>
+            <div class="card-actions">
+                <a href="timetable.html" class="button button-primary button-small">Timetable</a>
+            </div>
+        </div>
+
+        <!-- Module 7: Notice Board -->
+        <div class="card">
+            <div class="card-icon" style="background: #fee2e2; color: #dc2626;">&#128227;</div>
+            <h3>Campus Notice Board</h3>
+            <p class="muted">Official university circulars, exam schedule updates, workshop notices, and student bulletins.</p>
+            <div class="card-actions">
+                <a href="notices.html" class="button button-primary button-small">Notices</a>
+            </div>
+        </div>
+
+        <!-- Module 8: Security & Credentials -->
+        <div class="card">
+            <div class="card-icon" style="background: #e2e8f0; color: #1e293b;">&#128272;</div>
+            <h3>Security &amp; Credentials</h3>
+            <p class="muted">Secure HTTP session cookies, persistent 7-day Remember-Me tokens, and SHA-256 password cryptography.</p>
+            <div class="card-actions">
+                <a href="login.html" class="button button-primary button-small">Sign In</a>
+                <a href="users.html" class="button button-outline button-small">User Accounts</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Interactive API Endpoint Checker -->
+    <section class="api-tester" id="api-explorer">
+        <div class="topbar" style="margin-bottom: 16px;">
+            <div>
+                <h2 style="margin: 0; font-size: 21px;">Live API Endpoint Explorer</h2>
+                <p class="muted" style="margin: 4px 0 0 0; font-size: 13.5px;">Click any preset below to verify live REST JSON responses, headers, and server roundtrip latency.</p>
+            </div>
+            <span class="badge badge-success">&#9679; REST API Active</span>
+        </div>
+
+        <div class="api-pills">
+            <button class="api-pill active" onclick="selectEndpoint('api/auth/me')">GET /api/auth/me</button>
+            <button class="api-pill" onclick="selectEndpoint('api/dashboard/stats')">GET /api/dashboard/stats</button>
+            <button class="api-pill" onclick="selectEndpoint('api/students')">GET /api/students</button>
+            <button class="api-pill" onclick="selectEndpoint('api/faculty')">GET /api/faculty</button>
+            <button class="api-pill" onclick="selectEndpoint('api/departments')">GET /api/departments</button>
+            <button class="api-pill" onclick="selectEndpoint('api/courses')">GET /api/courses</button>
+            <button class="api-pill" onclick="selectEndpoint('api/subjects')">GET /api/subjects</button>
+            <button class="api-pill" onclick="selectEndpoint('api/attendance?studentId=1')">GET /api/attendance (Student 1)</button>
+            <button class="api-pill" onclick="selectEndpoint('api/results?studentId=1')">GET /api/results (Student 1)</button>
+            <button class="api-pill" onclick="selectEndpoint('api/timetables')">GET /api/timetables</button>
+            <button class="api-pill" onclick="selectEndpoint('api/notices')">GET /api/notices</button>
+        </div>
+
+        <div class="api-url-bar">
+            <span class="api-method" id="currentMethod">GET</span>
+            <input type="text" id="endpointInput" value="api/auth/me" style="flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 13.5px;">
+            <button class="button button-primary" onclick="executeApiTest()">Send Request &rarr;</button>
+        </div>
+
+        <div class="api-response-header">
+            <div>
+                <strong>Status:</strong> <span id="respStatus" class="badge badge-info">Idle</span>
+                <strong style="margin-left: 14px;">Latency:</strong> <span id="respLatency" class="muted">-</span>
+            </div>
+            <button class="link-button" onclick="copyApiResponse()">Copy Response JSON</button>
+        </div>
+
+        <pre id="apiOutput" class="code-block">// Click "Send Request" to test live API response...</pre>
+    </section>
+</main>
+
+<script>
+    const appRoot = window.location.pathname.endsWith('index.html')
+        ? window.location.pathname.replace('index.html', '')
+        : window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
+
+    // Check auth status
+    fetch(appRoot + 'api/auth/me')
+        .then(res => res.json())
+        .then(data => {
+            const greeting = document.getElementById('sessionGreeting');
+            const subtext = document.getElementById('sessionSubtext');
+            const btns = document.getElementById('sessionButtons');
+            const avatar = document.getElementById('avatarIcon');
+            const navAuth = document.getElementById('navAuthBtn');
+
+            if (data.authenticated && data.user) {
+                const u = data.user;
+                greeting.textContent = 'Welcome back, ' + u.username + '!';
+                subtext.innerHTML = 'Signed in as <span class="badge badge-primary">' + u.role + '</span> (' + u.email + ') &bull; Session Active';
+                avatar.textContent = u.username.substring(0, 1).toUpperCase();
+                btns.innerHTML = `
+                    <a href="dashboard.html" class="button button-small button-primary">Open Dashboard</a>
+                    <a href="logout" class="button button-small button-danger">Logout</a>
+                `;
+                navAuth.innerHTML = `
+                    <a class="button button-small button-danger" href="logout">Logout</a>
+                `;
+            } else {
+                greeting.textContent = 'Centurion University ERP';
+                subtext.textContent = 'Sign in or enable "Remember Me" to establish persistent session cookies.';
+                btns.innerHTML = `
+                    <a href="login.html" class="button button-small button-primary">Sign In</a>
+                    <a href="register.html" class="button button-small button-outline">Register</a>
+                `;
+            }
+        })
+        .catch(() => {});
+
+    function selectEndpoint(path) {
+        document.querySelectorAll('.api-pill').forEach(p => p.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById('endpointInput').value = path;
+        executeApiTest();
+    }
+
+    function executeApiTest() {
+        const path = document.getElementById('endpointInput').value.trim();
+        const output = document.getElementById('apiOutput');
+        const statusBadge = document.getElementById('respStatus');
+        const latencyEl = document.getElementById('respLatency');
+
+        statusBadge.textContent = 'Fetching...';
+        statusBadge.className = 'badge badge-warning';
+        output.textContent = '// Sending request to ' + path + '...';
+
+        const startTime = performance.now();
+        fetch(appRoot + path)
+            .then(async res => {
+                const latency = Math.round(performance.now() - startTime);
+                latencyEl.textContent = latency + ' ms';
+                statusBadge.textContent = res.status + ' ' + res.statusText;
+                statusBadge.className = 'badge ' + (res.ok ? 'badge-success' : 'badge-danger');
+                const text = await res.text();
+                try {
+                    const parsed = JSON.parse(text);
+                    output.textContent = JSON.stringify(parsed, null, 2);
+                } catch (e) {
+                    output.textContent = text || '// Empty response';
+                }
+            })
+            .catch(err => {
+                statusBadge.textContent = 'Network Error';
+                statusBadge.className = 'badge badge-danger';
+                output.textContent = '// Failed to connect to server: ' + err.message;
+            });
+    }
+
+    function copyApiResponse() {
+        const text = document.getElementById('apiOutput').textContent;
+        navigator.clipboard.writeText(text).then(() => alert('JSON copied to clipboard!'));
+    }
+</script>
 </body>
 </html>
