@@ -287,7 +287,7 @@ INSERT IGNORE INTO faculty (faculty_id, user_id, employee_number, first_name, la
 
 -- Students
 INSERT IGNORE INTO students (student_id, user_id, admission_number, roll_number, first_name, last_name, gender, date_of_birth, email, phone, address, city, state, pincode, department_id, course_id, semester_id, admission_date, guardian_name, guardian_phone, blood_group, status, created_at, updated_at) VALUES
-(1, 5, 'ADM2024001', '24CSE0101', 'Rahul', 'Sharma', 'Male', '2004-03-12', 'rahul@gmail.com', '9123456780', 'Flat 302, Sunrise Heights', 'Bhubaneswar', 'Odisha', '751010', 1, 1, 3, '2024-07-15', 'Mahesh Sharma', '9871122334', 'O+', 'ACTIVE', NOW(), NOW()),
+(1, 5, 'ADM2024001', '24CSE0101', 'Hiralal', 'Kumar', 'Male', '2004-03-12', 'hk@gmail.com', '7970836127', 'Flat 302, Sunrise Heights', 'Bhubaneswar', 'Odisha', '751010', 1, 1, 3, '2024-07-15', 'Mahesh Sharma', '9871122334', 'O+', 'ACTIVE', NOW(), NOW()),
 (2, 6, 'ADM2024002', '24CSE0102', 'Priya', 'Patel', 'Female', '2004-08-22', 'priya@gmail.com', '9123456781', 'Plot 14, Silicon Hills', 'Bhubaneswar', 'Odisha', '751024', 1, 1, 3, '2024-07-16', 'Ramesh Patel', '9871122335', 'B+', 'ACTIVE', NOW(), NOW()),
 (3, NULL, 'ADM2024003', '24CSE0103', 'Amit', 'Kumar', 'Male', '2003-12-05', 'amit.kumar@gmail.com', '9123456782', 'House 5, Forest Park', 'Cuttack', 'Odisha', '753002', 1, 1, 3, '2024-07-18', 'Suresh Kumar', '9871122336', 'A+', 'ACTIVE', NOW(), NOW()),
 (4, NULL, 'ADM2024004', '24BCA0201', 'Sneha', 'Reddy', 'Female', '2005-01-19', 'sneha.reddy@gmail.com', '9123456783', 'Apartment 4B, Infocity Road', 'Bhubaneswar', 'Odisha', '751024', 1, 2, 2, '2024-08-01', 'Venkatesh Reddy', '9871122337', 'AB+', 'ACTIVE', NOW(), NOW());

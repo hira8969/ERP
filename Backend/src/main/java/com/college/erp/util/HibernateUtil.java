@@ -46,4 +46,38 @@ public final class HibernateUtil {
     public static void shutdown() {
         getSessionFactory().close();
     }
+
+    @FunctionalInterface
+    public interface SessionOperation {
+        void execute(org.hibernate.Session session);
+    }
+
+    public static void doInTransaction(SessionOperation operation) {
+        org.hibernate.Transaction tx = null;
+        try (org.hibernate.Session session = getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
+            operation.execute(session);
+            tx.commit();
+        } catch (RuntimeException ex) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            throw ex;
+        }
+    }
+
+    public static <T> T doInTransaction(java.util.function.Function<org.hibernate.Session, T> operation) {
+        org.hibernate.Transaction tx = null;
+        try (org.hibernate.Session session = getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
+            T result = operation.apply(session);
+            tx.commit();
+            return result;
+        } catch (RuntimeException ex) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            throw ex;
+        }
+    }
 }

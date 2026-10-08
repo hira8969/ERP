@@ -43,17 +43,55 @@ public class FeePayment {
     private LocalDateTime createdAt;
 
 
-    // =========================
-    // Default Constructor
-    // =========================
 
     public FeePayment() {
     }
 
+    public FeePayment(
+            int feeId,
+            int studentId,
+            BigDecimal amount,
+            String paymentMethod,
+            String transactionId,
+            LocalDate paymentDate,
+            String receiptNumber,
+            String status,
+            LocalDateTime createdAt
+    ) {
+        this.feeId = feeId;
+        this.studentId = studentId;
+        this.amount = amount;
+        this.paymentMethod = paymentMethod;
+        this.transactionId = transactionId;
+        this.paymentDate = paymentDate;
+        this.receiptNumber = receiptNumber;
+        this.status = status;
+        this.createdAt = createdAt;
+    }
 
-    // =========================
-    // Getters & Setters
-    // =========================
+    public FeePayment(
+            int paymentId,
+            int feeId,
+            int studentId,
+            BigDecimal amount,
+            String paymentMethod,
+            String transactionId,
+            LocalDate paymentDate,
+            String receiptNumber,
+            String status,
+            LocalDateTime createdAt
+    ) {
+        this.paymentId = paymentId;
+        this.feeId = feeId;
+        this.studentId = studentId;
+        this.amount = amount;
+        this.paymentMethod = paymentMethod;
+        this.transactionId = transactionId;
+        this.paymentDate = paymentDate;
+        this.receiptNumber = receiptNumber;
+        this.status = status;
+        this.createdAt = createdAt;
+    }
 
     public int getPaymentId() {
         return paymentId;
@@ -133,5 +171,21 @@ public class FeePayment {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    @Override
+    public String toString() {
+        return "FeePayment{" +
+                "paymentId=" + paymentId +
+                ", feeId=" + feeId +
+                ", studentId=" + studentId +
+                ", amount=" + amount +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", transactionId='" + transactionId + '\'' +
+                ", paymentDate=" + paymentDate +
+                ", receiptNumber='" + receiptNumber + '\'' +
+                ", status='" + status + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }
