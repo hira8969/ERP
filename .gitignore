@@ -4,11 +4,15 @@ target/
 !**/src/test/**/target/
 .kotlin
 
-### IntelliJ IDEA ###
+### IntelliJ IDEA & Build Artifacts ###
+out/
 .idea/*
 *.iws
 *.iml
 *.ipr
+.smarttomcat/
+**/WEB-INF/classes/
+*.log
 
 ### Eclipse ###
 .apt_generated
