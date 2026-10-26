@@ -8,66 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/student-form.css">
-    <style>
-        .api-tester {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 28px;
-            margin-top: 36px;
-            box-shadow: var(--shadow-sm);
-        }
-        .api-pills {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 18px;
-        }
-        .api-pill {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            padding: 7px 14px;
-            border-radius: var(--radius-full);
-            font-size: 12.5px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', Consolas, monospace;
-            transition: all var(--transition-fast);
-            color: #334155;
-            box-shadow: none;
-        }
-        .api-pill:hover, .api-pill.active {
-            background: var(--primary-gradient);
-            color: #ffffff;
-            border-color: transparent;
-            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
-            transform: translateY(-1px);
-        }
-        .api-url-bar {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .api-method {
-            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-            color: #ffffff;
-            font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-            padding: 10px 16px;
-            border-radius: var(--radius-sm);
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
-        }
-        .api-response-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            font-size: 13.5px;
-        }
-    </style>
+
 </head>
 <body>
 
@@ -75,25 +16,35 @@
     <header class="erp-navbar">
         <div class="erp-navbar-inner">
             <a href="index.html" class="erp-brand">
-                <span class="erp-brand-icon">&#127891;</span>
-                Centurion <span>ERP</span>
+                <span class="erp-brand-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                </span>
+                <span class="erp-brand-text">
+                    <span class="erp-brand-title">Centurion <strong>ERP</strong></span>
+                    <span class="erp-brand-badge">Academic</span>
+                </span>
             </a>
-            <nav>
+            <nav class="erp-nav" id="erpNav">
                 <ul class="erp-nav-links">
-                    <li><a href="index.html" class="active">Portal Home</a></li>
-                    <li><a href="dashboard.html">Dashboard</a></li>
-                    <li><a href="student-list.html">Students</a></li>
-                    <li><a href="faculty-list.html">Faculty</a></li>
-                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
-                    <li><a href="attendance.html">Attendance</a></li>
-                    <li><a href="results.html">Results &amp; Grades</a></li>
-                    <li><a href="timetable.html">Timetable</a></li>
-                    <li><a href="notices.html">Notices</a></li>
+                    <li><a href="index.html" class="active"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> Portal Home</a></li>
+                    <li><a href="dashboard.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span> Dashboard</a></li>
+                    <li><a href="student-list.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Students</a></li>
+                    <li><a href="faculty-list.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span> Faculty</a></li>
+                    <li><a href="courses.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span> Courses</a></li>
+                    <li><a href="attendance.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Attendance</a></li>
+                    <li><a href="results.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></span> Results</a></li>
+                    <li><a href="timetable.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> Timetable</a></li>
+                    <li><a href="notices.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span> Notices</a></li>
                 </ul>
             </nav>
-            <div id="navAuthBtn">
+            <div id="navAuthBtn" class="erp-nav-actions">
                 <a class="button button-primary button-small" href="login.html">Sign In</a>
             </div>
+
+            <!-- Mobile hamburger toggle -->
+            <button class="erp-nav-toggle" id="navToggle" aria-label="Toggle navigation" onclick="document.getElementById('erpNav').classList.toggle('open')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
         </div>
     </header>
 
@@ -109,7 +60,6 @@
         </div>
         <div class="session-meta" id="sessionButtons">
             <a href="login.html" class="button button-small button-primary">Sign In</a>
-            <a href="register.html" class="button button-small button-outline">Register</a>
         </div>
     </section>
 
@@ -121,7 +71,6 @@
         <div class="hero-actions">
             <a href="login.html" class="button button-hero-primary">&#128274; Portal Login</a>
             <a href="dashboard.html" class="button button-hero-outline">&#128202; Role Dashboard</a>
-            <a href="#api-explorer" class="button button-hero-outline">&#9881; API Explorer</a>
         </div>
     </div>
 
@@ -219,46 +168,7 @@
         </div>
     </div>
 
-    <!-- Live Interactive API Endpoint Checker -->
-    <section class="api-tester" id="api-explorer">
-        <div class="topbar" style="margin-bottom: 16px;">
-            <div>
-                <h2 style="margin: 0; font-size: 21px;">Live API Endpoint Explorer</h2>
-                <p class="muted" style="margin: 4px 0 0 0; font-size: 13.5px;">Click any preset below to verify live REST JSON responses, headers, and server roundtrip latency.</p>
-            </div>
-            <span class="badge badge-success">&#9679; REST API Active</span>
-        </div>
 
-        <div class="api-pills">
-            <button class="api-pill active" onclick="selectEndpoint('api/auth/me')">GET /api/auth/me</button>
-            <button class="api-pill" onclick="selectEndpoint('api/dashboard/stats')">GET /api/dashboard/stats</button>
-            <button class="api-pill" onclick="selectEndpoint('api/students')">GET /api/students</button>
-            <button class="api-pill" onclick="selectEndpoint('api/faculty')">GET /api/faculty</button>
-            <button class="api-pill" onclick="selectEndpoint('api/departments')">GET /api/departments</button>
-            <button class="api-pill" onclick="selectEndpoint('api/courses')">GET /api/courses</button>
-            <button class="api-pill" onclick="selectEndpoint('api/subjects')">GET /api/subjects</button>
-            <button class="api-pill" onclick="selectEndpoint('api/attendance?studentId=1')">GET /api/attendance (Student 1)</button>
-            <button class="api-pill" onclick="selectEndpoint('api/results?studentId=1')">GET /api/results (Student 1)</button>
-            <button class="api-pill" onclick="selectEndpoint('api/timetables')">GET /api/timetables</button>
-            <button class="api-pill" onclick="selectEndpoint('api/notices')">GET /api/notices</button>
-        </div>
-
-        <div class="api-url-bar">
-            <span class="api-method" id="currentMethod">GET</span>
-            <input type="text" id="endpointInput" value="api/auth/me" style="flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 13.5px;">
-            <button class="button button-primary" onclick="executeApiTest()">Send Request &rarr;</button>
-        </div>
-
-        <div class="api-response-header">
-            <div>
-                <strong>Status:</strong> <span id="respStatus" class="badge badge-info">Idle</span>
-                <strong style="margin-left: 14px;">Latency:</strong> <span id="respLatency" class="muted">-</span>
-            </div>
-            <button class="link-button" onclick="copyApiResponse()">Copy Response JSON</button>
-        </div>
-
-        <pre id="apiOutput" class="code-block">// Click "Send Request" to test live API response...</pre>
-    </section>
 </main>
 
 <script>
@@ -289,59 +199,14 @@
                     <a class="button button-small button-danger" href="logout">Logout</a>
                 `;
             } else {
-                greeting.textContent = 'Centurion University ERP';
-                subtext.textContent = 'Sign in or enable "Remember Me" to establish persistent session cookies.';
-                btns.innerHTML = `
-                    <a href="login.html" class="button button-small button-primary">Sign In</a>
-                    <a href="register.html" class="button button-small button-outline">Register</a>
-                `;
+                window.location.href = 'login.html';
             }
         })
-        .catch(() => {});
+        .catch(() => {
+            window.location.href = 'login.html';
+        });
 
-    function selectEndpoint(path) {
-        document.querySelectorAll('.api-pill').forEach(p => p.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById('endpointInput').value = path;
-        executeApiTest();
-    }
 
-    function executeApiTest() {
-        const path = document.getElementById('endpointInput').value.trim();
-        const output = document.getElementById('apiOutput');
-        const statusBadge = document.getElementById('respStatus');
-        const latencyEl = document.getElementById('respLatency');
-
-        statusBadge.textContent = 'Fetching...';
-        statusBadge.className = 'badge badge-warning';
-        output.textContent = '// Sending request to ' + path + '...';
-
-        const startTime = performance.now();
-        fetch(appRoot + path)
-            .then(async res => {
-                const latency = Math.round(performance.now() - startTime);
-                latencyEl.textContent = latency + ' ms';
-                statusBadge.textContent = res.status + ' ' + res.statusText;
-                statusBadge.className = 'badge ' + (res.ok ? 'badge-success' : 'badge-danger');
-                const text = await res.text();
-                try {
-                    const parsed = JSON.parse(text);
-                    output.textContent = JSON.stringify(parsed, null, 2);
-                } catch (e) {
-                    output.textContent = text || '// Empty response';
-                }
-            })
-            .catch(err => {
-                statusBadge.textContent = 'Network Error';
-                statusBadge.className = 'badge badge-danger';
-                output.textContent = '// Failed to connect to server: ' + err.message;
-            });
-    }
-
-    function copyApiResponse() {
-        const text = document.getElementById('apiOutput').textContent;
-        navigator.clipboard.writeText(text).then(() => alert('JSON copied to clipboard!'));
-    }
 </script>
 </body>
 </html>

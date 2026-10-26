@@ -25,12 +25,14 @@ public class LoginServlet extends HttpServlet {
         String rememberMe = request.getParameter("rememberMe");
         boolean isJson = isJsonRequest(request);
 
+        com.college.erp.util.ERPLog.info("AUTH", "Login attempt for identifier: '" + email + "'");
         User user = email == null ? null : userDAO.findByEmail(email.trim().toLowerCase());
         if (user == null && email != null) {
             user = userDAO.findByUsername(email.trim());
         }
         if (user == null || !user.isActive() || password == null
                 || !PasswordUtil.matches(password, user.getPassword())) {
+            com.college.erp.util.ERPLog.warn("AUTH", "Login FAILED for: '" + email + "' (Invalid credentials or account inactive)");
             if (isJson) {
                 response.setContentType("application/json;charset=UTF-8");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -40,6 +42,8 @@ public class LoginServlet extends HttpServlet {
             }
             return;
         }
+
+        com.college.erp.util.ERPLog.success("AUTH", "User '" + user.getUsername() + "' (" + user.getEmail() + ") logged in successfully. Role: [" + user.getRole() + "]");
 
         // Establish session
         request.getSession(true).setAttribute("user", user);

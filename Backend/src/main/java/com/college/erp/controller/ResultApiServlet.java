@@ -74,6 +74,7 @@ public class ResultApiServlet extends HttpServlet {
             result.setMarksObtained(new BigDecimal(data.getOrDefault("marksObtained", "0")));
 
             resultService.recordResult(result);
+            com.college.erp.util.ERPLog.success("EXAM-RESULT", "Recorded marks: Student #" + result.getStudentId() + ", Subject #" + result.getSubjectId() + ", Marks: " + result.getMarksObtained() + " -> Grade: [" + result.getGrade() + "] (" + result.getResultStatus() + ")");
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.getWriter().write("{\"status\":\"success\",\"message\":\"Marks recorded successfully\",\"result\":" + toJson(result) + "}");
         } catch (RuntimeException ex) {

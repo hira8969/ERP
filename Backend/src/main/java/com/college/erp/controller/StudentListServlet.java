@@ -20,12 +20,10 @@ public class StudentListServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             request.setAttribute("students", studentService.getAllStudents());
-            request.getRequestDispatcher("/student-list.html")
-                    .forward(request, response);
-        } catch (RuntimeException exception) {
+            request.getRequestDispatcher("/student-list.html").forward(request, response);
+        } catch (Exception exception) {
             request.setAttribute("errorMessage", "Unable to load students: " + exception.getMessage());
-            request.getRequestDispatcher("/student-list.html")
-                    .forward(request, response);
+            request.getRequestDispatcher("/student-list.html").forward(request, response);
         }
     }
 }

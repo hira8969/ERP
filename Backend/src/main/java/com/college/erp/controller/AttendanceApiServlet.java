@@ -88,6 +88,7 @@ public class AttendanceApiServlet extends HttpServlet {
             }
 
             attendanceService.markAttendance(attendance);
+            com.college.erp.util.ERPLog.success("ATTENDANCE", "Marked attendance: Student #" + attendance.getStudentId() + ", Subject #" + attendance.getSubjectId() + " -> [" + attendance.getStatus() + "]");
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.getWriter().write("{\"status\":\"success\",\"message\":\"Attendance marked successfully\"}");
         } catch (RuntimeException ex) {

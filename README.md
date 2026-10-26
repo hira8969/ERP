@@ -1,32 +1,32 @@
 # Centurion University - College ERP System
 
-A complete College Enterprise Resource Planning (ERP) Web Application built with **Java (Jakarta EE 6.1)**, **Hibernate ORM 7**, **MySQL**, and **HTML5 / CSS3 / JavaScript**.
+A complete College Enterprise Resource Planning (ERP) Web Application built with **Core Java (Jakarta EE 6.1 Servlets & Filters)**, **Pure JDBC Database Connectivity**, **MySQL 8.0+**, and a clean **HTML5 / CSS3 / JavaScript (Fetch API)** frontend.
 
 ---
 
 ## 1. Project Overview & Features
 
-This ERP system automates the complete academic and administrative workflow of a university campus with role-based access for **Super Admin**, **Admin**, **Faculty**, and **Students**.
+This ERP system automates the academic and administrative workflow of a university campus with role-based access for **Super Admin**, **Admin**, **Faculty**, and **Students**.
 
 ### Key Modules:
 1. **Authentication & Multi-Auth Security**:
    - **HTTP Basic Authentication**: Header `Authorization: Basic <base64>` for REST API clients and tools.
-   - **Session & Cookie Auth**: Standard `JSESSIONID` session cookies and 7-day persistent `remember_me` tokens for browser users.
-   - **Readable Password Storage**: Saved in normal readable text (`PasswordUtil.hash(...)` stores readable string) for transparent database inspection and easy college project demonstrations.
-   - **Account Provisioning Workflow**: Admin & Super Admin create Faculty and Student accounts. Once created, Faculty and Students can log in using either their Email or Username/Roll Number.
+   - **Session & Cookie Auth**: Standard `JSESSIONID` session cookies and 7-day persistent `remember_me` tokens with cryptographic signatures.
+   - **Secure Password Hashing**: Passwords are securely hashed using standard SHA-256 (`PasswordUtil.hash(...)`) with hex encoding, keeping sensitive credentials protected.
+   - **Account Provisioning Workflow**: Admin creates Faculty and Student accounts. Faculty and Students can log in using either their Email or Username/Roll Number.
 2. **Student Lifecycle Management**:
-   - Complete student directory with real-time search & department filtering.
+   - Directory with real-time search & department filtering.
    - Student profiles with admission numbers, roll numbers, guardian contacts, and status.
    - Auto-creates `STUDENT` login account upon student admission.
 3. **Faculty & Staff Management**:
-   - Complete directory of professors, lecturers, and HODs.
+   - Directory of professors, lecturers, and HODs.
    - Educational qualifications, designations, and departmental allocations.
    - Auto-creates `FACULTY` login account upon faculty onboarding.
 4. **User & Credentials Administration (`/users.html` & `/api/users`)**:
-   - Dedicated portal for Super Admin & Admin to inspect user credentials, manage roles, and create accounts.
+   - Dedicated portal for Super Admin & Admin to inspect user accounts, manage roles, and create credentials.
 5. **Attendance Management**:
    - Faculty can mark daily class attendance (Present, Absent, Late).
-   - Automated attendance rate calculation.
+   - Automated attendance percentage calculation.
    - 75% minimum university examination eligibility check.
 6. **Examinations & UGC 10-Point Results**:
    - Faculty marks recording.
@@ -46,7 +46,7 @@ This ERP system automates the complete academic and administrative workflow of a
 ## 2. Technology Stack
 
 - **Backend**: Java 21, Jakarta EE 6.1 (Servlets & Filters)
-- **ORM & Persistence**: Hibernate 7.1.11.Final, Jakarta Persistence 3.2.0
+- **Database Connectivity**: Pure JDBC (`Connection`, `PreparedStatement`, `ResultSet`, `DBUtil`)
 - **Database**: MySQL 8.0+
 - **Frontend**: Clean Vanilla HTML5, CSS3, JavaScript (Fetch API)
 - **Build Tool**: Apache Maven
@@ -62,7 +62,7 @@ This ERP system automates the complete academic and administrative workflow of a
 2. Verify connection settings in `Backend/src/main/resources/db.properties`:
    ```properties
    db.driver=com.mysql.cj.jdbc.Driver
-   db.url=jdbc:mysql://localhost:3306/college_erp?useSSL=false&serverTimezone=UTC
+   db.url=jdbc:mysql://localhost:3306/college_erp?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
    db.username=root
    db.password=Hira2006@
    ```
@@ -71,7 +71,7 @@ This ERP system automates the complete academic and administrative workflow of a
 
 ## 4. Default Demo Accounts
 
-All accounts use the readable password: `Admin@123`
+All default demo accounts use the password: `Admin@123` (stored as SHA-256 hash in database).
 
 | Role | Username | Email | Password | Access Level |
 |---|---|---|---|---|
@@ -114,15 +114,6 @@ All API endpoints support:
 | `GET`, `POST` | `/api/timetables` | Authenticated | Weekly class timetable schedule |
 | `GET`, `POST` | `/api/notices` | Authenticated | Circulars & announcements |
 
-### Sample cURL with Basic Auth:
-```bash
-# Authenticate as Admin with Basic Auth
-curl -u admin:Admin@123 http://localhost:8080/Backend/api/dashboard/stats
-
-# Fetch all users with clear readable passwords
-curl -u admin:Admin@123 http://localhost:8080/Backend/api/users
-```
-
 ---
 
 ## 6. How to Build & Run
@@ -134,6 +125,6 @@ curl -u admin:Admin@123 http://localhost:8080/Backend/api/users
    ```
 2. **Deploy**:
    - Generated WAR file: `Backend/target/Backend.war`.
-   - Deploy to Apache Tomcat 10.1+.
+   - Deploy to Apache Tomcat 10.1+ (Jakarta EE 10 / Servlet 6.0+).
 3. **Open in Browser**:
    - URL: `http://localhost:8080/Backend/` or `http://localhost:8080/`

@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Centurion University ERP - Portal Dashboard</title>
+    <title>Centurion University ERP - Admin Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/student-form.css">
 </head>
 <body>
@@ -15,98 +15,121 @@
     <header class="erp-navbar">
         <div class="erp-navbar-inner">
             <a href="dashboard.html" class="erp-brand">
-                <span class="erp-brand-icon">&#127891;</span>
-                Centurion <span>ERP</span>
+                <span class="erp-brand-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                </span>
+                <span class="erp-brand-text">
+                    <span class="erp-brand-title">Centurion <strong>ERP</strong></span>
+                    <span class="erp-brand-badge">Academic</span>
+                </span>
             </a>
-            <nav>
+            <nav class="erp-nav" id="erpNav">
                 <ul class="erp-nav-links">
-                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                    <li><a href="student-list.html">Students</a></li>
-                    <li id="navFaculty"><a href="faculty-list.html">Faculty</a></li>
-                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
-                    <li><a href="attendance.html">Attendance</a></li>
-                    <li><a href="results.html">Results &amp; Grades</a></li>
-                    <li><a href="timetable.html">Timetable</a></li>
-                    <li><a href="notices.html">Notices</a></li>
-                    <li id="navUsers" style="display: none;"><a href="users.html">Users</a></li>
+                    <li><a href="dashboard.html" class="active"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span> Dashboard</a></li>
+                    <li><a href="student-list.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Students</a></li>
+                    <li id="navFaculty"><a href="faculty-list.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span> Faculty</a></li>
+                    <li><a href="courses.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span> Courses</a></li>
+                    <li><a href="attendance.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Attendance</a></li>
+                    <li><a href="results.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></span> Results</a></li>
+                    <li><a href="timetable.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> Timetable</a></li>
+                    <li><a href="notices.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span> Notices</a></li>
+                    <li id="navUsers" style="display: none;"><a href="users.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Users</a></li>
                 </ul>
             </nav>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <a class="button button-danger button-small" href="logout">Logout</a>
+            <div class="erp-nav-actions">
+                <div class="erp-user-chip">
+                    <span class="erp-user-status-dot"></span>
+                    <span id="navRoleBadge">ADMIN</span>
+                </div>
+                <a class="erp-nav-logout" href="logout" title="Sign out of ERP">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    <span>Logout</span>
+                </a>
             </div>
+            <!-- Mobile hamburger toggle -->
+            <button class="erp-nav-toggle" id="navToggle" aria-label="Toggle navigation" onclick="document.getElementById('erpNav').classList.toggle('open')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
         </div>
     </header>
 
 <main>
-    <div class="topbar" style="margin-top: 24px;">
+    <div class="topbar">
         <div>
-            <h1 id="title" style="margin: 0;">University Dashboard</h1>
-            <p class="muted" id="userSubtext" style="margin: 4px 0 0 0;">Loading active session...</p>
+            <h1 id="title" style="margin: 0;">ADMIN Dashboard</h1>
+            <p class="muted" id="userSubtext" style="margin: 4px 0 0 0;">Signed in as admin (ADMIN)</p>
         </div>
-        <div style="display: flex; gap: 10px; align-items: center;">
-            <a class="button button-outline button-small" href="index.html">&#8962; Portal Home</a>
-            <button class="button button-primary button-small" onclick="refreshDashboard()">&#8635; Refresh Data</button>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <a class="button button-outline button-small" href="index.html">Portal Home</a>
+            <button class="button button-primary button-small" onclick="refreshDashboard()">Refresh Data</button>
         </div>
     </div>
 
     <!-- Active User & Session Status Banner -->
-    <section class="session-banner" style="margin-bottom: 24px;">
+    <section class="session-banner">
         <div class="session-info">
-            <span class="user-avatar" id="userAvatar">U</span>
+            <span class="user-avatar" id="userAvatar">A</span>
             <div>
-                <h3 id="userName" style="margin: 0 0 4px 0; font-size: 18px;">Signed in User</h3>
-                <p id="userEmail" class="muted" style="margin: 0; font-size: 13.5px;">user@college.edu</p>
+                <h3 id="userName">admin</h3>
+                <p id="userEmail" class="muted">admin@gmail.com</p>
             </div>
         </div>
         <div class="session-meta">
-            <span id="roleBadge" class="badge badge-primary">ROLE</span>
-            <span class="badge badge-success">&#10004; Authenticated Session</span>
+            <span id="roleBadge" class="badge badge-primary">ADMIN</span>
+            <span class="badge badge-success">&#10003; Authenticated Session</span>
         </div>
     </section>
 
     <!-- Dynamic Live Statistics Cards -->
     <div class="stats-grid" id="statsGrid">
-        <!-- Rendered dynamically by JavaScript based on Role -->
         <div class="stat-card">
-            <div class="stat-icon" style="background: #e0e7ff; color: #4338ca;">&#128101;</div>
+            <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
             <div>
                 <div class="stat-val" id="stat1Val">--</div>
-                <div class="stat-lbl" id="stat1Lbl">Loading...</div>
+                <div class="stat-lbl" id="stat1Lbl">Total Students</div>
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon" style="background: #e0f2fe; color: #0284c7;">&#128104;&#8205;&#127979;</div>
+            <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
             <div>
                 <div class="stat-val" id="stat2Val">--</div>
-                <div class="stat-lbl" id="stat2Lbl">Loading...</div>
+                <div class="stat-lbl" id="stat2Lbl">Total Faculty</div>
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon" style="background: #ecfdf5; color: #059669;">&#128218;</div>
+            <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
             <div>
                 <div class="stat-val" id="stat3Val">--</div>
-                <div class="stat-lbl" id="stat3Lbl">Loading...</div>
+                <div class="stat-lbl" id="stat3Lbl">Active Courses</div>
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon" style="background: #fef3c7; color: #d97706;">&#128227;</div>
+            <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
             <div>
                 <div class="stat-val" id="stat4Val">--</div>
-                <div class="stat-lbl" id="stat4Lbl">Loading...</div>
+                <div class="stat-lbl" id="stat4Lbl">Campus Notices</div>
             </div>
         </div>
     </div>
 
     <!-- Role-Specific Action Panels -->
     <!-- Student Summary Card (Shown for STUDENT) -->
-    <section class="panel" id="studentSummaryPanel" style="display: none; margin-bottom: 26px;">
-        <div class="topbar" style="margin-bottom: 16px;">
-            <h3 style="margin: 0; font-size: 19px;">Academic Standing &amp; Exam Eligibility</h3>
+    <section class="panel" id="studentSummaryPanel" style="display: none; margin-bottom: 24px;">
+        <div class="topbar" style="margin-bottom: 14px;">
+            <h3 style="margin: 0; font-size: 16px;">Academic Standing &amp; Exam Eligibility</h3>
             <span id="examEligibilityBadge" class="badge badge-success">ELIGIBLE FOR EXAMS</span>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; align-items: center;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; align-items: center;">
             <div>
-                <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 14px; margin-bottom: 6px;">
+                <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 13.5px; margin-bottom: 6px;">
                     <span>Overall Attendance:</span>
                     <span id="attPercentText" style="color: var(--primary); font-weight: 700;">0.0%</span>
                 </div>
@@ -116,25 +139,27 @@
                 <small class="muted">Minimum mandatory requirement: 75% for university semester exams.</small>
             </div>
             <div>
-                <div style="font-size: 13.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Current SGPA / Grade Scale:</div>
-                <div style="font-size: 32px; font-weight: 800; color: var(--primary); font-family: 'Outfit', sans-serif;" id="sgpaText">0.00</div>
+                <div style="font-size: 12.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Current SGPA:</div>
+                <div style="font-size: 28px; font-weight: 700; color: var(--primary);" id="sgpaText">0.00</div>
                 <small class="muted" id="statusText">First Class with Distinction</small>
             </div>
         </div>
     </section>
 
     <!-- Navigation / Quick Modules Cards -->
-    <div class="topbar" style="margin: 28px 0 14px 0;">
+    <div class="topbar" style="margin: 24px 0 10px 0;">
         <div>
-            <h2 style="margin: 0; font-size: 20px;">University ERP Modules</h2>
-            <p class="muted" style="margin: 3px 0 0 0;">Quick shortcuts to essential academic operations</p>
+            <h2 style="margin: 0; font-size: 17px; font-weight: 600;">University ERP Modules</h2>
+            <p class="muted" style="margin: 2px 0 0 0;">Essential academic management operations</p>
         </div>
     </div>
 
     <div class="cards-grid" id="moduleCards">
         <!-- Student Directory Card -->
         <div class="card">
-            <div class="card-icon" style="background: #e0e7ff; color: #4338ca;">&#128101;</div>
+            <div class="card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
             <h3>Student Directory</h3>
             <p class="muted">Access student admissions, roll numbers, department profiles, and personal dossiers.</p>
             <div class="card-actions">
@@ -145,7 +170,9 @@
 
         <!-- Faculty Directory Card -->
         <div class="card" id="cardFaculty">
-            <div class="card-icon" style="background: #e0f2fe; color: #0284c7;">&#128104;&#8205;&#127979;</div>
+            <div class="card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
             <h3>Faculty &amp; Staff</h3>
             <p class="muted">Manage professors, department heads, designations, and academic qualifications.</p>
             <div class="card-actions">
@@ -156,7 +183,9 @@
 
         <!-- Attendance Card -->
         <div class="card">
-            <div class="card-icon" style="background: #ecfdf5; color: #059669;">&#128197;</div>
+            <div class="card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
             <h3>Attendance Management</h3>
             <p class="muted">Mark class attendance for students, calculate percentages, and verify eligibility.</p>
             <div class="card-actions">
@@ -166,7 +195,9 @@
 
         <!-- Results Card -->
         <div class="card">
-            <div class="card-icon" style="background: #fef3c7; color: #d97706;">&#127941;</div>
+            <div class="card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+            </div>
             <h3>Examinations &amp; Results</h3>
             <p class="muted">View semester grade cards, upload marks, and review UGC 10-point SGPA scales.</p>
             <div class="card-actions">
@@ -176,7 +207,9 @@
 
         <!-- Timetable Card -->
         <div class="card">
-            <div class="card-icon" style="background: #f1f5f9; color: #475569;">&#9200;</div>
+            <div class="card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
             <h3>Class Timetable</h3>
             <p class="muted">Review weekly schedules, lectures, lab sessions, and classroom assignments.</p>
             <div class="card-actions">
@@ -186,7 +219,9 @@
 
         <!-- Notice Board Card -->
         <div class="card">
-            <div class="card-icon" style="background: #fee2e2; color: #dc2626;">&#128227;</div>
+            <div class="card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
             <h3>Campus Notice Board</h3>
             <p class="muted">Read official announcements, examination circulars, events, and deadlines.</p>
             <div class="card-actions">
@@ -196,7 +231,9 @@
 
         <!-- User Accounts & Credentials (Admin Only) -->
         <div class="card" id="cardUsers">
-            <div class="card-icon" style="background: #fae8ff; color: #9333ea;">&#128273;</div>
+            <div class="card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
             <h3>User Credentials</h3>
             <p class="muted">Administer login accounts, passwords (stored in readable text), and permissions.</p>
             <div class="card-actions">
@@ -240,6 +277,9 @@
         const badge = document.getElementById('roleBadge');
         badge.textContent = user.role;
         badge.className = 'badge ' + ((user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') ? 'badge-primary' : (user.role === 'FACULTY' ? 'badge-info' : 'badge-warning'));
+
+        const navBadge = document.getElementById('navRoleBadge');
+        if (navBadge) navBadge.textContent = user.username + ' (' + user.role + ')';
 
         // Hide admin-only controls for non-admins
         const isAdmin = user.role === 'ADMIN' || user.role === 'SUPER_ADMIN';

@@ -15,24 +15,37 @@
     <header class="erp-navbar">
         <div class="erp-navbar-inner">
             <a href="dashboard.html" class="erp-brand">
-                <span class="erp-brand-icon">&#127891;</span>
-                Centurion <span>ERP</span>
+                <span class="erp-brand-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                </span>
+                <span class="erp-brand-text">
+                    <span class="erp-brand-title">Centurion <strong>ERP</strong></span>
+                    <span class="erp-brand-badge">Academic</span>
+                </span>
             </a>
-            <nav>
+            <nav class="erp-nav" id="erpNav">
                 <ul class="erp-nav-links">
-                    <li><a href="dashboard.html">Dashboard</a></li>
-                    <li><a href="student-list.html">Students</a></li>
-                    <li><a href="faculty-list.html">Faculty</a></li>
-                    <li><a href="courses.html">Courses &amp; Syllabus</a></li>
-                    <li><a href="attendance.html">Attendance</a></li>
-                    <li><a href="results.html">Results &amp; Grades</a></li>
-                    <li><a href="timetable.html">Timetable</a></li>
-                    <li><a href="notices.html" class="active">Notices</a></li>
+                    <li><a href="dashboard.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span> Dashboard</a></li>
+                    <li><a href="student-list.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Students</a></li>
+                    <li><a href="faculty-list.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span> Faculty</a></li>
+                    <li><a href="courses.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span> Courses</a></li>
+                    <li><a href="attendance.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Attendance</a></li>
+                    <li><a href="results.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></span> Results</a></li>
+                    <li><a href="timetable.html"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> Timetable</a></li>
+                    <li><a href="notices.html" class="active"><span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span> Notices</a></li>
                 </ul>
             </nav>
-            <div>
-                <a class="button button-danger" style="padding: 6px 14px; font-size: 13px;" href="logout">Logout</a>
+            <div class="erp-nav-actions">
+                <a class="erp-nav-logout" href="logout" title="Sign out of ERP">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    <span>Logout</span>
+                </a>
             </div>
+
+            <!-- Mobile hamburger toggle -->
+            <button class="erp-nav-toggle" id="navToggle" aria-label="Toggle navigation" onclick="document.getElementById('erpNav').classList.toggle('open')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
         </div>
     </header>
 

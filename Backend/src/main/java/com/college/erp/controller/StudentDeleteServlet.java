@@ -19,6 +19,7 @@ public class StudentDeleteServlet extends HttpServlet {
         try {
             int studentId = StudentFormSupport.parseNumber(request.getParameter("id"));
             studentService.deleteStudent(studentId);
+            com.college.erp.util.ERPLog.warn("STUDENT", "Deleted Student ID #" + studentId);
             response.sendRedirect(request.getContextPath() + "/students/list");
         } catch (RuntimeException exception) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, exception.getMessage());

@@ -59,6 +59,7 @@ public class StudentAddServlet extends HttpServlet {
             }
 
             studentService.saveStudent(student);
+            com.college.erp.util.ERPLog.success("STUDENT", "New student registered: Admission No. '" + student.getAdmissionNumber() + "', Name: '" + student.getFirstName() + " " + (student.getLastName() != null ? student.getLastName() : "") + "'");
             response.sendRedirect(request.getContextPath() + "/student-list.html?added=true");
         } catch (RuntimeException exception) {
                 String message = URLEncoder.encode(userMessage(exception), StandardCharsets.UTF_8);

@@ -108,6 +108,7 @@ public class AuthFilter implements Filter {
 
         // 4. If unauthenticated
         if (user == null) {
+            com.college.erp.util.ERPLog.warn("SECURITY", "Unauthenticated request blocked -> " + httpRequest.getMethod() + " " + path);
             if (isApi) {
                 httpResponse.setHeader("WWW-Authenticate", "Basic realm=\"Centurion ERP Portal\"");
                 httpResponse.setContentType("application/json;charset=UTF-8");
@@ -121,6 +122,7 @@ public class AuthFilter implements Filter {
 
         // 5. Role-based authorization check
         if (!hasAccess(user, path, httpRequest.getMethod())) {
+            com.college.erp.util.ERPLog.warn("SECURITY", "Access denied for user '" + user.getUsername() + "' (" + user.getRole() + ") -> " + httpRequest.getMethod() + " " + path);
             if (isApi) {
                 httpResponse.setContentType("application/json;charset=UTF-8");
                 httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -131,7 +133,10 @@ public class AuthFilter implements Filter {
             return;
         }
 
+        long start = System.currentTimeMillis();
         chain.doFilter(request, response);
+        long elapsed = System.currentTimeMillis() - start;
+        com.college.erp.util.ERPLog.info("HTTP", httpRequest.getMethod() + " " + path + " | User: " + user.getUsername() + " (" + user.getRole() + ") | " + elapsed + "ms");
     }
 
     private boolean hasAccess(User user, String path, String method) {

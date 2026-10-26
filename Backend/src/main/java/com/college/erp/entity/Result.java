@@ -1,51 +1,12 @@
 package com.college.erp.entity;
 
-import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "results")
-public class Result {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "result_id")
-    private int resultId;
-
-    @Column(name = "student_id", nullable = false)
-    private int studentId;
-
-    @Column(name = "examination_id", nullable = false)
-    private int examinationId;
-
-    @Column(name = "subject_id", nullable = false)
-    private int subjectId;
-
-    @Column(name = "marks_obtained", nullable = false, precision = 6, scale = 2)
-    private BigDecimal marksObtained;
-
-    @Column(name = "grade", length = 10)
-    private String grade;
-
-    @Column(name = "grade_point", precision = 4, scale = 2)
-    private BigDecimal gradePoint;
-
-    @Column(name = "result_status", nullable = false, length = 30)
-    private String resultStatus;
-
-
-    // =========================
-    // Default Constructor
-    // =========================
+public class Result {    private int resultId;    private int studentId;    private int examinationId;    private int subjectId;    private BigDecimal marksObtained;    private String grade;    private BigDecimal gradePoint;    private String resultStatus;
 
     public Result() {
     }
-
-
-    // =========================
-    // Getters & Setters
-    // =========================
 
     public int getResultId() {
         return resultId;

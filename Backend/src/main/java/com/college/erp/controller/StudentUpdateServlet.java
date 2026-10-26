@@ -25,6 +25,7 @@ public class StudentUpdateServlet extends HttpServlet {
             Student student = StudentFormSupport.fromRequest(request);
             student.setStudentId(StudentFormSupport.parseNumber(request.getParameter("studentId")));
             studentService.updateStudent(student);
+            com.college.erp.util.ERPLog.info("STUDENT", "Updated record for Student ID #" + student.getStudentId() + " (" + student.getAdmissionNumber() + ")");
             response.sendRedirect(request.getContextPath() + "/students/list");
         } catch (RuntimeException exception) {
                 String message = URLEncoder.encode(exception.getMessage(), StandardCharsets.UTF_8);

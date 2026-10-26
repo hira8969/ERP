@@ -27,9 +27,8 @@ public class StudentEditServlet extends HttpServlet {
                 return;
             }
             request.setAttribute("student", student);
-                request.getRequestDispatcher("/edit-student.html")
-                    .forward(request, response);
-        } catch (RuntimeException exception) {
+            request.getRequestDispatcher("/edit-student.html").forward(request, response);
+        } catch (Exception exception) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, exception.getMessage());
         }
     }

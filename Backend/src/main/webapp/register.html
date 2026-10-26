@@ -3,41 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Centurion University ERP - Register Student Account</title>
+    <title>Centurion University ERP - Student Registration</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/student-form.css">
 </head>
 <body>
 <main>
     <div class="topbar">
-        <a href="index.html" class="link-muted">&larr; Back to Portal Home</a>
-        <span class="badge badge-success">&#127891; Student Self-Registration</span>
+        <a href="login.html" class="link-muted">&larr; Back to Sign In</a>
+        <span class="badge badge-primary">&#127891; Student Self-Registration</span>
     </div>
 
     <section class="panel auth-panel">
         <div class="auth-header">
             <div class="portal-badge">NEW STUDENT PORTAL</div>
             <h1>Create Student Account</h1>
-            <p class="muted">Register to access your personal dashboard, results, syllabus, and course timetable</p>
+            <p class="muted">Register to access your personal academic records, syllabus, notices, and exam results</p>
         </div>
 
         <p id="error" class="alert error" hidden></p>
 
-        <form method="post" action="register">
+        <form method="post" action="register" id="registerForm">
             <div class="form-grid single-col">
                 <label>
-                    Username
-                    <input name="username" required maxlength="100" placeholder="e.g. ashakumar" autocomplete="username">
+                    Full Name / Username
+                    <input type="text" name="username" id="username" required maxlength="100" placeholder="e.g. rahul_kumar" autocomplete="username">
                 </label>
                 <label>
-                    Gmail Address
-                    <input type="email" name="email" pattern="[A-Za-z0-9._%+-]+@gmail\.com" title="Use a Gmail address ending with @gmail.com" required maxlength="150" placeholder="name@gmail.com" autocomplete="email">
+                    Email Address
+                    <input type="email" name="email" id="email" required maxlength="150" placeholder="student@college.edu or name@gmail.com" autocomplete="email">
                 </label>
                 <label>
                     Password
-                    <input type="password" name="password" minlength="8" required placeholder="Choose a password (min 8 chars)" autocomplete="new-password">
+                    <input type="password" name="password" id="password" minlength="6" required placeholder="Choose a password (min 6 characters)" autocomplete="new-password">
                 </label>
             </div>
             <p style="margin-top: 22px;">
@@ -46,16 +46,17 @@
         </form>
 
         <div class="auth-links" style="justify-content: center; margin-top: 22px;">
-            <p>Already have an enrolled account? <a href="login.html">Sign In</a></p>
+            <p>Already have an account? <a href="login.html">Sign In here</a></p>
         </div>
     </section>
 </main>
 <script>
-    const error = new URLSearchParams(location.search).get('error');
-    if (error) {
-        const element = document.getElementById('error');
-        element.textContent = error;
-        element.hidden = false;
+    const params = new URLSearchParams(window.location.search);
+    const errorParam = params.get('error');
+    if (errorParam) {
+        const errorEl = document.getElementById('error');
+        errorEl.textContent = errorParam;
+        errorEl.hidden = false;
     }
 </script>
 </body>

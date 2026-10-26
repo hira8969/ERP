@@ -27,9 +27,8 @@ public class StudentDetailsServlet extends HttpServlet {
                 return;
             }
             request.setAttribute("student", student);
-                request.getRequestDispatcher("/student-details.html")
-                    .forward(request, response);
-        } catch (RuntimeException exception) {
+            request.getRequestDispatcher("/student-details.html").forward(request, response);
+        } catch (Exception exception) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, exception.getMessage());
         }
     }

@@ -25,6 +25,10 @@ public class LogoutServlet extends HttpServlet {
     private void processLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession(false);
         if (session != null) {
+            com.college.erp.entity.User u = (com.college.erp.entity.User) session.getAttribute("user");
+            if (u != null) {
+                com.college.erp.util.ERPLog.info("AUTH", "User '" + u.getUsername() + "' (" + u.getRole() + ") logged out. Session invalidated.");
+            }
             session.invalidate();
         }
         AuthCookieUtil.clearRememberMeCookie(request, response);

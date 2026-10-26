@@ -85,6 +85,16 @@ public final class AuthCookieUtil {
 
     private static String generateSignature(User user) {
         String payload = user.getUserId() + ":" + user.getPassword() + ":" + COOKIE_SECRET;
-        return PasswordUtil.hash(payload);
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(payload.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hash) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            return String.valueOf(payload.hashCode());
+        }
     }
 }

@@ -1,50 +1,20 @@
 package com.college.erp.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "users")
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private int userId;
-
-    @Column(name = "username", nullable = false, unique = true, length = 100)
     private String username;
-
-    @Column(name = "password", nullable = false, length = 255)
     private String password;
-
-    @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
-
-    @Column(name = "role", nullable = false, length = 50)
     private String role;
-
-    @Column(name = "active", nullable = false)
     private boolean active;
-
-    @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-
-    // =========================
-    // Default Constructor
-    // =========================
 
     public User() {
     }
-
-
-    // =========================
-    // Parameterized Constructor
-    // =========================
 
     public User(
             int userId,

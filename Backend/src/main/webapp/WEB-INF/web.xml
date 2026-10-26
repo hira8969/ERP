@@ -2,14 +2,15 @@
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-         version="6.0">
+         version="6.0"
+         metadata-complete="true">
 
     <display-name>Centurion University College ERP</display-name>
 
     <!-- Start Point / Welcome Files -->
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
         <welcome-file>login.html</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
     <!-- Session & Cookie Configuration -->
@@ -22,6 +23,11 @@
         </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
+
+    <!-- Context Lifecycle Listener for Clean Shutdown and Leak Prevention -->
+    <listener>
+        <listener-class>com.college.erp.listener.AppContextListener</listener-class>
+    </listener>
 
     <!-- Auth Filter -->
     <filter>
@@ -113,6 +119,7 @@
     <servlet-mapping>
         <servlet-name>AuthApiServlet</servlet-name>
         <url-pattern>/api/auth/me</url-pattern>
+        <url-pattern>/api/auth/*</url-pattern>
     </servlet-mapping>
 
     <servlet>

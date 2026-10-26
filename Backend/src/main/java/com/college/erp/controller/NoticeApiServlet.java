@@ -53,6 +53,7 @@ public class NoticeApiServlet extends HttpServlet {
             notice.setActive(true);
 
             noticeService.saveNotice(notice);
+            com.college.erp.util.ERPLog.success("NOTICE", "Published circular: '" + notice.getTitle() + "' (Target: [" + notice.getTargetRole() + "])");
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.getWriter().write("{\"status\":\"success\",\"message\":\"Notice published successfully\",\"notice\":" + toJson(notice) + "}");
         } catch (RuntimeException ex) {

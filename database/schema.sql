@@ -245,7 +245,7 @@ CREATE TABLE IF NOT EXISTS enrollments (
 -- =======================================================
 
 -- Users (Super Admin, Admin, Faculty, Student)
--- All default passwords saved in clear, readable format: Admin@123
+-- All default passwords saved in clear, readable plain-text format: Admin@123
 INSERT IGNORE INTO users (user_id, username, password, email, role, active, created_at, updated_at) VALUES
 (1, 'superadmin', 'Admin@123', 'superadmin@gmail.com', 'SUPER_ADMIN', TRUE, NOW(), NOW()),
 (2, 'admin', 'Admin@123', 'admin@gmail.com', 'ADMIN', TRUE, NOW(), NOW()),

@@ -34,7 +34,10 @@ public interface AttendanceService {
             this.eligibleForExam = eligibleForExam;
         }
 
-        public int getTotalClasses() { return totalClasses; }
+        public int getTotalClasses()
+         { 
+            return totalClasses;
+         }
         public void setTotalClasses(int totalClasses) { this.totalClasses = totalClasses; }
 
         public int getPresentClasses() { return presentClasses; }

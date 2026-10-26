@@ -12,7 +12,7 @@
 <body>
 <main>
     <div class="topbar">
-        <a href="index.html" class="link-muted">&larr; Back to Portal Home</a>
+        <span style="font-weight: 700; color: var(--text-main); font-size: 15px;">&#127891; Centurion University ERP</span>
         <span class="badge badge-primary">&#128274; Secure Session Auth</span>
     </div>
 
@@ -45,15 +45,15 @@
             </p>
         </form>
 
-        <div class="auth-links">
-            <p>New student? <a href="register.html">Create an account</a></p>
+        <div class="auth-links" style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+            <p><a href="register.html">New student? Create account</a></p>
             <p><a href="forgot-password.html">Forgot password?</a></p>
         </div>
 
         <div class="auth-hints">
-            <div style="font-weight: 700; margin-bottom: 4px; color: var(--text-main);">Default Demo Credentials</div>
-            <div><code>admin@gmail.com</code> &bull; Role: <code>ADMIN</code></div>
-            <div style="margin-top: 4px;"><small class="muted">Click to auto-fill or type your login credentials</small></div>
+            <div style="font-weight: 700; margin-bottom: 4px; color: var(--text-main);">Default Demo Credentials (Click to Auto-fill)</div>
+            <div>Email: <code>admin@gmail.com</code> &bull; Password: <code>Admin@123</code></div>
+            <div style="margin-top: 4px;"><small class="muted">Role: ADMIN &bull; Click anywhere here to fill form</small></div>
         </div>
     </section>
 </main>
@@ -65,13 +65,13 @@
         message.className = 'alert error';
         message.textContent = params.get('error');
         message.hidden = false;
-    } else if (params.get('registered') === 'true') {
-        message.className = 'alert success';
-        message.textContent = 'Account created successfully! Please sign in.';
-        message.hidden = false;
     } else if (params.get('loggedOut') === 'true') {
         message.className = 'alert info';
         message.textContent = 'You have been logged out and session cookies cleared.';
+        message.hidden = false;
+    } else if (params.get('registered') === 'true') {
+        message.className = 'alert success';
+        message.textContent = 'Account registered successfully! Please sign in with your credentials.';
         message.hidden = false;
     }
 
@@ -79,7 +79,7 @@
     document.querySelector('.auth-hints').style.cursor = 'pointer';
     document.querySelector('.auth-hints').addEventListener('click', () => {
         document.getElementById('email').value = 'admin@gmail.com';
-        document.getElementById('password').focus();
+        document.getElementById('password').value = 'Admin@123';
     });
 </script>
 </body>
