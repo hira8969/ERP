@@ -172,14 +172,22 @@ main {
     flex-shrink: 0;
 }
 
-.erp-brand-img {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-    border: 1.5px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.erp-brand img,
+.erp-brand-img,
+img.erp-brand-img {
+    width: 28px !important;
+    height: 28px !important;
+    max-width: 28px !important;
+    max-height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    margin-right: 4px;
 }
 
 .erp-brand-text {
