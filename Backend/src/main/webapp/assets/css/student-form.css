@@ -172,6 +172,16 @@ main {
     flex-shrink: 0;
 }
 
+.erp-brand-img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .erp-brand-text {
     display: inline-flex;
     align-items: baseline;
@@ -584,10 +594,10 @@ main {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.90) 0%, rgba(30, 58, 138, 0.85) 100%), url('../img/campus-banner.jpg') center/cover no-repeat;
     color: #ffffff;
     border-radius: var(--radius-lg);
-    padding: 40px 40px;
+    padding: 44px 40px;
     margin-bottom: 28px;
     box-shadow: var(--shadow-lg);
     position: relative;
