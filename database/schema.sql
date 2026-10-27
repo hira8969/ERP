@@ -298,7 +298,13 @@ INSERT IGNORE INTO subjects (subject_id, subject_code, subject_name, course_id, 
 (2, 'CS302', 'Database Management Systems', 1, 3, 1, 4, 100, 40, TRUE),
 (3, 'CS303', 'Object-Oriented Java Programming', 1, 3, 1, 4, 100, 40, TRUE),
 (4, 'CS304', 'Computer Organization & Architecture', 1, 3, 3, 3, 100, 40, TRUE),
-(5, 'CS305', 'Discrete Mathematics', 1, 3, 2, 3, 100, 40, TRUE);
+(5, 'CS305', 'Discrete Mathematics', 1, 3, 2, 3, 100, 40, TRUE),
+(6, 'CUTM1001', 'Python Programming & Data Analytics', 2, 3, 1, 4, 100, 40, TRUE),
+(7, 'BCA101', 'Programming in C & Problem Solving', 2, 1, 2, 4, 100, 40, TRUE),
+(8, 'BCA102', 'Computer Organization & Architecture', 2, 1, 3, 4, 100, 40, TRUE),
+(9, 'BCA103', 'Mathematical Foundation for Computing', 2, 1, 3, 4, 100, 40, TRUE),
+(10, 'BCA104', 'Web Technologies & Responsive Design', 2, 1, 2, 4, 100, 40, TRUE),
+(11, 'BCA105', 'Database Systems & SQL Essentials', 2, 1, 1, 4, 100, 40, TRUE);
 
 -- Attendance Records
 INSERT IGNORE INTO attendance (attendance_id, student_id, subject_id, faculty_id, attendance_date, status, remarks) VALUES

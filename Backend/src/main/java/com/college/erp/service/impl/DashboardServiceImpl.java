@@ -66,7 +66,8 @@ public class DashboardServiceImpl implements DashboardService {
 
             stats.put("studentId", currentStudent.getStudentId());
             stats.put("studentName", currentStudent.getFirstName() + " " + (currentStudent.getLastName() != null ? currentStudent.getLastName() : ""));
-            stats.put("rollNumber", currentStudent.getRollNumber());
+            stats.put("rollNumber", currentStudent.getRollNumber() != null ? currentStudent.getRollNumber() : "");
+            stats.put("admissionNumber", currentStudent.getAdmissionNumber() != null ? currentStudent.getAdmissionNumber() : "");
             stats.put("attendancePercentage", attSummary.getPercentage());
             stats.put("attendanceEligible", attSummary.isEligibleForExam());
             stats.put("totalClasses", attSummary.getTotalClasses());
@@ -74,12 +75,71 @@ public class DashboardServiceImpl implements DashboardService {
             stats.put("sgpa", gradeReport.getSgpa());
             stats.put("overallStatus", gradeReport.getOverallStatus());
             stats.put("completedExams", gradeReport.getResults().size());
+
+            com.college.erp.entity.Course course = (currentStudent.getCourseId() > 0) ? courseDAO.findById(currentStudent.getCourseId()) : null;
+            com.college.erp.entity.Department dept = (currentStudent.getDepartmentId() > 0) ? departmentDAO.findById(currentStudent.getDepartmentId()) : null;
+
+            stats.put("courseId", currentStudent.getCourseId());
+            stats.put("semesterId", currentStudent.getSemesterId());
+            stats.put("courseName", course != null ? course.getCourseName() : "Enrolled Academic Course");
+            stats.put("courseCode", course != null ? course.getCourseCode() : "N/A");
+            stats.put("departmentName", dept != null ? dept.getDepartmentName() : "Academic Department");
+
+            List<com.college.erp.entity.Subject> subjects = subjectDAO.getSubjectsByCourseAndSemester(currentStudent.getCourseId(), currentStudent.getSemesterId());
+            if (subjects == null || subjects.isEmpty()) {
+                subjects = subjectDAO.getAllSubjects().stream()
+                        .filter(s -> s.getCourseId() == currentStudent.getCourseId())
+                        .toList();
+            }
+            if (subjects.isEmpty()) {
+                subjects = subjectDAO.getAllSubjects();
+            }
+
+            java.util.List<Map<String, Object>> subjectList = new java.util.ArrayList<>();
+            java.util.Set<String> distinctFaculty = new java.util.HashSet<>();
+
+            for (com.college.erp.entity.Subject sub : subjects) {
+                Map<String, Object> subMap = new HashMap<>();
+                subMap.put("subjectId", sub.getSubjectId());
+                subMap.put("subjectCode", sub.getSubjectCode());
+                subMap.put("subjectName", sub.getSubjectName());
+                subMap.put("credits", sub.getCredits());
+                subMap.put("maxMarks", sub.getMaxMarks());
+                subMap.put("passMarks", sub.getPassMarks());
+                subMap.put("facultyId", sub.getFacultyId());
+
+                Faculty fac = (sub.getFacultyId() > 0) ? facultyDAO.getFacultyById(sub.getFacultyId()) : null;
+                if (fac != null) {
+                    String fn = fac.getFirstName() + (fac.getLastName() != null && !fac.getLastName().isBlank() ? " " + fac.getLastName() : "");
+                    subMap.put("facultyName", fn.trim());
+                    subMap.put("facultyEmail", fac.getEmail() != null ? fac.getEmail() : "academic@college.edu");
+                    subMap.put("facultyPhone", fac.getPhone() != null ? fac.getPhone() : "");
+                    subMap.put("designation", fac.getDesignation() != null ? fac.getDesignation() : "Professor");
+                    subMap.put("employeeNumber", fac.getEmployeeNumber() != null ? fac.getEmployeeNumber() : "");
+                    distinctFaculty.add(fn.trim());
+                } else {
+                    subMap.put("facultyName", "Department Faculty");
+                    subMap.put("facultyEmail", "academic@college.edu");
+                    subMap.put("facultyPhone", "N/A");
+                    subMap.put("designation", "Course Instructor");
+                    subMap.put("employeeNumber", "FAC-TBA");
+                    distinctFaculty.add("Department Faculty");
+                }
+                subjectList.add(subMap);
+            }
+
+            stats.put("courseSubjects", subjectList);
+            stats.put("totalSubjects", subjectList.size());
+            stats.put("totalCourseFaculty", distinctFaculty.size());
         } else {
             stats.put("studentName", "Student");
             stats.put("attendancePercentage", 0.0);
             stats.put("attendanceEligible", true);
             stats.put("sgpa", 0.0);
             stats.put("overallStatus", "N/A");
+            stats.put("courseSubjects", java.util.Collections.emptyList());
+            stats.put("totalSubjects", 0);
+            stats.put("totalCourseFaculty", 0);
         }
         stats.put("recentNotices", noticeDAO.getNoticesByRole("STUDENT").size());
         return stats;

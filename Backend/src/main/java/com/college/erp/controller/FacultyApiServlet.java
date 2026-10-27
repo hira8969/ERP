@@ -52,6 +52,20 @@ public class FacultyApiServlet extends HttpServlet {
                     } catch (NumberFormatException ignored) {}
                 }
 
+                String courseParam = request.getParameter("courseId");
+                String semParam = request.getParameter("semesterId");
+                if (courseParam != null && !courseParam.isBlank()) {
+                    try {
+                        int courseId = Integer.parseInt(courseParam.trim());
+                        com.college.erp.dao.SubjectDAO subDAO = new com.college.erp.dao.impl.SubjectDAOImpl();
+                        List<com.college.erp.entity.Subject> subs = (semParam != null && !semParam.isBlank())
+                                ? subDAO.getSubjectsByCourseAndSemester(courseId, Integer.parseInt(semParam.trim()))
+                                : subDAO.getAllSubjects().stream().filter(s -> s.getCourseId() == courseId).toList();
+                        java.util.Set<Integer> facIds = subs.stream().map(com.college.erp.entity.Subject::getFacultyId).filter(id -> id > 0).collect(Collectors.toSet());
+                        list = list.stream().filter(f -> facIds.contains(f.getFacultyId())).collect(Collectors.toList());
+                    } catch (NumberFormatException ignored) {}
+                }
+
                 response.getWriter().write(toJsonList(list));
                 return;
             }

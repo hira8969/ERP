@@ -124,7 +124,21 @@ public class SubjectApiServlet extends HttpServlet {
         return sb.toString();
     }
 
+    private final com.college.erp.dao.FacultyDAO facultyDAO = new com.college.erp.dao.impl.FacultyDAOImpl();
+
     private String toJson(Subject s) {
+        String facName = "Department Faculty";
+        String facDesig = "Course Instructor";
+        String facEmail = "academic@college.edu";
+        if (s.getFacultyId() > 0) {
+            com.college.erp.entity.Faculty f = facultyDAO.getFacultyById(s.getFacultyId());
+            if (f != null) {
+                String full = f.getFirstName() + (f.getLastName() != null && !f.getLastName().isBlank() ? " " + f.getLastName() : "");
+                facName = full.trim();
+                if (f.getDesignation() != null) facDesig = f.getDesignation();
+                if (f.getEmail() != null) facEmail = f.getEmail();
+            }
+        }
         return "{"
                 + "\"subjectId\":" + s.getSubjectId() + ","
                 + "\"subjectCode\":\"" + escapeJson(s.getSubjectCode()) + "\","
@@ -132,6 +146,9 @@ public class SubjectApiServlet extends HttpServlet {
                 + "\"courseId\":" + s.getCourseId() + ","
                 + "\"semesterId\":" + s.getSemesterId() + ","
                 + "\"facultyId\":" + s.getFacultyId() + ","
+                + "\"facultyName\":\"" + escapeJson(facName) + "\","
+                + "\"facultyDesignation\":\"" + escapeJson(facDesig) + "\","
+                + "\"facultyEmail\":\"" + escapeJson(facEmail) + "\","
                 + "\"credits\":" + s.getCredits() + ","
                 + "\"maxMarks\":" + s.getMaxMarks() + ","
                 + "\"passMarks\":" + s.getPassMarks() + ","
