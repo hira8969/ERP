@@ -999,9 +999,21 @@ tbody tr:hover td {
     font-size: 12.5px;
 }
 
-/* ==========================================================================
-   13. Alerts & Feedback Messages
-   ========================================================================== */
+/* Hide empty alerts or alerts marked as hidden */
+[hidden],
+.alert[hidden],
+.alert:empty,
+p:empty.alert,
+div:empty.alert {
+    display: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    visibility: hidden !important;
+}
+
 .alert {
     padding: 12px 16px;
     border-radius: var(--radius-sm);
@@ -1039,6 +1051,24 @@ tbody tr:hover td {
     color: var(--warning-text);
     border: 1px solid var(--warning-border);
     border-left: 4px solid var(--warning);
+}
+
+/* Strictly hide any alert that is empty or marked as hidden */
+[hidden],
+.alert[hidden],
+.alert:empty,
+p.alert:empty,
+div.alert:empty,
+p[hidden].alert,
+div[hidden].alert {
+    display: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
 }
 
 /* ==========================================================================
