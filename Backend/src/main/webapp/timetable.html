@@ -156,6 +156,7 @@
     let allSlots = [];
     let subjectList = [];
     let facultyList = [];
+    let currentUser = null;
 
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -163,9 +164,20 @@
     fetch(root + 'api/auth/me').then(r => r.json()).then(data => {
         if (!data.authenticated) {
             window.location.href = root + 'login.html';
-        } else if (data.user.role === 'STUDENT') {
-            const btn = document.getElementById('btnAddSlotBtn');
-            if (btn) btn.style.display = 'none';
+            return;
+        }
+        currentUser = data.user;
+        const isAdmin = currentUser.role === 'ADMIN' || currentUser.role === 'SUPER_ADMIN';
+        const btn = document.getElementById('btnAddSlotBtn');
+        if (btn && !isAdmin) {
+            btn.style.display = 'none';
+        }
+
+        if (currentUser.role === 'STUDENT') {
+            const navS = document.getElementById('navStudentsText');
+            if (navS) navS.textContent = 'My Profile';
+            const navF = document.getElementById('navFacultyText');
+            if (navF) navF.textContent = 'Course Faculty';
         }
     }).catch(() => {});
 
@@ -201,6 +213,8 @@
             return;
         }
 
+        const isAdmin = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'SUPER_ADMIN');
+
         tbody.innerHTML = list.map(t => {
             const subj = subjectList.find(s => s.subjectId === t.subjectId);
             const fac = facultyList.find(f => f.facultyId === t.facultyId);
@@ -212,7 +226,11 @@
                     <td style="color: var(--text-secondary);">${escapeHtml(fac ? (fac.firstName + ' ' + (fac.lastName || '')) : 'Faculty #' + t.facultyId)}</td>
                     <td><span class="pass-cell">${escapeHtml(t.roomNumber || 'TBD')}</span></td>
                     <td>
-                        <button class="button button-danger button-small" style="padding: 3px 8px; font-size: 11.5px;" onclick="deleteSlot(${t.timetableId})">&#128465; Remove</button>
+                        ${isAdmin ? `
+                            <button class="button button-danger button-small" style="padding: 3px 8px; font-size: 11.5px;" onclick="deleteSlot(${t.timetableId})">&#128465; Remove</button>
+                        ` : `
+                            <span class="badge badge-success" style="font-size: 11px;">Active</span>
+                        `}
                     </td>
                 </tr>
             `;

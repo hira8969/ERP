@@ -139,30 +139,53 @@ public class AuthFilter implements Filter {
         com.college.erp.util.ERPLog.info("HTTP", httpRequest.getMethod() + " " + path + " | User: " + user.getUsername() + " (" + user.getRole() + ") | " + elapsed + "ms");
     }
 
-    private boolean hasAccess(User user, String path, String method) {
-        String role = user.getRole();
+    public boolean hasAccess(User user, String path, String method) {
+        if (user == null || user.getRole() == null) {
+            return false;
+        }
+        String role = user.getRole().trim();
         // Super Admin and Admin have full unrestricted access to all operations
         if ("SUPER_ADMIN".equalsIgnoreCase(role) || "ADMIN".equalsIgnoreCase(role)) {
             return true;
         }
 
         if ("FACULTY".equalsIgnoreCase(role)) {
-            if (path.startsWith("/api/dashboard/stats")
-                    || path.startsWith("/api/departments")
-                    || path.startsWith("/api/courses")
-                    || path.startsWith("/api/subjects")
-                    || path.startsWith("/api/attendance")
-                    || path.startsWith("/api/results")
-                    || path.startsWith("/api/timetables")
-                    || path.startsWith("/api/notices")) {
+            // Block admin-only management forms and user administration
+            if (path.contains("users") || path.startsWith("/api/users")
+                    || path.contains("add-student") || path.contains("edit-student")
+                    || path.contains("add-faculty") || path.startsWith("/students/add")
+                    || path.startsWith("/students/edit") || path.startsWith("/students/update")
+                    || path.startsWith("/students/delete")) {
+                return false;
+            }
+
+            // APIs allowed for Faculty:
+            if (path.startsWith("/api/dashboard/stats")) {
                 return true;
             }
-            if (path.equals("/api/students") || path.startsWith("/api/students/")) {
+            // Faculty can view and mark attendance
+            if (path.startsWith("/api/attendance")) {
+                return "GET".equalsIgnoreCase(method) || "POST".equalsIgnoreCase(method);
+            }
+            // Faculty can view and enter results/grades
+            if (path.startsWith("/api/results")) {
+                return "GET".equalsIgnoreCase(method) || "POST".equalsIgnoreCase(method);
+            }
+            // Faculty can view and publish campus notices
+            if (path.startsWith("/api/notices")) {
+                return "GET".equalsIgnoreCase(method) || "POST".equalsIgnoreCase(method);
+            }
+            // Read-only APIs for academic catalog, students directory, and faculty directory
+            if (path.startsWith("/api/departments")
+                    || path.startsWith("/api/courses")
+                    || path.startsWith("/api/subjects")
+                    || path.startsWith("/api/timetables")
+                    || path.startsWith("/api/students")
+                    || path.startsWith("/api/faculty")) {
                 return "GET".equalsIgnoreCase(method);
             }
-            if (path.equals("/api/faculty") || path.startsWith("/api/faculty/")) {
-                return "GET".equalsIgnoreCase(method);
-            }
+
+            // Web pages allowed for Faculty
             return path.contains("dashboard")
                     || path.contains("attendance")
                     || path.contains("results")
@@ -177,6 +200,16 @@ public class AuthFilter implements Filter {
         }
 
         if ("STUDENT".equalsIgnoreCase(role)) {
+            // Block admin-only and management pages
+            if (path.contains("users") || path.startsWith("/api/users")
+                    || path.contains("add-student") || path.contains("edit-student")
+                    || path.contains("add-faculty") || path.startsWith("/students/add")
+                    || path.startsWith("/students/edit") || path.startsWith("/students/update")
+                    || path.startsWith("/students/delete")) {
+                return false;
+            }
+
+            // APIs allowed for Student (STRICTLY READ-ONLY GET):
             if (path.startsWith("/api/dashboard/stats")
                     || path.startsWith("/api/departments")
                     || path.startsWith("/api/courses")
@@ -184,18 +217,24 @@ public class AuthFilter implements Filter {
                     || path.startsWith("/api/attendance")
                     || path.startsWith("/api/results")
                     || path.startsWith("/api/timetables")
-                    || path.startsWith("/api/notices")) {
+                    || path.startsWith("/api/notices")
+                    || path.startsWith("/api/students")
+                    || path.startsWith("/api/faculty")) {
                 return "GET".equalsIgnoreCase(method);
             }
-            if (path.startsWith("/students/details") || path.contains("student-details")) {
-                return true;
-            }
+
+            // Web pages allowed for Student (Read-Only Views):
             return path.contains("dashboard")
                     || path.contains("attendance")
                     || path.contains("results")
                     || path.contains("timetable")
                     || path.contains("courses")
-                    || path.contains("notices");
+                    || path.contains("notices")
+                    || path.contains("faculty-list")
+                    || path.contains("student-list")
+                    || path.contains("student-details")
+                    || path.endsWith("/details")
+                    || path.endsWith("/list");
         }
 
         return false;

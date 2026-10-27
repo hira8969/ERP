@@ -245,12 +245,18 @@
     }
 
     function loadOwnStudentAttendance() {
-        fetch(root + 'api/students').then(r => r.json()).then(students => {
-            studentList = students || [];
-            const myStudent = students.find(s => s.email === currentUser.email) || students[0];
-            if (myStudent) {
-                loadStudentAttendance(myStudent.studentId);
+        fetch(root + 'api/dashboard/stats').then(r => r.ok ? r.json() : null).then(data => {
+            if (data && data.stats && data.stats.studentId) {
+                loadStudentAttendance(data.stats.studentId);
+                return;
             }
+            fetch(root + 'api/students').then(r => r.json()).then(students => {
+                studentList = students || [];
+                const myStudent = students.find(s => s.email === currentUser.email || s.admissionNumber === currentUser.username || s.rollNumber === currentUser.username) || students[0];
+                if (myStudent) {
+                    loadStudentAttendance(myStudent.studentId);
+                }
+            }).catch(() => {});
         }).catch(() => {});
     }
 

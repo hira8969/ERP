@@ -55,7 +55,7 @@
         </div>
         <div style="display: flex; gap: 10px;">
             <a class="button button-outline button-small" href="dashboard.html">Dashboard</a>
-            <a class="button button-primary button-small" href="add-student.html">+ Add Student</a>
+            <a class="button button-primary button-small" id="btnAddStudent" href="add-student.html">+ Add Student</a>
         </div>
     </div>
 
@@ -108,8 +108,34 @@ const searchInput = document.getElementById('searchInput');
 const deptFilter = document.getElementById('departmentFilter');
 
 let allStudents = [];
+let currentUser = null;
 
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// Check authentication and role
+fetch(root + 'api/auth/me').then(r => r.json()).then(data => {
+    if (!data.authenticated) {
+        window.location.href = root + 'login.html';
+        return;
+    }
+    currentUser = data.user;
+    const isAdmin = currentUser.role === 'ADMIN' || currentUser.role === 'SUPER_ADMIN';
+    const btnAdd = document.getElementById('btnAddStudent');
+    if (btnAdd && !isAdmin) {
+        btnAdd.style.display = 'none';
+    }
+
+    if (currentUser.role === 'STUDENT') {
+        const navS = document.getElementById('navStudentsText');
+        if (navS) navS.textContent = 'My Profile';
+        const navF = document.getElementById('navFacultyText');
+        if (navF) navF.textContent = 'Course Faculty';
+    }
+
+    loadStudents();
+}).catch(() => {
+    loadStudents();
+});
 
 // Load departments for filter
 fetch(root + 'api/departments').then(r => r.ok ? r.json() : []).then(depts => {
@@ -161,6 +187,7 @@ function renderTable(students) {
         rows.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 28px; color: var(--text-muted);">No students found matching current search criteria.</td></tr>';
         return;
     }
+    const isAdmin = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'SUPER_ADMIN');
     rows.innerHTML = students.map(student => {
         const name = [student.firstName, student.lastName].filter(Boolean).join(' ');
         const statusClass = (student.status || 'ACTIVE').toLowerCase() === 'active' ? 'badge-success' : 'badge-info';
@@ -174,17 +201,17 @@ function renderTable(students) {
             <td><span class="badge ${statusClass}">${escapeHtml(student.status || 'ACTIVE')}</span></td>
             <td class="actions">
                 <a class="button button-small button-outline" href="${root}students/details?id=${student.studentId}">View</a>
-                <a class="button button-small button-outline" href="${root}students/edit?id=${student.studentId}">Edit</a>
-                <form method="post" action="${root}students/delete" onsubmit="return confirm('Are you sure you want to delete student ${escapeHtml(student.admissionNumber)}?');" style="margin:0;">
-                    <input type="hidden" name="id" value="${student.studentId}">
-                    <button class="button button-small button-danger" type="submit">Delete</button>
-                </form>
+                ${isAdmin ? `
+                    <a class="button button-small button-outline" href="${root}students/edit?id=${student.studentId}">Edit</a>
+                    <form method="post" action="${root}students/delete" onsubmit="return confirm('Are you sure you want to delete student ${escapeHtml(student.admissionNumber)}?');" style="margin:0; display:inline-block;">
+                        <input type="hidden" name="id" value="${student.studentId}">
+                        <button class="button button-small button-danger" type="submit">Delete</button>
+                    </form>
+                ` : ''}
             </td>
         </tr>`;
     }).join('');
 }
-
-loadStudents();
 </script>
 </body>
 </html>
