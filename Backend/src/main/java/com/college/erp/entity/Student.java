@@ -1,18 +1,44 @@
 package com.college.erp.entity;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class Student {    private int studentId;    private int userId;    private String admissionNumber;    private String rollNumber;    private String firstName;    private String lastName;    private String gender;    private LocalDate dateOfBirth;    private String email;    private String phone;    private String address;    private String city;    private String state;    private String pincode;    private int departmentId;    private int courseId;    private int semesterId;    private LocalDate admissionDate;    private String guardianName;    private String guardianPhone;    private String bloodGroup;    private String profileImage;    private String status;    private LocalDateTime createdAt;    private LocalDateTime updatedAt;
+public class Student {
+
+    private int studentId;
+    private int userId;
+    private String admissionNumber;
+    private String rollNumber;
+    private String firstName;
+    private String lastName;
+    private String gender;
+    private LocalDate dateOfBirth;
+    private String email;
+    private String phone;
+    private String address;
+    private String city;
+    private String state;
+    private String pincode;
+    private int departmentId;
+    private int courseId;
+    private int semesterId;
+    private LocalDate admissionDate;
+    private String guardianName;
+    private String guardianPhone;
+    private String bloodGroup;
+    private String profileImage;
+    private String status;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public Student() {
     }
 
-    public Student(int studentId,int userId, String admissionNumber, String rollNumber, String firstName, String lastName, String gender,
+    public Student(int studentId, int userId, String admissionNumber, String rollNumber, String firstName, String lastName, String gender,
                    LocalDate dateOfBirth, String email, String phone, String address, String city, String state,
                    String pincode, int departmentId, int courseId, int semesterId, LocalDate admissionDate,
-                   String guardianName, String guardianPhone, String bloodGroup, String profileImage,String status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                   String guardianName, String guardianPhone, String bloodGroup, String profileImage, String status,
+                   LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.studentId = studentId;
         this.userId = userId;
         this.admissionNumber = admissionNumber;
@@ -39,7 +65,6 @@ public class Student {    private int studentId;    private int userId;    priva
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-
 
     public int getStudentId() {
         return studentId;
@@ -242,6 +267,6 @@ public class Student {    private int studentId;    private int userId;    priva
     }
 
     public String getFullName() {
-        return firstName + " " + lastName;
+        return (firstName != null ? firstName : "") + (lastName != null && !lastName.isEmpty() ? " " + lastName : "");
     }
 }

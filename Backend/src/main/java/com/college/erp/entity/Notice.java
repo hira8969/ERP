@@ -1,9 +1,17 @@
 package com.college.erp.entity;
 
-
 import java.time.LocalDateTime;
 
-public class Notice {    private int noticeId;    private String title;    private String content;    private int createdBy;    private String targetRole;    private LocalDateTime publishDate;    private LocalDateTime expiryDate;    private boolean active;
+public class Notice {
+
+    private int noticeId;
+    private String title;
+    private String content;
+    private int createdBy;
+    private String targetRole;
+    private LocalDateTime publishDate;
+    private LocalDateTime expiryDate;
+    private boolean active;
 
     public Notice() {
     }

@@ -1,7 +1,15 @@
 package com.college.erp.entity;
 
 
-public class Course {    private int courseId;    private String courseCode;    private String courseName;    private int departmentId;    private String duration;    private int totalSemesters;    private String description;    private boolean active;
+public class Course {
+    private int courseId;
+    private String courseCode;
+    private String courseName;
+    private int departmentId;
+    private String duration;
+    private int totalSemesters;
+    private String description;
+    private boolean active;
 
 
 

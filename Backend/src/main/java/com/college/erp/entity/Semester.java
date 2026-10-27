@@ -1,7 +1,13 @@
 package com.college.erp.entity;
 
+public class Semester {
 
-public class Semester {    private int semesterId;    private int semesterNumber;    private String semesterName;    private int courseId;    private String academicYear;    private boolean active;
+    private int semesterId;
+    private int semesterNumber;
+    private String semesterName;
+    private int courseId;
+    private String academicYear;
+    private boolean active;
 
     public Semester() {
     }

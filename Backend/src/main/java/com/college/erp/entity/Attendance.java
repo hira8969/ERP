@@ -12,18 +12,17 @@ public class Attendance {
     private String status;
     private String remarks;
 
-
-    // =========================
-    // Default Constructor
-    // =========================
-
     public Attendance() {
     }
 
-
-    // =========================
-    // Getters & Setters
-    // =========================
+    public Attendance(int studentId, int subjectId, int facultyId, LocalDate attendanceDate, String status, String remarks) {
+        this.studentId = studentId;
+        this.subjectId = subjectId;
+        this.facultyId = facultyId;
+        this.attendanceDate = attendanceDate;
+        this.status = status;
+        this.remarks = remarks;
+    }
 
     public int getAttendanceId() {
         return attendanceId;

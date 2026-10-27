@@ -1,16 +1,35 @@
 package com.college.erp.entity;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class Faculty {    private int facultyId;    private int userId;    private String employeeNumber;    private String firstName;    private String lastName;    private String gender;    private LocalDate dateOfBirth;    private String email;    private String phone;    private int departmentId;    private String designation;    private String qualification;    private String specialization;    private LocalDate joiningDate;    private String address;    private String city;    private String state;    private String pincode;    private String profileImage;    private String status;    private LocalDateTime createdAt;    private LocalDateTime updatedAt;
+public class Faculty {
 
-
+    private int facultyId;
+    private int userId;
+    private String employeeNumber;
+    private String firstName;
+    private String lastName;
+    private String gender;
+    private LocalDate dateOfBirth;
+    private String email;
+    private String phone;
+    private int departmentId;
+    private String designation;
+    private String qualification;
+    private String specialization;
+    private LocalDate joiningDate;
+    private String address;
+    private String city;
+    private String state;
+    private String pincode;
+    private String profileImage;
+    private String status;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public Faculty() {
     }
-
 
     public int getFacultyId() {
         return facultyId;
@@ -137,7 +156,7 @@ public class Faculty {    private int facultyId;    private int userId;    priva
     }
 
     public void setCity(String city) {
-        this.city = state;
+        this.city = city;
     }
 
     public String getState() {
@@ -189,6 +208,6 @@ public class Faculty {    private int facultyId;    private int userId;    priva
     }
 
     public String getFullName() {
-        return firstName + " " + lastName;
+        return (firstName != null ? firstName : "") + (lastName != null && !lastName.isEmpty() ? " " + lastName : "");
     }
 }

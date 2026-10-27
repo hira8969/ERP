@@ -1,20 +1,16 @@
 package com.college.erp.entity;
 
+public class Department {
 
-public class Department {    private int departmentId;    private String departmentCode;    private String departmentName;    private String description;    private Integer hodFacultyId;    private boolean active;
-
-
-    // =========================
-    // Default Constructor
-    // =========================
+    private int departmentId;
+    private String departmentCode;
+    private String departmentName;
+    private String description;
+    private Integer hodFacultyId;
+    private boolean active;
 
     public Department() {
     }
-
-
-    // =========================
-    // Getters & Setters
-    // =========================
 
     public int getDepartmentId() {
         return departmentId;

@@ -16,16 +16,7 @@ public class User {
     public User() {
     }
 
-    public User(
-            int userId,
-            String username,
-            String password,
-            String email,
-            String role,
-            boolean active,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt
-    ) {
+    public User(int userId, String username, String password, String email, String role, boolean active, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.userId = userId;
         this.username = username;
         this.password = password;
@@ -35,11 +26,6 @@ public class User {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-
-
-    // =========================
-    // Getters & Setters
-    // =========================
 
     public int getUserId() {
         return userId;

@@ -1,9 +1,17 @@
 package com.college.erp.entity;
 
-
 import java.math.BigDecimal;
 
-public class Result {    private int resultId;    private int studentId;    private int examinationId;    private int subjectId;    private BigDecimal marksObtained;    private String grade;    private BigDecimal gradePoint;    private String resultStatus;
+public class Result {
+
+    private int resultId;
+    private int studentId;
+    private int examinationId;
+    private int subjectId;
+    private BigDecimal marksObtained;
+    private String grade;
+    private BigDecimal gradePoint;
+    private String resultStatus;
 
     public Result() {
     }

@@ -1,8 +1,17 @@
 package com.college.erp.entity;
 
+public class Subject {
 
-public class Subject {    private int subjectId;    private String subjectCode;    private String subjectName;    private int courseId;    private int semesterId;    private int facultyId;    private int credits;    private int maxMarks;    private int passMarks;    private boolean active;
-
+    private int subjectId;
+    private String subjectCode;
+    private String subjectName;
+    private int courseId;
+    private int semesterId;
+    private int facultyId;
+    private int credits;
+    private int maxMarks;
+    private int passMarks;
+    private boolean active;
 
     public Subject() {
     }

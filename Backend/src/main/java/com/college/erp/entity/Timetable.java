@@ -1,12 +1,19 @@
 package com.college.erp.entity;
 
+public class Timetable {
 
-public class Timetable {    private int timetableId;    private int courseId;    private int semesterId;    private int subjectId;    private int facultyId;    private String dayOfWeek;    private String startTime;    private String endTime;    private String roomNumber;
-
+    private int timetableId;
+    private int courseId;
+    private int semesterId;
+    private int subjectId;
+    private int facultyId;
+    private String dayOfWeek;
+    private String startTime;
+    private String endTime;
+    private String roomNumber;
 
     public Timetable() {
     }
-
 
     public int getTimetableId() {
         return timetableId;
