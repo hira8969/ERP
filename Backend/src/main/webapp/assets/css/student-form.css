@@ -1004,7 +1004,11 @@ tbody tr:hover td {
 .alert[hidden],
 .alert:empty,
 p:empty.alert,
-div:empty.alert {
+div:empty.alert,
+p.alert:empty,
+div.alert:empty,
+p[hidden].alert,
+div[hidden].alert {
     display: none !important;
     padding: 0 !important;
     margin: 0 !important;
@@ -1012,17 +1016,22 @@ div:empty.alert {
     height: 0 !important;
     min-height: 0 !important;
     visibility: hidden !important;
+    opacity: 0 !important;
 }
 
 .alert {
+    display: none;
     padding: 12px 16px;
     border-radius: var(--radius-sm);
     font-size: 13.5px;
     margin-bottom: 18px;
-    display: flex;
     align-items: center;
     gap: 10px;
     line-height: 1.45;
+}
+
+.alert:not(:empty):not([hidden]) {
+    display: flex;
 }
 
 .alert.error {

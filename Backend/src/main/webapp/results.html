@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/student-form.css?v=4">
+    <link rel="stylesheet" href="assets/css/student-form.css?v=5">
     <style>
         @media print {
             .erp-navbar, .topbar, #resultControls, #studentSelectPanel, .button { display: none !important; }
@@ -66,8 +66,8 @@
         </div>
     </div>
 
-    <p id="error-message" class="alert error" hidden></p>
-    <p id="success-message" class="alert success" hidden></p>
+    <p id="error-message" class="alert error" style="display: none;"></p>
+    <p id="success-message" class="alert success" style="display: none;"></p>
 
     <!-- Student Select for Admin / Faculty -->
     <section class="panel filter-bar" id="studentSelectPanel" style="margin-bottom: 20px;">
@@ -371,8 +371,11 @@
             closeMarksModal();
             const sMsg = document.getElementById('success-message');
             sMsg.textContent = 'Marks saved and published successfully!';
-            sMsg.hidden = false;
-            setTimeout(() => sMsg.hidden = true, 3000);
+            sMsg.style.display = 'flex';
+            setTimeout(() => {
+                sMsg.style.display = 'none';
+                sMsg.textContent = '';
+            }, 3000);
             loadStudentResults(sId);
         })
         .catch(() => {

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/student-form.css?v=4">
+    <link rel="stylesheet" href="assets/css/student-form.css?v=5">
 </head>
 <body>
 
@@ -58,8 +58,8 @@
         </div>
     </div>
 
-    <p id="error-message" class="alert error" hidden></p>
-    <p id="success-message" class="alert success" hidden></p>
+    <p id="error-message" class="alert error" style="display: none;"></p>
+    <p id="success-message" class="alert success" style="display: none;"></p>
 
     <form id="addFacultyForm" onsubmit="submitFaculty(event)">
         <section class="panel">
@@ -173,12 +173,12 @@
             if (result.status === 'success') {
                 const s = document.getElementById('success-message');
                 s.textContent = 'Faculty member saved successfully! Redirecting...';
-                s.hidden = false;
+                s.style.display = 'flex';
                 setTimeout(() => window.location.href = 'faculty-list.html', 1500);
             } else {
                 const err = document.getElementById('error-message');
                 err.textContent = result.error || 'Failed to save faculty.';
-                err.hidden = false;
+                err.style.display = 'flex';
             }
         })
         .catch(err => {
@@ -186,7 +186,7 @@
             btn.textContent = 'Save Faculty Member';
             const errEl = document.getElementById('error-message');
             errEl.textContent = 'Network or server error.';
-            errEl.hidden = false;
+            errEl.style.display = 'flex';
         });
     }
 </script>

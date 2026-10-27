@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link id="student-form-styles" rel="stylesheet" href="assets/css/student-form.css?v=4">
+    <link id="student-form-styles" rel="stylesheet" href="assets/css/student-form.css?v=5">
 </head>
 <body>
 
@@ -60,7 +60,7 @@
     </div>
 
     <section class="panel">
-        <p id="error-message" class="alert error" hidden></p>
+        <p id="error-message" class="alert error" style="display: none;"></p>
 
         <form id="add-student-form" method="post" action="students/add">
             <h3 style="margin-top: 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Basic &amp; Academic Info</h3>
@@ -147,7 +147,7 @@
     if (error) {
         const errorMessage = document.getElementById('error-message');
         errorMessage.textContent = error;
-        errorMessage.hidden = false;
+        errorMessage.style.display = 'flex';
     }
 
     // Load active departments dynamically from API

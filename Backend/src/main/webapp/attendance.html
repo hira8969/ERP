@@ -62,8 +62,8 @@
         </div>
     </div>
 
-    <p id="error-message" class="alert error" hidden></p>
-    <p id="success-message" class="alert success" hidden></p>
+    <p id="error-message" class="alert error" style="display: none;"></p>
+    <p id="success-message" class="alert success" style="display: none;"></p>
 
     <!-- SECTION 1: View Attendance & Exam Eligibility -->
     <div id="viewAttendanceSection">
@@ -383,8 +383,11 @@
                     btn.textContent = 'Submit Class Attendance';
                     const sMsg = document.getElementById('success-message');
                     sMsg.textContent = 'Attendance submitted successfully for ' + completed + ' students!';
-                    sMsg.hidden = false;
-                    setTimeout(() => sMsg.hidden = true, 4000);
+                    sMsg.style.display = 'flex';
+                    setTimeout(() => {
+                        sMsg.style.display = 'none';
+                        sMsg.textContent = '';
+                    }, 4000);
                     switchTab('view');
                 }
             });

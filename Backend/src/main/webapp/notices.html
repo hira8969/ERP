@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/student-form.css?v=4">
+    <link rel="stylesheet" href="assets/css/student-form.css?v=5">
 </head>
 <body>
 
@@ -58,8 +58,8 @@
         </div>
     </div>
 
-    <p id="error-message" class="alert error" hidden></p>
-    <p id="success-message" class="alert success" hidden></p>
+    <p id="error-message" class="alert error" style="display: none;"></p>
+    <p id="success-message" class="alert success" style="display: none;"></p>
 
     <!-- Filter Buttons -->
     <div style="display: flex; gap: 8px; margin-bottom: 20px;">
@@ -222,8 +222,11 @@
             closeNoticeModal();
             const sMsg = document.getElementById('success-message');
             sMsg.textContent = 'Notice published successfully to campus board!';
-            sMsg.hidden = false;
-            setTimeout(() => sMsg.hidden = true, 3000);
+            sMsg.style.display = 'flex';
+            setTimeout(() => {
+                sMsg.style.display = 'none';
+                sMsg.textContent = '';
+            }, 3000);
             loadNotices();
         })
         .catch(() => {

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/student-form.css?v=4">
+    <link rel="stylesheet" href="assets/css/student-form.css?v=5">
 </head>
 <body>
 
@@ -59,8 +59,8 @@
         </div>
     </div>
 
-    <p id="error-message" class="alert error" hidden></p>
-    <p id="success-message" class="alert success" hidden></p>
+    <p id="error-message" class="alert error" style="display: none;"></p>
+    <p id="success-message" class="alert success" style="display: none;"></p>
 
     <!-- Student Enrolled Course Faculty Alert -->
     <div id="studentCourseBanner" style="display: none; margin-bottom: 20px; padding: 14px 18px; background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
@@ -261,8 +261,11 @@
             .then(data => {
                 const s = document.getElementById('success-message');
                 s.textContent = 'Faculty member removed successfully.';
-                s.hidden = false;
-                setTimeout(() => s.hidden = true, 3000);
+                s.style.display = 'flex';
+                setTimeout(() => {
+                    s.style.display = 'none';
+                    s.textContent = '';
+                }, 3000);
                 loadFaculty();
             })
             .catch(() => {
