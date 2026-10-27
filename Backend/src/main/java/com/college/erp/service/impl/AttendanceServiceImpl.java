@@ -25,24 +25,49 @@ public class AttendanceServiceImpl implements AttendanceService {
         if (attendance == null) {
             throw new IllegalArgumentException("Attendance details cannot be empty");
         }
+        LocalDate today = LocalDate.now();
         if (attendance.getAttendanceDate() == null) {
-            attendance.setAttendanceDate(LocalDate.now());
+            attendance.setAttendanceDate(today);
+        } else if (!attendance.getAttendanceDate().equals(today)) {
+            throw new IllegalArgumentException("Attendance can only be marked for today (" + today + "). Past and future dates are strictly prohibited.");
         }
         if (attendance.getStatus() == null || attendance.getStatus().trim().isEmpty()) {
             attendance.setStatus("PRESENT");
         }
-        attendanceDAO.saveAttendance(attendance);
+        attendanceDAO.saveOrUpdateAttendance(attendance);
     }
 
     @Override
     public void markBatchAttendance(List<Attendance> list) {
         if (list == null || list.isEmpty()) return;
+        LocalDate today = LocalDate.now();
         for (Attendance att : list) {
             if (att.getAttendanceDate() == null) {
-                att.setAttendanceDate(LocalDate.now());
+                att.setAttendanceDate(today);
+            } else if (!att.getAttendanceDate().equals(today)) {
+                throw new IllegalArgumentException("Attendance can only be marked for today (" + today + "). Past and future dates are strictly prohibited.");
             }
+            if (att.getStatus() == null || att.getStatus().trim().isEmpty()) {
+                att.setStatus("PRESENT");
+            }
+            attendanceDAO.saveOrUpdateAttendance(att);
         }
-        attendanceDAO.saveBatchAttendance(list);
+    }
+
+    @Override
+    public void updateAttendance(Attendance attendance) {
+        if (attendance == null || attendance.getAttendanceId() <= 0) {
+            throw new IllegalArgumentException("Invalid attendance record specified for update");
+        }
+        if (attendance.getStatus() == null || attendance.getStatus().trim().isEmpty()) {
+            attendance.setStatus("PRESENT");
+        }
+        attendanceDAO.updateAttendance(attendance);
+    }
+
+    @Override
+    public Attendance getAttendanceById(int attendanceId) {
+        return attendanceDAO.getAttendanceById(attendanceId);
     }
 
     @Override

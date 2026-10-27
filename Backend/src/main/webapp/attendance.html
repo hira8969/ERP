@@ -51,6 +51,61 @@
             justify-content: center;
             border: 1px solid var(--primary-border);
         }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: 1050;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-backdrop.open {
+            display: flex;
+        }
+        .modal-card {
+            background: #ffffff;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            width: 100%;
+            max-width: 480px;
+            border: 1px solid var(--border-color);
+            animation: modalSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            overflow: hidden;
+        }
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .badge-warning {
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+        .status-option-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 13px;
+        }
+        .status-option-label:hover {
+            border-color: var(--primary);
+            background: var(--bg-subtle);
+        }
     </style>
 </head>
 <body>
@@ -191,10 +246,11 @@
                         <th>Faculty In-Charge</th>
                         <th style="width: 130px;">Presence Status</th>
                         <th>Session Remarks</th>
+                        <th style="width: 110px; text-align: center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="attRows">
-                    <tr><td colspan="5" style="padding: 32px; text-align: center; color: var(--text-muted);">Loading attendance logs...</td></tr>
+                    <tr><td colspan="6" style="padding: 32px; text-align: center; color: var(--text-muted);">Loading attendance logs...</td></tr>
                 </tbody>
             </table>
         </section>
@@ -203,20 +259,29 @@
     <!-- SECTION 2: Mark Class Attendance (Faculty & Admin) -->
     <div id="markAttendanceSection" style="display: none;">
         <section class="panel">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 18px;">
-                <span style="font-size: 20px;">📝</span>
-                <h3 style="margin: 0; font-size: 18px;">Mark Daily Class Attendance</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 20px;">📝</span>
+                    <h3 style="margin: 0; font-size: 18px;">Mark Daily Class Attendance</h3>
+                </div>
+                <div id="rosterStatusNotice">
+                    <span class="badge badge-primary">🔒 Present Date Only</span>
+                </div>
             </div>
             <div class="form-grid">
                 <label>
                     Select Subject *
-                    <select id="markSubjectSelect" required>
+                    <select id="markSubjectSelect" required onchange="handleSubjectSelection(this.value)">
                         <option value="">Loading curriculum subjects...</option>
                     </select>
                 </label>
                 <label>
-                    Attendance Date *
-                    <input type="date" id="markDate" required>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-weight: 700;">Attendance Date *</span>
+                        <span class="badge badge-primary" style="font-size: 11px; padding: 2px 7px;">🔒 Today's Date Locked</span>
+                    </div>
+                    <input type="date" id="markDate" required readonly style="background-color: var(--bg-subtle, #f8fafc); cursor: not-allowed; font-weight: 700; font-family: 'JetBrains Mono', monospace;">
+                    <small class="muted" style="display: block; font-size: 11.5px; margin-top: 4px;">Attendance can strictly only be recorded for today's active session. Past and future dates are not allowed.</small>
                 </label>
             </div>
         </section>
@@ -262,6 +327,50 @@
         </section>
     </div>
 
+    <!-- Update Single Attendance Record Modal -->
+    <div id="updateAttendanceModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div style="padding: 18px 24px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; background: var(--bg-subtle);">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 18px;">✏️</span>
+                    <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--text-main);">Update Attendance Log</h3>
+                </div>
+                <button type="button" onclick="closeUpdateModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted); line-height: 1;" aria-label="Close modal">&times;</button>
+            </div>
+            <form id="updateAttendanceForm" onsubmit="handleUpdateAttendance(event)" style="padding: 22px 24px;">
+                <input type="hidden" id="editAttendanceId">
+                <div style="margin-bottom: 16px; background: #f8fafc; border: 1px solid var(--border-color); padding: 12px 16px; border-radius: var(--radius-md);">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Student Session Information</div>
+                    <div id="editSessionInfo" style="font-weight: 600; color: var(--text-main); font-size: 13.5px; margin-top: 4px;"></div>
+                </div>
+                <div style="margin-bottom: 18px;">
+                    <label style="font-size: 12.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; display: block;">Attendance Status *</label>
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <label class="status-option-label" style="color: #059669; font-weight: 700;">
+                            <input type="radio" name="editStatus" value="PRESENT" id="editStatusPresent" required>
+                            <span>&#10003; Present</span>
+                        </label>
+                        <label class="status-option-label" style="color: #dc2626; font-weight: 700;">
+                            <input type="radio" name="editStatus" value="ABSENT" id="editStatusAbsent" required>
+                            <span>&#10007; Absent</span>
+                        </label>
+                    </div>
+                </div>
+                <div style="margin-bottom: 22px;">
+                    <label style="font-size: 12.5px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; display: block;">Session Remarks / Justification</label>
+                    <input type="text" id="editRemarks" placeholder="E.g. Verified classroom presence, excused sick leave, etc." style="width: 100%; padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); font-size: 13px;">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                    <button type="button" class="button button-outline button-small" onclick="closeUpdateModal()">Cancel</button>
+                    <button type="submit" class="button button-primary button-small" id="btnSaveAttendanceUpdate">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span>Update Attendance</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Enterprise Floating Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 </main>
@@ -275,9 +384,26 @@
     let studentList = [];
     let subjectList = [];
     let facultyList = [];
+    let currentSelectedStudentId = null;
+    let currentRosterAttendanceMap = {};
 
-    // Set today's date
-    document.getElementById('markDate').valueAsDate = new Date();
+    function getTodayDateStr() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    const todayDateStr = getTodayDateStr();
+    const markDateEl = document.getElementById('markDate');
+    if (markDateEl) {
+        markDateEl.value = todayDateStr;
+        markDateEl.min = todayDateStr;
+        markDateEl.max = todayDateStr;
+        markDateEl.readOnly = true;
+        markDateEl.addEventListener('keydown', e => e.preventDefault());
+    }
 
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -317,6 +443,9 @@
         const selSub = document.getElementById('markSubjectSelect');
         if (selSub) {
             selSub.innerHTML = subjectList.map(s => `<option value="${s.subjectId}">${s.subjectCode} - ${s.subjectName}</option>`).join('');
+            if (subjectList.length > 0) {
+                handleSubjectSelection(subjectList[0].subjectId);
+            }
         }
 
         // Check auth and load students
@@ -351,6 +480,10 @@
                 sel.innerHTML = students.map(s => `<option value="${s.studentId}">${s.rollNumber || s.admissionNumber} - ${s.firstName} ${s.lastName || ''}</option>`).join('');
                 loadStudentAttendance(students[0].studentId);
                 renderStudentRoster(students);
+                const firstSub = document.getElementById('markSubjectSelect');
+                if (firstSub && firstSub.value) {
+                    handleSubjectSelection(firstSub.value);
+                }
             } else {
                 sel.innerHTML = '<option value="">No students found</option>';
             }
@@ -375,6 +508,7 @@
 
     function loadStudentAttendance(studentId) {
         if (!studentId) return;
+        currentSelectedStudentId = studentId;
         fetch(root + 'api/attendance?studentId=' + studentId)
             .then(res => res.json())
             .then(data => {
@@ -404,23 +538,30 @@
                 document.getElementById('logCountBadge').textContent = `${records.length} Sessions Logged`;
 
                 if (records.length === 0) {
-                    rows.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 36px 20px; color: var(--text-muted);">No attendance records logged for this student yet.</td></tr>';
+                    rows.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 36px 20px; color: var(--text-muted);">No attendance records logged for this student yet.</td></tr>';
                     return;
                 }
+
+                const canEdit = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'FACULTY');
 
                 rows.innerHTML = records.map(r => {
                     const subj = subjectList.find(s => String(s.subjectId) === String(r.subjectId));
                     const fac = facultyList.find(f => String(f.facultyId) === String(r.facultyId));
                     const facInitials = fac ? `${fac.firstName ? fac.firstName[0] : ''}${fac.lastName ? fac.lastName[0] : ''}` : 'FC';
+                    const subjName = subj ? subj.subjectName : 'Subject #' + r.subjectId;
+                    const safeDate = escapeHtml(r.attendanceDate);
+                    const safeSubj = escapeHtml(subjName);
+                    const safeRemarks = escapeHtml(r.remarks || '');
+                    const safeStatus = escapeHtml(r.status);
 
                     return `
                         <tr>
                             <td>
-                                <strong style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-main);">${escapeHtml(r.attendanceDate)}</strong>
+                                <strong style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-main);">${safeDate}</strong>
                             </td>
                             <td>
                                 <div style="display: flex; flex-direction: column;">
-                                    <strong style="color: var(--text-main); font-weight: 600; font-size: 13.5px;">${escapeHtml(subj ? subj.subjectName : 'Subject #' + r.subjectId)}</strong>
+                                    <strong style="color: var(--text-main); font-weight: 600; font-size: 13.5px;">${safeSubj}</strong>
                                     <span class="muted" style="font-size: 12px; margin-top: 2px;">${subj ? escapeHtml(subj.subjectCode) + ' &bull; Curriculum Track' : 'Academic Class'}</span>
                                 </div>
                             </td>
@@ -435,13 +576,21 @@
                                     ${r.status === 'PRESENT' ? '&#10003; PRESENT' : '&#10007; ABSENT'}
                                 </span>
                             </td>
-                            <td style="color: var(--text-muted); font-size: 13px;">${escapeHtml(r.remarks || '—')}</td>
+                            <td style="color: var(--text-muted); font-size: 13px;">${safeRemarks || '—'}</td>
+                            <td style="text-align: center;">
+                                ${canEdit ? `
+                                    <button type="button" class="button button-outline button-small" style="padding: 4px 10px; font-size: 12px; gap: 4px;" onclick="openUpdateModal(${r.attendanceId}, '${safeStatus}', '${safeRemarks}', '${safeDate}', '${safeSubj}')">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                        <span>Update</span>
+                                    </button>
+                                ` : `<span style="color: var(--text-muted); font-size: 12px;">Verified</span>`}
+                            </td>
                         </tr>
                     `;
                 }).join('');
             })
             .catch(() => {
-                document.getElementById('attRows').innerHTML = '<tr><td colspan="5" style="padding: 24px; text-align: center; color: var(--error);">Unable to load attendance records.</td></tr>';
+                document.getElementById('attRows').innerHTML = '<tr><td colspan="6" style="padding: 24px; text-align: center; color: var(--error);">Unable to load attendance records.</td></tr>';
             });
     }
 
@@ -468,6 +617,67 @@
         `).join('');
     }
 
+    function handleSubjectSelection(subjectId) {
+        if (!subjectId) return;
+        const today = getTodayDateStr();
+        fetch(root + `api/attendance?subjectId=${subjectId}&date=${today}`)
+            .then(res => res.json())
+            .then(records => {
+                currentRosterAttendanceMap = {};
+                const list = Array.isArray(records) ? records : [];
+                list.forEach(r => {
+                    currentRosterAttendanceMap[r.studentId] = r;
+                });
+
+                const count = list.length;
+                const statusNotice = document.getElementById('rosterStatusNotice');
+                const submitBtn = document.getElementById('btnSubmitAttendance');
+
+                if (count > 0) {
+                    if (statusNotice) {
+                        statusNotice.innerHTML = `<span class="badge badge-warning" style="display: inline-flex; align-items: center; gap: 5px;">⚠️ Already recorded for ${count} students today (${today}) &bull; Submitting will UPDATE</span>`;
+                    }
+                    if (submitBtn) {
+                        submitBtn.innerHTML = `
+                            <span>Update Class Attendance</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        `;
+                    }
+                } else {
+                    if (statusNotice) {
+                        statusNotice.innerHTML = `<span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 5px;">✓ New Session for Today (${today})</span>`;
+                    }
+                    if (submitBtn) {
+                        submitBtn.innerHTML = `
+                            <span>Submit Class Attendance</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        `;
+                    }
+                }
+
+                // Populate roster with existing marks
+                studentList.forEach(s => {
+                    const existing = currentRosterAttendanceMap[s.studentId];
+                    const presRad = document.querySelector(`input[name="status_${s.studentId}"][value="PRESENT"]`);
+                    const absRad = document.querySelector(`input[name="status_${s.studentId}"][value="ABSENT"]`);
+                    const remInput = document.getElementById('remark_' + s.studentId);
+
+                    if (existing) {
+                        if (existing.status === 'ABSENT' && absRad) {
+                            absRad.checked = true;
+                        } else if (presRad) {
+                            presRad.checked = true;
+                        }
+                        if (remInput) remInput.value = existing.remarks || '';
+                    } else {
+                        if (presRad) presRad.checked = true;
+                        if (remInput) remInput.value = '';
+                    }
+                });
+            })
+            .catch(() => {});
+    }
+
     function setAllAttendance(val) {
         studentList.forEach(s => {
             const rad = document.querySelector(`input[name="status_${s.studentId}"][value="${val}"]`);
@@ -478,15 +688,25 @@
 
     function submitAttendance() {
         const subjectId = document.getElementById('markSubjectSelect').value;
-        const date = document.getElementById('markDate').value;
-        if (!subjectId || !date) {
-            showToast('Please select both a subject and class date.', 'error');
+        const todayStr = getTodayDateStr();
+        const dateInput = document.getElementById('markDate');
+        const date = dateInput ? dateInput.value : todayStr;
+
+        if (date !== todayStr) {
+            showToast(`Attendance can strictly only be recorded for today (${todayStr}). Past and future dates are prohibited.`, 'error');
+            if (dateInput) dateInput.value = todayStr;
             return;
         }
 
+        if (!subjectId) {
+            showToast('Please select a subject to mark class attendance.', 'error');
+            return;
+        }
+
+        const isUpdating = Object.keys(currentRosterAttendanceMap).length > 0;
         const btn = document.getElementById('btnSubmitAttendance');
         btn.disabled = true;
-        btn.textContent = 'Submitting...';
+        btn.textContent = isUpdating ? 'Updating...' : 'Submitting...';
 
         let completed = 0;
         let errors = 0;
@@ -505,7 +725,7 @@
                     subjectId: subjectId,
                     facultyId: 1,
                     status: status,
-                    attendanceDate: date,
+                    attendanceDate: todayStr,
                     remarks: remarks
                 })
             })
@@ -515,11 +735,88 @@
             .finally(() => {
                 if (completed + errors === studentList.length) {
                     btn.disabled = false;
-                    btn.textContent = 'Submit Class Attendance';
-                    showToast(`Attendance recorded successfully for ${completed} students!`, 'success');
+                    btn.innerHTML = `
+                        <span>${isUpdating ? 'Update' : 'Submit'} Class Attendance</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    `;
+                    if (errors === 0) {
+                        showToast(`Attendance ${isUpdating ? 'updated' : 'recorded'} successfully for ${completed} students!`, 'success');
+                    } else {
+                        showToast(`Recorded ${completed} attendance logs (${errors} issues).`, 'info');
+                    }
+                    handleSubjectSelection(subjectId);
                     switchTab('view');
                 }
             });
+        });
+    }
+
+    // Modal Operations for Updating Existing Attendance Record
+    function openUpdateModal(attendanceId, status, remarks, date, subjectName) {
+        document.getElementById('editAttendanceId').value = attendanceId;
+        const curStudent = studentList.find(s => String(s.studentId) === String(currentSelectedStudentId));
+        const studentName = curStudent ? `${curStudent.firstName} ${curStudent.lastName || ''} (${curStudent.rollNumber || curStudent.admissionNumber})` : 'Student';
+
+        document.getElementById('editSessionInfo').innerHTML = `
+            <div><strong>Student:</strong> ${escapeHtml(studentName)}</div>
+            <div style="margin-top: 4px;"><strong>Subject:</strong> ${escapeHtml(subjectName)} &bull; <strong>Date:</strong> ${escapeHtml(date)}</div>
+        `;
+
+        if (status === 'ABSENT') {
+            document.getElementById('editStatusAbsent').checked = true;
+        } else {
+            document.getElementById('editStatusPresent').checked = true;
+        }
+
+        document.getElementById('editRemarks').value = remarks || '';
+        document.getElementById('updateAttendanceModal').classList.add('open');
+    }
+
+    function closeUpdateModal() {
+        document.getElementById('updateAttendanceModal').classList.remove('open');
+    }
+
+    function handleUpdateAttendance(event) {
+        event.preventDefault();
+        const attendanceId = document.getElementById('editAttendanceId').value;
+        const checkedStatus = document.querySelector('input[name="editStatus"]:checked');
+        const status = checkedStatus ? checkedStatus.value : 'PRESENT';
+        const remarks = document.getElementById('editRemarks').value;
+
+        const btn = document.getElementById('btnSaveAttendanceUpdate');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        fetch(root + 'api/attendance', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                attendanceId: attendanceId,
+                status: status,
+                remarks: remarks
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                showToast(data.error, 'error');
+            } else {
+                showToast('Attendance record updated successfully!', 'success');
+                closeUpdateModal();
+                if (currentSelectedStudentId) {
+                    loadStudentAttendance(currentSelectedStudentId);
+                }
+            }
+        })
+        .catch(err => {
+            showToast('Failed to update attendance record', 'error');
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = `
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Update Attendance</span>
+            `;
         });
     }
 
@@ -536,7 +833,20 @@
             document.getElementById('markAttendanceSection').style.display = 'block';
             document.getElementById('tabViewBtn').className = 'button button-outline button-small';
             document.getElementById('tabMarkBtn').className = 'button button-primary button-small';
+            const selSub = document.getElementById('markSubjectSelect');
+            if (selSub && selSub.value) handleSubjectSelection(selSub.value);
         }
+    }
+
+    // Close modal on Escape key or clicking backdrop
+    window.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeUpdateModal();
+    });
+    const modalBackdrop = document.getElementById('updateAttendanceModal');
+    if (modalBackdrop) {
+        modalBackdrop.addEventListener('click', e => {
+            if (e.target === modalBackdrop) closeUpdateModal();
+        });
     }
 </script>
 </body>

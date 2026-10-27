@@ -136,6 +136,86 @@ public class AttendanceDAOImpl implements AttendanceDAO {
         return list;
     }
 
+    @Override
+    public void updateAttendance(Attendance a) {
+        String sql = "UPDATE attendance SET status = ?, remarks = ?, faculty_id = ? WHERE attendance_id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, a.getStatus() != null ? a.getStatus() : "PRESENT");
+            stmt.setString(2, a.getRemarks());
+            stmt.setInt(3, a.getFacultyId());
+            stmt.setInt(4, a.getAttendanceId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating attendance: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Attendance getAttendanceById(int attendanceId) {
+        String sql = "SELECT " + SELECT_COLUMNS + " FROM attendance WHERE attendance_id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, attendanceId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapAttendance(rs);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching attendance by id: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
+    public Attendance getAttendanceByStudentSubjectAndDate(int studentId, int subjectId, LocalDate date) {
+        String sql = "SELECT " + SELECT_COLUMNS + " FROM attendance WHERE student_id = ? AND subject_id = ? AND attendance_date = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, studentId);
+            stmt.setInt(2, subjectId);
+            stmt.setDate(3, Date.valueOf(date));
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapAttendance(rs);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching attendance by student, subject and date: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
+    public void saveOrUpdateAttendance(Attendance a) {
+        if (a.getAttendanceId() > 0) {
+            updateAttendance(a);
+            return;
+        }
+        String sql = "INSERT INTO attendance (student_id, subject_id, faculty_id, attendance_date, status, remarks) "
+                   + "VALUES (?, ?, ?, ?, ?, ?) "
+                   + "ON DUPLICATE KEY UPDATE status = VALUES(status), remarks = VALUES(remarks), faculty_id = VALUES(faculty_id)";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, a.getStudentId());
+            stmt.setInt(2, a.getSubjectId());
+            stmt.setInt(3, a.getFacultyId());
+            stmt.setDate(4, a.getAttendanceDate() != null ? Date.valueOf(a.getAttendanceDate()) : Date.valueOf(LocalDate.now()));
+            stmt.setString(5, a.getStatus() != null ? a.getStatus() : "PRESENT");
+            stmt.setString(6, a.getRemarks());
+            stmt.executeUpdate();
+
+            try (ResultSet keys = stmt.getGeneratedKeys()) {
+                if (keys.next()) {
+                    a.setAttendanceId(keys.getInt(1));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error saving or updating attendance: " + e.getMessage(), e);
+        }
+    }
+
     private Attendance mapAttendance(ResultSet rs) throws SQLException {
         Attendance a = new Attendance();
         a.setAttendanceId(rs.getInt("attendance_id"));

@@ -17,4 +17,12 @@ public interface AttendanceDAO {
     List<Attendance> getAttendanceByStudentAndSubject(int studentId, int subjectId);
 
     List<Attendance> getAllAttendance();
+
+    default void updateAttendance(Attendance attendance) {}
+
+    default Attendance getAttendanceById(int attendanceId) { return null; }
+
+    default Attendance getAttendanceByStudentSubjectAndDate(int studentId, int subjectId, LocalDate date) { return null; }
+
+    default void saveOrUpdateAttendance(Attendance attendance) { saveAttendance(attendance); }
 }

@@ -10,6 +10,10 @@ public interface AttendanceService {
 
     void markBatchAttendance(List<Attendance> list);
 
+    void updateAttendance(Attendance attendance);
+
+    Attendance getAttendanceById(int attendanceId);
+
     List<Attendance> getAttendanceByStudent(int studentId);
 
     List<Attendance> getAttendanceBySubjectAndDate(int subjectId, LocalDate date);

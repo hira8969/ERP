@@ -163,9 +163,9 @@ public class AuthFilter implements Filter {
             if (path.startsWith("/api/dashboard/stats")) {
                 return true;
             }
-            // Faculty can view and mark attendance
+            // Faculty can view, mark, and update attendance
             if (path.startsWith("/api/attendance")) {
-                return "GET".equalsIgnoreCase(method) || "POST".equalsIgnoreCase(method);
+                return "GET".equalsIgnoreCase(method) || "POST".equalsIgnoreCase(method) || "PUT".equalsIgnoreCase(method);
             }
             // Faculty can view and enter results/grades
             if (path.startsWith("/api/results")) {

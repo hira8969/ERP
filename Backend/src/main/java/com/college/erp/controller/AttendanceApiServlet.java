@@ -27,9 +27,22 @@ public class AttendanceApiServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
         try {
+            String attendanceIdParam = request.getParameter("attendanceId");
             String studentIdParam = request.getParameter("studentId");
             String subjectIdParam = request.getParameter("subjectId");
             String dateParam = request.getParameter("date");
+
+            if (attendanceIdParam != null && !attendanceIdParam.isBlank()) {
+                int attId = Integer.parseInt(attendanceIdParam.trim());
+                Attendance att = attendanceService.getAttendanceById(attId);
+                if (att != null) {
+                    response.getWriter().write(toJson(att));
+                } else {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    response.getWriter().write("{\"error\":\"Attendance record not found\"}");
+                }
+                return;
+            }
 
             if (studentIdParam != null && !studentIdParam.isBlank()) {
                 int studentId = Integer.parseInt(studentIdParam.trim());
@@ -75,6 +88,30 @@ public class AttendanceApiServlet extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         try {
             Map<String, String> data = extractData(request);
+
+            if (data.containsKey("attendanceId") && !data.get("attendanceId").isBlank()) {
+                int attendanceId = Integer.parseInt(data.get("attendanceId"));
+                Attendance existing = attendanceService.getAttendanceById(attendanceId);
+                if (existing == null) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    response.getWriter().write("{\"error\":\"Attendance record not found\"}");
+                    return;
+                }
+                if (data.containsKey("status") && !data.get("status").isBlank()) {
+                    existing.setStatus(data.get("status").toUpperCase());
+                }
+                if (data.containsKey("remarks")) {
+                    existing.setRemarks(data.get("remarks"));
+                }
+                if (data.containsKey("facultyId") && !data.get("facultyId").isBlank()) {
+                    existing.setFacultyId(Integer.parseInt(data.get("facultyId")));
+                }
+                attendanceService.updateAttendance(existing);
+                com.college.erp.util.ERPLog.success("ATTENDANCE", "Updated attendance record #" + attendanceId + " -> [" + existing.getStatus() + "]");
+                response.getWriter().write("{\"status\":\"success\",\"message\":\"Attendance record updated successfully\"}");
+                return;
+            }
+
             Attendance attendance = new Attendance();
             attendance.setStudentId(Integer.parseInt(data.get("studentId")));
             attendance.setSubjectId(Integer.parseInt(data.get("subjectId")));
@@ -90,7 +127,43 @@ public class AttendanceApiServlet extends HttpServlet {
             attendanceService.markAttendance(attendance);
             com.college.erp.util.ERPLog.success("ATTENDANCE", "Marked attendance: Student #" + attendance.getStudentId() + ", Subject #" + attendance.getSubjectId() + " -> [" + attendance.getStatus() + "]");
             response.setStatus(HttpServletResponse.SC_CREATED);
-            response.getWriter().write("{\"status\":\"success\",\"message\":\"Attendance marked successfully\"}");
+            response.getWriter().write("{\"status\":\"success\",\"message\":\"Attendance recorded successfully\"}");
+        } catch (RuntimeException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\":\"" + escapeJson(ex.getMessage()) + "\"}");
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        try {
+            Map<String, String> data = extractData(request);
+            if (!data.containsKey("attendanceId") || data.get("attendanceId").isBlank()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\":\"Missing attendanceId for update\"}");
+                return;
+            }
+            int attendanceId = Integer.parseInt(data.get("attendanceId"));
+            Attendance existing = attendanceService.getAttendanceById(attendanceId);
+            if (existing == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write("{\"error\":\"Attendance record not found\"}");
+                return;
+            }
+            if (data.containsKey("status") && !data.get("status").isBlank()) {
+                existing.setStatus(data.get("status").toUpperCase());
+            }
+            if (data.containsKey("remarks")) {
+                existing.setRemarks(data.get("remarks"));
+            }
+            if (data.containsKey("facultyId") && !data.get("facultyId").isBlank()) {
+                existing.setFacultyId(Integer.parseInt(data.get("facultyId")));
+            }
+            attendanceService.updateAttendance(existing);
+            com.college.erp.util.ERPLog.success("ATTENDANCE", "Updated attendance record #" + attendanceId + " -> [" + existing.getStatus() + "]");
+            response.getWriter().write("{\"status\":\"success\",\"message\":\"Attendance updated successfully\"}");
         } catch (RuntimeException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"error\":\"" + escapeJson(ex.getMessage()) + "\"}");

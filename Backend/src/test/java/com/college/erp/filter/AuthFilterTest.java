@@ -59,6 +59,7 @@ public class AuthFilterTest {
 
         // Faculty API permissions
         assertTrue(authFilter.hasAccess(facultyUser, "/api/attendance", "POST")); // Mark attendance
+        assertTrue(authFilter.hasAccess(facultyUser, "/api/attendance", "PUT"));  // Update attendance
         assertTrue(authFilter.hasAccess(facultyUser, "/api/results", "POST"));    // Record marks
         assertTrue(authFilter.hasAccess(facultyUser, "/api/notices", "POST"));    // Post announcement
         assertTrue(authFilter.hasAccess(facultyUser, "/api/students", "GET"));

@@ -135,7 +135,8 @@ CREATE TABLE IF NOT EXISTS attendance (
     status VARCHAR(20) NOT NULL, -- PRESENT, ABSENT, LATE
     remarks VARCHAR(255) NULL,
     CONSTRAINT fk_att_student FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
-    CONSTRAINT fk_att_subject FOREIGN KEY (subject_id) REFERENCES subjects(subject_id)
+    CONSTRAINT fk_att_subject FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
+    CONSTRAINT uq_student_subject_date UNIQUE (student_id, subject_id, attendance_date)
 );
 
 -- 9. Examinations Table

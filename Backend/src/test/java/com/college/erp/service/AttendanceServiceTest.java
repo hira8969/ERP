@@ -82,4 +82,63 @@ public class AttendanceServiceTest {
         assertEquals(60.0, summary.getPercentage(), 0.01);
         assertFalse(summary.isEligibleForExam());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRejectPastDate() {
+        AttendanceDAO mockDao = new AttendanceDAO() {
+            @Override public void saveAttendance(Attendance attendance) {}
+            @Override public void saveBatchAttendance(List<Attendance> list) {}
+            @Override public List<Attendance> getAttendanceByStudent(int studentId) { return List.of(); }
+            @Override public List<Attendance> getAttendanceBySubjectAndDate(int subjectId, LocalDate date) { return List.of(); }
+            @Override public List<Attendance> getAttendanceByStudentAndSubject(int studentId, int subjectId) { return List.of(); }
+            @Override public List<Attendance> getAllAttendance() { return List.of(); }
+        };
+        AttendanceService service = new AttendanceServiceImpl(mockDao);
+        Attendance att = new Attendance();
+        att.setStudentId(1);
+        att.setSubjectId(1);
+        att.setAttendanceDate(LocalDate.now().minusDays(1)); // Past date
+        service.markAttendance(att);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRejectFutureDate() {
+        AttendanceDAO mockDao = new AttendanceDAO() {
+            @Override public void saveAttendance(Attendance attendance) {}
+            @Override public void saveBatchAttendance(List<Attendance> list) {}
+            @Override public List<Attendance> getAttendanceByStudent(int studentId) { return List.of(); }
+            @Override public List<Attendance> getAttendanceBySubjectAndDate(int subjectId, LocalDate date) { return List.of(); }
+            @Override public List<Attendance> getAttendanceByStudentAndSubject(int studentId, int subjectId) { return List.of(); }
+            @Override public List<Attendance> getAllAttendance() { return List.of(); }
+        };
+        AttendanceService service = new AttendanceServiceImpl(mockDao);
+        Attendance att = new Attendance();
+        att.setStudentId(1);
+        att.setSubjectId(1);
+        att.setAttendanceDate(LocalDate.now().plusDays(2)); // Future date
+        service.markAttendance(att);
+    }
+
+    @Test
+    public void testAllowTodayDateAndSaveOrUpdate() {
+        final boolean[] called = {false};
+        AttendanceDAO mockDao = new AttendanceDAO() {
+            @Override public void saveAttendance(Attendance attendance) {}
+            @Override public void saveBatchAttendance(List<Attendance> list) {}
+            @Override public List<Attendance> getAttendanceByStudent(int studentId) { return List.of(); }
+            @Override public List<Attendance> getAttendanceBySubjectAndDate(int subjectId, LocalDate date) { return List.of(); }
+            @Override public List<Attendance> getAttendanceByStudentAndSubject(int studentId, int subjectId) { return List.of(); }
+            @Override public List<Attendance> getAllAttendance() { return List.of(); }
+            @Override public void saveOrUpdateAttendance(Attendance attendance) {
+                called[0] = true;
+            }
+        };
+        AttendanceService service = new AttendanceServiceImpl(mockDao);
+        Attendance att = new Attendance();
+        att.setStudentId(1);
+        att.setSubjectId(1);
+        att.setAttendanceDate(LocalDate.now()); // Today
+        service.markAttendance(att);
+        assertTrue(called[0]);
+    }
 }
