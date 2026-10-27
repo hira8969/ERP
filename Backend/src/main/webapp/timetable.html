@@ -6,8 +6,71 @@
     <title>Centurion University - Class Timetable &amp; Schedule</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/student-form.css?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/student-form.css?v=6">
+    <style>
+        .day-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        .day-Monday    { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
+        .day-Tuesday   { background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; }
+        .day-Wednesday { background: #f0fdf4; color: #047857; border: 1px solid #a7f3d0; }
+        .day-Thursday  { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+        .day-Friday    { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+        .day-Saturday  { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+
+        .time-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: var(--radius-xs);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .faculty-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .faculty-avatar-mini {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--primary-tint);
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--primary-border);
+        }
+
+        .room-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            padding: 3px 8px;
+            border-radius: var(--radius-xs);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
 
@@ -48,50 +111,117 @@
     </header>
 
 <main>
+    <!-- Topbar Header -->
     <div class="topbar" style="margin-top: 24px;">
         <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <span class="badge badge-primary">Semester 3 Schedule</span>
+                <span class="badge badge-success">&#9679; Room Allocations Confirmed</span>
+            </div>
             <h1 style="margin: 0;">Weekly Class Schedule &amp; Timetable</h1>
-            <p class="muted" style="margin: 4px 0 0 0;">View lecture hours, tutorial sessions, laboratory assignments, and room allocations</p>
+            <p class="muted" style="margin: 4px 0 0 0;">View lecture periods, laboratory slots, assigned professors, and hall allocations</p>
         </div>
         <div style="display: flex; gap: 10px;">
-            <button class="button button-primary button-small" id="btnAddSlotBtn" onclick="openSlotModal()">+ Add Schedule Slot</button>
+            <button class="button button-outline button-small" onclick="resetTimetableFilters()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                <span>Reset Filters</span>
+            </button>
+            <button class="button button-primary button-small" id="btnAddSlotBtn" onclick="openSlotModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>+ Add Schedule Slot</span>
+            </button>
         </div>
     </div>
 
     <p id="error-message" class="alert error" style="display: none;"></p>
     <p id="success-message" class="alert success" style="display: none;"></p>
 
-    <!-- Day Filter -->
-    <section class="panel filter-bar" style="margin-bottom: 20px;">
-        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-            <label style="font-weight: 700; font-size: 13.5px; margin: 0; color: var(--text-main);">Filter by Day:</label>
-            <select id="dayFilter" onchange="filterSchedule(this.value)" style="min-width: 220px;">
-                <option value="">All Days (Mon - Sat)</option>
-                <option value="Monday">Monday</option>
-                <option value="Tuesday">Tuesday</option>
-                <option value="Wednesday">Wednesday</option>
-                <option value="Thursday">Thursday</option>
-                <option value="Friday">Friday</option>
-                <option value="Saturday">Saturday</option>
-            </select>
+    <!-- KPI Metric Strip -->
+    <div class="metric-strip">
+        <div class="metric-chip">
+            <div class="metric-icon" style="background: #eef2ff; color: #4338ca;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 24px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif;" id="kpiTotalSlots">--</div>
+                <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Weekly Lectures</div>
+            </div>
+        </div>
+
+        <div class="metric-chip">
+            <div class="metric-icon" style="background: #f0fdf4; color: #059669;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 24px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif;" id="kpiFacultyCount">--</div>
+                <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Course Faculty</div>
+            </div>
+        </div>
+
+        <div class="metric-chip">
+            <div class="metric-icon" style="background: #f0f9ff; color: #0284c7;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 24px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif;" id="kpiRoomsCount">--</div>
+                <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Halls &amp; Labs</div>
+            </div>
+        </div>
+
+        <div class="metric-chip">
+            <div class="metric-icon" style="background: #fef3c7; color: #d97706;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 24px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif;">6 Days</div>
+                <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Mon - Sat Schedule</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day Selector Pills & Filter Toolbar -->
+    <section class="panel filter-bar" style="margin-bottom: 22px;">
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; flex: 1;">
+            <!-- Day Pill Switcher -->
+            <div class="filter-pills" id="dayPillContainer">
+                <button class="pill-btn active" data-day="" onclick="setDayFilter('')">All Days</button>
+                <button class="pill-btn" data-day="Monday" onclick="setDayFilter('Monday')">Monday</button>
+                <button class="pill-btn" data-day="Tuesday" onclick="setDayFilter('Tuesday')">Tuesday</button>
+                <button class="pill-btn" data-day="Wednesday" onclick="setDayFilter('Wednesday')">Wednesday</button>
+                <button class="pill-btn" data-day="Thursday" onclick="setDayFilter('Thursday')">Thursday</button>
+                <button class="pill-btn" data-day="Friday" onclick="setDayFilter('Friday')">Friday</button>
+                <button class="pill-btn" data-day="Saturday" onclick="setDayFilter('Saturday')">Saturday</button>
+            </div>
+
+            <!-- Live Search Box -->
+            <div class="search-box" style="max-width: 320px;">
+                <span class="search-box-icon">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </span>
+                <input type="text" id="timetableSearch" placeholder="Search subject, faculty or room..." oninput="handleTimetableSearch(this.value)">
+            </div>
+        </div>
+
+        <div>
+            <span class="badge badge-primary" id="scheduleCountBadge">0 Lectures</span>
         </div>
     </section>
 
     <!-- Timetable Grid Table -->
     <section class="panel" style="overflow-x: auto; padding: 0;">
-        <table>
+        <table style="border: none; border-radius: var(--radius-lg); box-shadow: none;">
             <thead>
                 <tr>
-                    <th>Day</th>
-                    <th>Time Slot</th>
-                    <th>Subject ID / Title</th>
-                    <th>Faculty In-Charge</th>
-                    <th>Classroom / Lab</th>
-                    <th>Actions</th>
+                    <th style="width: 130px;">Day</th>
+                    <th style="width: 170px;">Time Period</th>
+                    <th>Subject &amp; Curriculum Track</th>
+                    <th>Assigned Faculty / Instructor</th>
+                    <th style="width: 150px;">Classroom / Lab</th>
+                    <th style="width: 120px; text-align: center;">Actions</th>
                 </tr>
             </thead>
             <tbody id="timetableRows">
-                <tr><td colspan="6" style="padding: 28px; text-align: center; color: var(--text-muted);">Loading schedule...</td></tr>
+                <tr><td colspan="6" style="padding: 32px; text-align: center; color: var(--text-muted);">Loading timetable schedule...</td></tr>
             </tbody>
         </table>
     </section>
@@ -99,9 +229,12 @@
     <!-- Modal for Adding Schedule Slot -->
     <div class="modal-overlay" id="slotModal" style="display: none;">
         <div class="modal-content">
-            <div class="topbar" style="margin-bottom: 16px;">
-                <h3 style="margin: 0; font-size: 19px;">Add Class Schedule Slot</h3>
-                <button class="link-button" onclick="closeSlotModal()">&times; Close</button>
+            <div class="topbar" style="margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 20px;">📅</span>
+                    <h3 style="margin: 0; font-size: 19px;">Add Class Schedule Slot</h3>
+                </div>
+                <button class="link-button" onclick="closeSlotModal()" style="font-size: 16px; text-decoration: none;">&times; Close</button>
             </div>
             <form id="slotForm" onsubmit="submitSlot(event)">
                 <div class="form-grid single-col">
@@ -146,6 +279,9 @@
             </form>
         </div>
     </div>
+
+    <!-- Enterprise Floating Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 </main>
 
 <script>
@@ -157,8 +293,35 @@
     let subjectList = [];
     let facultyList = [];
     let currentUser = null;
+    let selectedDayFilter = '';
+    let searchQuery = '';
 
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    // Toast Notification System
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = `toast-item ${type}`;
+        
+        let iconSvg = '';
+        if (type === 'success') {
+            iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+        } else if (type === 'error') {
+            iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+        } else {
+            iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+        }
+
+        toast.innerHTML = `<span class="toast-icon">${iconSvg}</span><span>${escapeHtml(message)}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'toastSlideOut 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+            setTimeout(() => toast.remove(), 250);
+        }, 3200);
+    }
 
     // Check auth
     fetch(root + 'api/auth/me').then(r => r.json()).then(data => {
@@ -181,55 +344,133 @@
         }
     }).catch(() => {});
 
-    // Load subjects & faculty for modal
-    fetch(root + 'api/subjects').then(r => r.json()).then(subs => {
+    // Load subjects & faculty with Promise.all before loading schedule
+    Promise.all([
+        fetch(root + 'api/subjects').then(r => r.json()).catch(() => []),
+        fetch(root + 'api/faculty').then(r => r.json()).catch(() => [])
+    ]).then(([subs, facs]) => {
         subjectList = subs || [];
-        const sel = document.getElementById('slotSubject');
-        if (sel) sel.innerHTML = subjectList.map(s => `<option value="${s.subjectId}">${s.subjectCode} - ${s.subjectName}</option>`).join('');
-    }).catch(() => {});
+        facultyList = facs || [];
+        
+        document.getElementById('kpiFacultyCount').textContent = facultyList.length;
 
-    fetch(root + 'api/faculty').then(r => r.json()).then(fac => {
-        facultyList = fac || [];
-        const sel = document.getElementById('slotFaculty');
-        if (sel) sel.innerHTML = facultyList.map(f => `<option value="${f.facultyId}">${f.firstName} ${f.lastName || ''} (${f.designation || 'Faculty'})</option>`).join('');
-    }).catch(() => {});
+        const selSub = document.getElementById('slotSubject');
+        if (selSub) selSub.innerHTML = subjectList.map(s => `<option value="${s.subjectId}">${s.subjectCode} - ${s.subjectName}</option>`).join('');
+
+        const selFac = document.getElementById('slotFaculty');
+        if (selFac) selFac.innerHTML = facultyList.map(f => `<option value="${f.facultyId}">${f.firstName} ${f.lastName || ''} (${f.designation || 'Faculty'})</option>`).join('');
+
+        loadSchedule();
+    });
 
     function loadSchedule() {
         fetch(root + 'api/timetables')
             .then(res => res.json())
             .then(data => {
                 allSlots = data || [];
-                renderTable(allSlots);
+                document.getElementById('kpiTotalSlots').textContent = allSlots.length;
+                
+                // Count unique rooms
+                const rooms = new Set(allSlots.map(t => t.roomNumber).filter(Boolean));
+                document.getElementById('kpiRoomsCount').textContent = rooms.size || '3';
+
+                renderTable();
             })
             .catch(() => {
-                document.getElementById('timetableRows').innerHTML = '<tr><td colspan="6" style="padding: 24px; text-align: center;">Unable to load timetable schedule.</td></tr>';
+                document.getElementById('timetableRows').innerHTML = '<tr><td colspan="6" style="padding: 24px; text-align: center; color: var(--error);">Unable to load timetable schedule.</td></tr>';
             });
     }
 
-    function renderTable(list) {
+    function renderTable() {
         const tbody = document.getElementById('timetableRows');
-        if (!list || list.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 28px; color: var(--text-muted);">No timetable scheduled for this selection.</td></tr>';
+        let filtered = allSlots;
+
+        // Filter by Day
+        if (selectedDayFilter) {
+            filtered = filtered.filter(t => t.dayOfWeek.toLowerCase() === selectedDayFilter.toLowerCase());
+        }
+
+        // Search query filter
+        if (searchQuery.trim() !== '') {
+            const q = searchQuery.toLowerCase().trim();
+            filtered = filtered.filter(t => {
+                const subj = subjectList.find(s => s.subjectId === t.subjectId);
+                const fac = facultyList.find(f => f.facultyId === t.facultyId);
+                const subjMatch = subj && (subj.subjectName.toLowerCase().includes(q) || subj.subjectCode.toLowerCase().includes(q));
+                const facMatch = fac && ((fac.firstName + ' ' + (fac.lastName || '')).toLowerCase().includes(q));
+                const roomMatch = t.roomNumber && t.roomNumber.toLowerCase().includes(q);
+                const dayMatch = t.dayOfWeek && t.dayOfWeek.toLowerCase().includes(q);
+                return subjMatch || facMatch || roomMatch || dayMatch;
+            });
+        }
+
+        document.getElementById('scheduleCountBadge').textContent = `${filtered.length} Periods`;
+
+        if (!filtered || filtered.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px 20px;">
+                        <div style="font-size: 28px; margin-bottom: 8px;">🗓️</div>
+                        <h4 style="margin: 0 0 4px 0; color: var(--text-main);">No class schedule found</h4>
+                        <p class="muted" style="margin: 0; font-size: 13px;">No scheduled periods match the selected day or search keyword.</p>
+                        <button class="button button-outline button-small" style="margin-top: 14px;" onclick="resetTimetableFilters()">Reset Filters</button>
+                    </td>
+                </tr>
+            `;
             return;
         }
 
         const isAdmin = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'SUPER_ADMIN');
 
-        tbody.innerHTML = list.map(t => {
+        tbody.innerHTML = filtered.map(t => {
             const subj = subjectList.find(s => s.subjectId === t.subjectId);
             const fac = facultyList.find(f => f.facultyId === t.facultyId);
+            const facInitials = fac ? `${fac.firstName ? fac.firstName[0] : ''}${fac.lastName ? fac.lastName[0] : ''}` : 'FC';
+
             return `
                 <tr>
-                    <td><strong style="color: var(--primary);">${escapeHtml(t.dayOfWeek)}</strong></td>
-                    <td><span class="badge badge-info">${escapeHtml(t.startTime)} - ${escapeHtml(t.endTime)}</span></td>
-                    <td><strong style="color: var(--text-main); font-weight: 600;">${escapeHtml(subj ? subj.subjectName : 'Subject #' + t.subjectId)}</strong></td>
-                    <td style="color: var(--text-secondary);">${escapeHtml(fac ? (fac.firstName + ' ' + (fac.lastName || '')) : 'Faculty #' + t.facultyId)}</td>
-                    <td><span class="pass-cell">${escapeHtml(t.roomNumber || 'TBD')}</span></td>
                     <td>
+                        <span class="day-badge day-${escapeHtml(t.dayOfWeek)}">
+                            ${escapeHtml(t.dayOfWeek)}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="time-chip">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span>${escapeHtml(t.startTime)} - ${escapeHtml(t.endTime)}</span>
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-direction: column;">
+                            <strong style="color: var(--text-main); font-weight: 600; font-size: 14px;">${escapeHtml(subj ? subj.subjectName : 'Subject #' + t.subjectId)}</strong>
+                            <span class="muted" style="font-size: 12px; margin-top: 2px;">
+                                ${subj ? escapeHtml(subj.subjectCode) + ' &bull; 4 Credits' : 'Academic Course'}
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="faculty-chip">
+                            <span class="faculty-avatar-mini">${facInitials}</span>
+                            <div>
+                                <div style="font-weight: 600; font-size: 13.5px; color: var(--text-main);">${escapeHtml(fac ? (fac.firstName + ' ' + (fac.lastName || '')) : 'Faculty #' + t.facultyId)}</div>
+                                <div class="muted" style="font-size: 11.5px;">${escapeHtml(fac ? (fac.designation || 'Instructor') : 'Academic Faculty')}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="room-chip">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <span>${escapeHtml(t.roomNumber || 'Room 101')}</span>
+                        </span>
+                    </td>
+                    <td style="text-align: center;">
                         ${isAdmin ? `
-                            <button class="button button-danger button-small" style="padding: 3px 8px; font-size: 11.5px;" onclick="deleteSlot(${t.timetableId})">&#128465; Remove</button>
+                            <button class="button button-danger button-small" style="padding: 4px 10px; font-size: 12px;" onclick="deleteSlot(${t.timetableId})">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                <span>Remove</span>
+                            </button>
                         ` : `
-                            <span class="badge badge-success" style="font-size: 11px;">Active</span>
+                            <span class="badge badge-success">&#9679; Confirmed</span>
                         `}
                     </td>
                 </tr>
@@ -237,12 +478,29 @@
         }).join('');
     }
 
-    function filterSchedule(day) {
-        if (!day) {
-            renderTable(allSlots);
-        } else {
-            renderTable(allSlots.filter(t => t.dayOfWeek.toLowerCase() === day.toLowerCase()));
-        }
+    function setDayFilter(day) {
+        selectedDayFilter = day;
+        document.querySelectorAll('#dayPillContainer .pill-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-day') === day);
+        });
+        renderTable();
+        if (day) showToast(`Showing timetable for ${day}`, 'info');
+    }
+
+    function handleTimetableSearch(val) {
+        searchQuery = val;
+        renderTable();
+    }
+
+    function resetTimetableFilters() {
+        selectedDayFilter = '';
+        searchQuery = '';
+        document.getElementById('timetableSearch').value = '';
+        document.querySelectorAll('#dayPillContainer .pill-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-day') === '');
+        });
+        renderTable();
+        showToast('Timetable filters reset', 'info');
     }
 
     function openSlotModal() {
@@ -285,31 +543,26 @@
             btn.disabled = false;
             btn.textContent = 'Save Schedule';
             closeSlotModal();
-            const sMsg = document.getElementById('success-message');
-            sMsg.textContent = 'Schedule slot added successfully!';
-            sMsg.style.display = 'flex';
-            setTimeout(() => {
-                sMsg.style.display = 'none';
-                sMsg.textContent = '';
-            }, 3000);
+            showToast('Class schedule slot added successfully!', 'success');
             loadSchedule();
         })
         .catch(() => {
             btn.disabled = false;
             btn.textContent = 'Save Schedule';
-            alert('Failed to save slot.');
+            showToast('Failed to save schedule slot.', 'error');
         });
     }
 
     function deleteSlot(id) {
-        if (!confirm('Remove this schedule slot?')) return;
+        if (!confirm('Are you sure you want to remove this schedule slot?')) return;
         fetch(root + 'api/timetables/' + id, { method: 'DELETE' })
             .then(res => res.json())
-            .then(() => loadSchedule())
-            .catch(() => alert('Failed to delete slot.'));
+            .then(() => {
+                showToast('Schedule slot removed successfully.', 'success');
+                loadSchedule();
+            })
+            .catch(() => showToast('Failed to delete slot.', 'error'));
     }
-
-    loadSchedule();
 </script>
 </body>
 </html>

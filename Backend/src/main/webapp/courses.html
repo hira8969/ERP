@@ -6,8 +6,103 @@
     <title>Centurion University - Academic Courses &amp; Curriculum</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/student-form.css?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/student-form.css?v=6">
+    <style>
+        .courses-grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+        @media (max-width: 900px) {
+            .courses-grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        .dept-card-item, .course-card-item {
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border-radius: var(--radius-sm);
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+        .dept-card-item:hover, .course-card-item:hover {
+            border-color: var(--primary-border);
+            background: #f8fafc;
+            transform: translateX(3px);
+            box-shadow: var(--shadow-xs);
+        }
+        .dept-card-item.active, .course-card-item.active {
+            border-color: var(--primary-light);
+            background: var(--primary-tint);
+            box-shadow: 0 0 0 1.5px var(--primary-light);
+        }
+        .code-chip {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-color);
+            padding: 3px 8px;
+            border-radius: var(--radius-xs);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .code-copy-btn {
+            background: none;
+            border: none;
+            padding: 2px;
+            cursor: pointer;
+            color: var(--text-dim);
+            display: inline-flex;
+            align-items: center;
+            box-shadow: none;
+            border-radius: 3px;
+        }
+        .code-copy-btn:hover {
+            color: var(--primary-light);
+            background: rgba(79, 70, 229, 0.1);
+            transform: none;
+            box-shadow: none;
+        }
+        .credit-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: var(--radius-full);
+            font-size: 11.5px;
+            font-weight: 700;
+        }
+        .credit-4 { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
+        .credit-3 { background: #f0fdf4; color: #047857; border: 1px solid #a7f3d0; }
+        .credit-2 { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
+        .pass-meter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .pass-meter-bar {
+            width: 70px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        .pass-meter-fill {
+            height: 100%;
+            background: #10b981;
+            border-radius: var(--radius-full);
+        }
+    </style>
 </head>
 <body>
 
@@ -48,86 +143,174 @@
     </header>
 
 <main>
+    <!-- Topbar with Actions -->
     <div class="topbar" style="margin-top: 24px;">
         <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <span class="badge badge-primary">Academic Catalog 2026-2027</span>
+                <span class="badge badge-success">&#9679; Semester Active</span>
+            </div>
             <h1 style="margin: 0;">Academic Programs &amp; Syllabus</h1>
-            <p class="muted" style="margin: 4px 0 0 0;">Browse university academic structure, departments, degree tracks, and semester curriculum</p>
+            <p class="muted" style="margin: 4px 0 0 0;">Browse university schools, departments, accredited degree tracks, and course syllabi</p>
         </div>
         <div style="display: flex; gap: 10px;">
-            <button class="button button-primary button-small" id="btnAddSubjectBtn" onclick="openSubjectModal()">+ Add Course Subject</button>
+            <button class="button button-outline button-small" onclick="resetAllFilters()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                <span>Reset View</span>
+            </button>
+            <button class="button button-primary button-small" id="btnAddSubjectBtn" onclick="openSubjectModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>+ Add Course Subject</span>
+            </button>
         </div>
     </div>
 
+    <!-- Alert placeholders with strict hidden enforcement -->
     <p id="error-message" class="alert error" style="display: none;"></p>
     <p id="success-message" class="alert success" style="display: none;"></p>
 
-    <!-- Departments & Courses Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 26px;">
-        <!-- Departments Panel -->
-        <section class="panel">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                <h3 style="margin: 0; font-size: 18px;">&#127970; Academic Departments</h3>
-                <span class="badge badge-primary">Schools</span>
+    <!-- KPI Metric Strip -->
+    <div class="metric-strip">
+        <div class="metric-chip">
+            <div class="metric-icon" style="background: #eef2ff; color: #4338ca;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 7v14M21 7v14M6 21V11M10 21V11M14 21V11M18 21V11M12 3L2 7h20L12 3z"/></svg>
             </div>
-            <ul id="deptList" style="list-style: none; padding: 0; margin: 0;">
-                <li style="padding: 12px; text-align: center; color: var(--text-muted);">Loading departments...</li>
-            </ul>
-        </section>
-
-        <!-- Courses Panel -->
-        <section class="panel">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                <h3 style="margin: 0; font-size: 18px;">&#127891; Enrolled Degree Programs</h3>
-                <span class="badge badge-info">Degrees</span>
-            </div>
-            <ul id="courseList" style="list-style: none; padding: 0; margin: 0;">
-                <li style="padding: 12px; text-align: center; color: var(--text-muted);">Loading degree courses...</li>
-            </ul>
-        </section>
-    </div>
-
-    <!-- Subjects & Curriculum Table -->
-    <section class="panel" style="overflow-x: auto; padding: 0;">
-        <div class="topbar" style="padding: 18px 22px 14px 22px; margin: 0; border-bottom: 1px solid var(--border-color);">
             <div>
-                <h3 style="margin: 0; font-size: 18px;">Curriculum Subjects &amp; Syllabus</h3>
-                <small class="muted">Subject credit weights and passing examination standards</small>
+                <div style="font-size: 24px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif;" id="kpiDepts">--</div>
+                <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Departments</div>
             </div>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Subject Code</th>
-                    <th>Subject Title</th>
-                    <th>Credits</th>
-                    <th>Maximum Marks</th>
-                    <th>Pass Marks</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="subjectRows">
-                <tr><td colspan="6" style="padding: 28px; text-align: center; color: var(--text-muted);">Loading curriculum subjects...</td></tr>
-            </tbody>
-        </table>
+        <div class="metric-chip">
+            <div class="metric-icon" style="background: #f0fdf4; color: #059669;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 24px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif;" id="kpiCourses">--</div>
+                <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Degree Tracks</div>
+            </div>
+        </div>
+
+        <div class="metric-chip">
+            <div class="metric-icon" style="background: #f0f9ff; color: #0284c7;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 24px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif;" id="kpiSubjects">--</div>
+                <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Curriculum Subjects</div>
+            </div>
+        </div>
+
+        <div class="metric-chip">
+            <div class="metric-icon" style="background: #fef3c7; color: #d97706;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 24px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif;" id="kpiCredits">--</div>
+                <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Total Credit Points</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Departments & Degree Courses Interactive Explorer -->
+    <div class="courses-grid-layout">
+        <!-- Departments Panel -->
+        <section class="panel" style="padding: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 18px;">🏛️</span>
+                    <h3 style="margin: 0; font-size: 17px;">Academic Departments</h3>
+                </div>
+                <span class="badge badge-primary" id="deptCountBadge">Loading...</span>
+            </div>
+            <p class="muted" style="font-size: 12.5px; margin-bottom: 14px;">Click any department to filter degree tracks and subjects:</p>
+            <div id="deptList">
+                <div style="padding: 16px; text-align: center; color: var(--text-muted);">Loading departments...</div>
+            </div>
+        </section>
+
+        <!-- Degree Courses Panel -->
+        <section class="panel" style="padding: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 18px;">🎓</span>
+                    <h3 style="margin: 0; font-size: 17px;">Degree Programs</h3>
+                </div>
+                <span class="badge badge-info" id="courseCountBadge">Loading...</span>
+            </div>
+            <p class="muted" style="font-size: 12.5px; margin-bottom: 14px;">Click any program to inspect its specific curriculum subjects:</p>
+            <div id="courseList">
+                <div style="padding: 16px; text-align: center; color: var(--text-muted);">Loading degree courses...</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Subjects & Curriculum Table Panel -->
+    <section class="panel" style="padding: 0; overflow: visible;">
+        <!-- Filter Controls Toolbar -->
+        <div class="filter-bar" style="border: none; border-bottom: 1px solid var(--border-color); border-radius: var(--radius-lg) var(--radius-lg) 0 0; margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; flex: 1;">
+                <!-- Live Search Box -->
+                <div class="search-box">
+                    <span class="search-box-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </span>
+                    <input type="text" id="subjectSearch" placeholder="Search subject code, title or credits..." oninput="handleSearch(this.value)">
+                </div>
+
+                <!-- Filter Pills -->
+                <div class="filter-pills">
+                    <button class="pill-btn active" id="pillAll" onclick="setCreditFilter('ALL')">All Subjects</button>
+                    <button class="pill-btn" id="pillHigh" onclick="setCreditFilter('HIGH')">High Credit (4+)</button>
+                    <button class="pill-btn" id="pillStandard" onclick="setCreditFilter('STANDARD')">Core (3 Credits)</button>
+                    <button class="pill-btn" id="pillFoundation" onclick="setCreditFilter('FOUNDATION')">Foundation (1-2)</button>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="badge badge-primary" id="resultsCountBadge">0 Subjects</span>
+            </div>
+        </div>
+
+        <!-- Subjects Table -->
+        <div style="overflow-x: auto;">
+            <table style="border: none; border-radius: 0; box-shadow: none;">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Subject Code</th>
+                        <th>Subject Title &amp; Curriculum</th>
+                        <th style="width: 120px;">Credits</th>
+                        <th style="width: 170px;">Exam Standard</th>
+                        <th style="width: 110px;">Status</th>
+                        <th style="width: 130px; text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="subjectRows">
+                    <tr><td colspan="6" style="padding: 32px; text-align: center; color: var(--text-muted);">Loading curriculum subjects...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </section>
 
     <!-- Modal for Adding Subject -->
     <div class="modal-overlay" id="subjectModal" style="display: none;">
         <div class="modal-content">
-            <div class="topbar" style="margin-bottom: 16px;">
-                <h3 style="margin: 0; font-size: 19px;">Add Curriculum Subject</h3>
-                <button class="link-button" onclick="closeSubjectModal()">&times; Close</button>
+            <div class="topbar" style="margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 20px;">📚</span>
+                    <h3 style="margin: 0; font-size: 19px;">Add Curriculum Subject</h3>
+                </div>
+                <button class="link-button" onclick="closeSubjectModal()" style="font-size: 16px; text-decoration: none;">&times; Close</button>
             </div>
             <form id="addSubjectForm" onsubmit="submitSubject(event)">
                 <div class="form-grid single-col">
                     <label>
                         Subject Code *
-                        <input type="text" id="subCode" required placeholder="e.g. CS401">
+                        <input type="text" id="subCode" required placeholder="e.g. CS401" style="font-family: 'JetBrains Mono', monospace;">
                     </label>
                     <label>
                         Subject Title *
-                        <input type="text" id="subName" required placeholder="e.g. Artificial Intelligence & Machine Learning">
+                        <input type="text" id="subName" required placeholder="e.g. Artificial Intelligence &amp; Neural Networks">
                     </label>
                     <label>
                         Course Program *
@@ -151,6 +334,54 @@
             </form>
         </div>
     </div>
+
+    <!-- Modal for Viewing Subject Details & Syllabus -->
+    <div class="modal-overlay" id="subjectDetailsModal" style="display: none;">
+        <div class="modal-content">
+            <div class="topbar" style="margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="code-chip" id="detailModalCode">CS401</span>
+                    <h3 style="margin: 0; font-size: 18px;" id="detailModalTitle">Subject Syllabus</h3>
+                </div>
+                <button class="link-button" onclick="closeSubjectDetailsModal()" style="font-size: 16px; text-decoration: none;">&times; Close</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
+                <div style="background: #f8fafc; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                    <small class="muted" style="font-weight: 700; text-transform: uppercase;">Credit Weightage</small>
+                    <div style="font-size: 20px; font-weight: 800; color: var(--primary); font-family: 'Outfit', sans-serif;" id="detailModalCredits">4 Credits</div>
+                    <small class="muted">Lecture: 3 hrs | Lab: 2 hrs</small>
+                </div>
+                <div style="background: #f8fafc; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                    <small class="muted" style="font-weight: 700; text-transform: uppercase;">Passing Criteria</small>
+                    <div style="font-size: 20px; font-weight: 800; color: #10b981; font-family: 'Outfit', sans-serif;" id="detailModalPass">40 / 100 Marks</div>
+                    <small class="muted">Minimum passing score 40%</small>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <h4 style="margin: 0 0 6px 0; font-size: 14px;">Curriculum Course Track</h4>
+                <p class="muted" style="font-size: 13.5px;" id="detailModalCourseName">Bachelor of Technology (Computer Science &amp; Engineering)</p>
+            </div>
+
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #166534; font-weight: 700; font-size: 13px;">✓ University Board Certified</span>
+                    <span class="badge badge-success">ACTIVE SYLLABUS</span>
+                </div>
+                <p style="margin: 4px 0 0 0; font-size: 12.5px; color: #166534;">
+                    Evaluated via internal continuous assessment (30 marks) and end-semester university examination (70 marks).
+                </p>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+                <button type="button" class="button button-outline" onclick="closeSubjectDetailsModal()">Close Details</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enterprise Floating Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 </main>
 
 <script>
@@ -159,6 +390,53 @@
         : './';
 
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    // Toast Notification System
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = `toast-item ${type}`;
+        
+        let iconSvg = '';
+        if (type === 'success') {
+            iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+        } else if (type === 'error') {
+            iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+        } else {
+            iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+        }
+
+        toast.innerHTML = `<span class="toast-icon">${iconSvg}</span><span>${escapeHtml(message)}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'toastSlideOut 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+            setTimeout(() => toast.remove(), 250);
+        }, 3200);
+    }
+
+    // Copy to clipboard helper
+    function copySubjectCode(code) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(code).then(() => {
+                showToast(`Subject code ${code} copied to clipboard!`, 'success');
+            }).catch(() => {
+                showToast(`Code: ${code}`, 'info');
+            });
+        } else {
+            showToast(`Code: ${code}`, 'info');
+        }
+    }
+
+    // State
+    let departmentsData = [];
+    let coursesData = [];
+    let subjectsData = [];
+    let selectedDepartmentId = null;
+    let selectedCourseId = null;
+    let currentCreditFilter = 'ALL';
+    let searchQuery = '';
 
     // Check user role
     fetch(root + 'api/auth/me').then(r => r.json()).then(data => {
@@ -179,66 +457,255 @@
     }).catch(() => {});
 
     // Load Departments
-    fetch(root + 'api/departments').then(r => r.json()).then(depts => {
-        const list = document.getElementById('deptList');
-        if (depts && depts.length > 0) {
-            list.innerHTML = depts.map(d => `
-                <li style="padding: 12px; margin-bottom: 8px; border-radius: var(--radius-sm); background: #f8fafc; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <strong style="color: var(--primary); font-family: 'JetBrains Mono', monospace;">${escapeHtml(d.departmentCode)}</strong> &bull; <span style="font-weight: 600;">${escapeHtml(d.departmentName)}</span>
-                        <br><small class="muted">${escapeHtml(d.description || 'Active academic division')}</small>
-                    </div>
-                    <span class="badge badge-success">ACTIVE</span>
-                </li>
-            `).join('');
-        } else {
-            list.innerHTML = '<li style="padding: 12px; color: var(--text-muted);">No departments found.</li>';
-        }
-    }).catch(() => {});
+    function loadDepartments() {
+        fetch(root + 'api/departments').then(r => r.json()).then(depts => {
+            departmentsData = depts || [];
+            document.getElementById('kpiDepts').textContent = departmentsData.length;
+            document.getElementById('deptCountBadge').textContent = `${departmentsData.length} Schools`;
 
-    // Load Courses
-    fetch(root + 'api/courses').then(r => r.json()).then(courses => {
-        const list = document.getElementById('courseList');
-        const modalSelect = document.getElementById('modalCourseSelect');
-        if (courses && courses.length > 0) {
-            list.innerHTML = courses.map(c => `
-                <li style="padding: 12px; margin-bottom: 8px; border-radius: var(--radius-sm); background: #f8fafc; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <strong style="color: var(--primary); font-family: 'JetBrains Mono', monospace;">${escapeHtml(c.courseCode)}</strong> &bull; <span style="font-weight: 600;">${escapeHtml(c.courseName)}</span>
-                        <br><small class="muted">Duration: ${escapeHtml(c.duration || 'N/A')} &bull; Semesters: ${c.totalSemesters}</small>
+            const list = document.getElementById('deptList');
+            if (departmentsData.length > 0) {
+                list.innerHTML = departmentsData.map(d => `
+                    <div class="dept-card-item ${selectedDepartmentId === d.departmentId ? 'active' : ''}" onclick="selectDepartment(${d.departmentId})">
+                        <div>
+                            <span class="code-chip">${escapeHtml(d.departmentCode)}</span>
+                            <strong style="margin-left: 6px; font-size: 13.5px; color: var(--text-main);">${escapeHtml(d.departmentName)}</strong>
+                            <div class="muted" style="font-size: 12px; margin-top: 3px;">${escapeHtml(d.description || 'Active Division')}</div>
+                        </div>
+                        <span class="badge badge-success">&#10003; ACTIVE</span>
                     </div>
-                    <span class="badge badge-primary">PROGRAM</span>
-                </li>
-            `).join('');
-            if (modalSelect) {
-                modalSelect.innerHTML = courses.map(c => `<option value="${c.courseId}">${c.courseCode} - ${c.courseName}</option>`).join('');
-            }
-        } else {
-            list.innerHTML = '<li style="padding: 12px; color: var(--text-muted);">No courses found.</li>';
-        }
-    }).catch(() => {});
-
-    // Load Subjects
-    function loadSubjects() {
-        fetch(root + 'api/subjects').then(r => r.json()).then(subjects => {
-            const tbody = document.getElementById('subjectRows');
-            if (subjects && subjects.length > 0) {
-                tbody.innerHTML = subjects.map(s => `
-                    <tr>
-                        <td><strong style="color: var(--primary); font-family: 'JetBrains Mono', monospace;">${escapeHtml(s.subjectCode)}</strong></td>
-                        <td><strong style="color: var(--text-main); font-weight: 600;">${escapeHtml(s.subjectName)}</strong></td>
-                        <td><span class="badge badge-info">${s.credits} Credits</span></td>
-                        <td>${s.maxMarks}</td>
-                        <td>${s.passMarks}</td>
-                        <td><span class="badge badge-success">ACTIVE</span></td>
-                    </tr>
                 `).join('');
             } else {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 28px; color: var(--text-muted);">No curriculum subjects found.</td></tr>';
+                list.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted);">No departments found.</div>';
             }
         }).catch(() => {});
     }
 
+    // Load Courses
+    function loadCourses() {
+        fetch(root + 'api/courses').then(r => r.json()).then(courses => {
+            coursesData = courses || [];
+            document.getElementById('kpiCourses').textContent = coursesData.length;
+            document.getElementById('courseCountBadge').textContent = `${coursesData.length} Tracks`;
+
+            const modalSelect = document.getElementById('modalCourseSelect');
+            if (modalSelect && coursesData.length > 0) {
+                modalSelect.innerHTML = coursesData.map(c => `<option value="${c.courseId}">${escapeHtml(c.courseCode)} - ${escapeHtml(c.courseName)}</option>`).join('');
+            }
+
+            renderCourseList();
+        }).catch(() => {});
+    }
+
+    function renderCourseList() {
+        const list = document.getElementById('courseList');
+        let filtered = coursesData;
+        if (selectedDepartmentId) {
+            filtered = coursesData.filter(c => c.departmentId === selectedDepartmentId);
+        }
+
+        if (filtered.length > 0) {
+            list.innerHTML = filtered.map(c => `
+                <div class="course-card-item ${selectedCourseId === c.courseId ? 'active' : ''}" onclick="selectCourse(${c.courseId})">
+                    <div>
+                        <span class="code-chip">${escapeHtml(c.courseCode)}</span>
+                        <strong style="margin-left: 6px; font-size: 13.5px; color: var(--text-main);">${escapeHtml(c.courseName)}</strong>
+                        <div class="muted" style="font-size: 12px; margin-top: 3px;">
+                            Duration: ${escapeHtml(c.duration || 'N/A')} &bull; ${c.totalSemesters} Semesters
+                        </div>
+                    </div>
+                    <span class="badge badge-primary">PROGRAM</span>
+                </div>
+            `).join('');
+        } else {
+            list.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted);">No degree courses match filter.</div>';
+        }
+    }
+
+    // Load Subjects
+    function loadSubjects() {
+        fetch(root + 'api/subjects').then(r => r.json()).then(subjects => {
+            subjectsData = subjects || [];
+            document.getElementById('kpiSubjects').textContent = subjectsData.length;
+
+            const totalCredits = subjectsData.reduce((acc, s) => acc + (parseInt(s.credits) || 0), 0);
+            document.getElementById('kpiCredits').textContent = totalCredits;
+
+            renderSubjectsTable();
+        }).catch(() => {});
+    }
+
+    function renderSubjectsTable() {
+        const tbody = document.getElementById('subjectRows');
+        let filtered = subjectsData;
+
+        // Search query filter
+        if (searchQuery.trim() !== '') {
+            const q = searchQuery.toLowerCase().trim();
+            filtered = filtered.filter(s => 
+                (s.subjectCode && s.subjectCode.toLowerCase().includes(q)) ||
+                (s.subjectName && s.subjectName.toLowerCase().includes(q)) ||
+                (String(s.credits) === q)
+            );
+        }
+
+        // Selected course filter
+        if (selectedCourseId) {
+            filtered = filtered.filter(s => s.courseId === selectedCourseId);
+        }
+
+        // Credit pill filter
+        if (currentCreditFilter === 'HIGH') {
+            filtered = filtered.filter(s => (parseInt(s.credits) || 0) >= 4);
+        } else if (currentCreditFilter === 'STANDARD') {
+            filtered = filtered.filter(s => (parseInt(s.credits) || 0) === 3);
+        } else if (currentCreditFilter === 'FOUNDATION') {
+            filtered = filtered.filter(s => (parseInt(s.credits) || 0) <= 2);
+        }
+
+        document.getElementById('resultsCountBadge').textContent = `${filtered.length} Subjects`;
+
+        if (filtered.length > 0) {
+            tbody.innerHTML = filtered.map(s => {
+                const credits = parseInt(s.credits) || 3;
+                let creditClass = 'credit-3';
+                if (credits >= 4) creditClass = 'credit-4';
+                else if (credits <= 2) creditClass = 'credit-2';
+
+                const passPercent = Math.round(((s.passMarks || 40) / (s.maxMarks || 100)) * 100);
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <span class="code-chip">${escapeHtml(s.subjectCode)}</span>
+                                <button class="code-copy-btn" onclick="copySubjectCode('${escapeHtml(s.subjectCode)}')" title="Copy Code">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                </button>
+                            </div>
+                        </td>
+                        <td>
+                            <strong style="color: var(--text-main); font-weight: 600; font-size: 14px;">${escapeHtml(s.subjectName)}</strong>
+                            <div class="muted" style="font-size: 12px; margin-top: 2px;">Core Academic Track &bull; Theory &amp; Practical</div>
+                        </td>
+                        <td>
+                            <span class="credit-chip ${creditClass}">
+                                ★ ${credits} Credits
+                            </span>
+                        </td>
+                        <td>
+                            <div class="pass-meter">
+                                <div class="pass-meter-bar">
+                                    <div class="pass-meter-fill" style="width: ${passPercent}%;"></div>
+                                </div>
+                                <span style="font-size: 12.5px; font-weight: 600; color: var(--text-secondary);">${s.passMarks} / ${s.maxMarks}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-success">&#9679; ACTIVE</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="button button-outline button-small" onclick="viewSubjectDetails(${s.subjectId})">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <span>Details</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        } else {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px 20px;">
+                        <div style="font-size: 28px; margin-bottom: 8px;">🔍</div>
+                        <h4 style="margin: 0 0 4px 0; color: var(--text-main);">No matching curriculum subjects</h4>
+                        <p class="muted" style="margin: 0; font-size: 13px;">Try modifying your search keywords or clearing active filters.</p>
+                        <button class="button button-outline button-small" style="margin-top: 14px;" onclick="resetAllFilters()">Clear All Filters</button>
+                    </td>
+                </tr>
+            `;
+        }
+    }
+
+    // Interactivity Filters
+    function handleSearch(val) {
+        searchQuery = val;
+        renderSubjectsTable();
+    }
+
+    function setCreditFilter(filter) {
+        currentCreditFilter = filter;
+        document.getElementById('pillAll').classList.toggle('active', filter === 'ALL');
+        document.getElementById('pillHigh').classList.toggle('active', filter === 'HIGH');
+        document.getElementById('pillStandard').classList.toggle('active', filter === 'STANDARD');
+        document.getElementById('pillFoundation').classList.toggle('active', filter === 'FOUNDATION');
+        renderSubjectsTable();
+    }
+
+    function selectDepartment(deptId) {
+        if (selectedDepartmentId === deptId) {
+            selectedDepartmentId = null;
+        } else {
+            selectedDepartmentId = deptId;
+            showToast('Filtering for selected department', 'info');
+        }
+        selectedCourseId = null;
+        loadDepartments();
+        renderCourseList();
+        renderSubjectsTable();
+    }
+
+    function selectCourse(courseId) {
+        if (selectedCourseId === courseId) {
+            selectedCourseId = null;
+        } else {
+            selectedCourseId = courseId;
+            const c = coursesData.find(x => x.courseId === courseId);
+            if (c) showToast(`Filtered curriculum for ${c.courseName}`, 'info');
+        }
+        renderCourseList();
+        renderSubjectsTable();
+    }
+
+    function resetAllFilters() {
+        selectedDepartmentId = null;
+        selectedCourseId = null;
+        currentCreditFilter = 'ALL';
+        searchQuery = '';
+        document.getElementById('subjectSearch').value = '';
+        document.getElementById('pillAll').classList.add('active');
+        document.getElementById('pillHigh').classList.remove('active');
+        document.getElementById('pillStandard').classList.remove('active');
+        document.getElementById('pillFoundation').classList.remove('active');
+        loadDepartments();
+        renderCourseList();
+        renderSubjectsTable();
+        showToast('All filters have been reset', 'info');
+    }
+
+    // Subject Details Modal
+    function viewSubjectDetails(subjectId) {
+        const s = subjectsData.find(x => x.subjectId === subjectId);
+        if (!s) return;
+
+        document.getElementById('detailModalCode').textContent = s.subjectCode;
+        document.getElementById('detailModalTitle').textContent = s.subjectName;
+        document.getElementById('detailModalCredits').textContent = `${s.credits} Credits`;
+        document.getElementById('detailModalPass').textContent = `${s.passMarks} / ${s.maxMarks} Marks`;
+
+        const c = coursesData.find(x => x.courseId === s.courseId);
+        document.getElementById('detailModalCourseName').textContent = c 
+            ? `${c.courseCode} - ${c.courseName} (${c.duration || 'Full-time'})`
+            : 'Department Core Academic Track';
+
+        document.getElementById('subjectDetailsModal').style.display = 'flex';
+    }
+
+    function closeSubjectDetailsModal() {
+        document.getElementById('subjectDetailsModal').style.display = 'none';
+    }
+
+    // Add Subject Modal
     function openSubjectModal() {
         document.getElementById('subjectModal').style.display = 'flex';
     }
@@ -249,8 +716,8 @@
 
     function submitSubject(e) {
         e.preventDefault();
-        const code = document.getElementById('subCode').value;
-        const name = document.getElementById('subName').value;
+        const code = document.getElementById('subCode').value.trim();
+        const name = document.getElementById('subName').value.trim();
         const cId = document.getElementById('modalCourseSelect').value;
         const credits = document.getElementById('subCredits').value;
         const passMarks = document.getElementById('subPassMarks').value;
@@ -277,22 +744,19 @@
             btn.disabled = false;
             btn.textContent = 'Save Subject';
             closeSubjectModal();
-            const sMsg = document.getElementById('success-message');
-            sMsg.textContent = 'Subject added to academic curriculum successfully!';
-            sMsg.style.display = 'flex';
-            setTimeout(() => {
-                sMsg.style.display = 'none';
-                sMsg.textContent = '';
-            }, 3000);
+            showToast('Subject added to academic curriculum successfully!', 'success');
             loadSubjects();
         })
         .catch(() => {
             btn.disabled = false;
             btn.textContent = 'Save Subject';
-            alert('Failed to add subject.');
+            showToast('Failed to add subject. Please check fields.', 'error');
         });
     }
 
+    // Initial Load
+    loadDepartments();
+    loadCourses();
     loadSubjects();
 </script>
 </body>

@@ -3,14 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>Centurion University - Attendance Management</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/student-form.css?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/student-form.css?v=6">
+    <style>
+        .student-picker-bar {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-xs);
+        }
+        .student-picker-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .code-chip {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-color);
+            padding: 2px 7px;
+            border-radius: var(--radius-xs);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .faculty-avatar-mini {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary-tint);
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--primary-border);
+        }
+    </style>
 </head>
 <body>
 
@@ -51,14 +92,25 @@
     </header>
 
 <main>
+    <!-- Topbar Header -->
     <div class="topbar" style="margin-top: 24px;">
         <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <span class="badge badge-primary">Semester Academic Attendance</span>
+                <span class="badge badge-success">&#9679; 75% Requirement Active</span>
+            </div>
             <h1 style="margin: 0;">Attendance Management</h1>
-            <p class="muted" style="margin: 4px 0 0 0;">Track student class presence, monitor 75% examination eligibility, and log daily sessions</p>
+            <p class="muted" style="margin: 4px 0 0 0;">Monitor student class presence, calculate examination eligibility, and log daily lecture sessions</p>
         </div>
         <div style="display: flex; gap: 10px;">
-            <button class="button button-outline button-small" id="tabViewBtn" onclick="switchTab('view')">View Attendance</button>
-            <button class="button button-primary button-small" id="tabMarkBtn" onclick="switchTab('mark')">+ Mark Class Attendance</button>
+            <button class="button button-primary button-small" id="tabViewBtn" onclick="switchTab('view')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>View Attendance</span>
+            </button>
+            <button class="button button-outline button-small" id="tabMarkBtn" onclick="switchTab('mark')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                <span>+ Mark Class Attendance</span>
+            </button>
         </div>
     </div>
 
@@ -68,67 +120,81 @@
     <!-- SECTION 1: View Attendance & Exam Eligibility -->
     <div id="viewAttendanceSection">
         
-        <!-- Filter for Admin/Faculty to select student -->
-        <section class="panel filter-bar" id="studentSelectPanel" style="margin-bottom: 20px;">
-            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                <label style="font-weight: 700; font-size: 13.5px; margin: 0; color: var(--text-main);">Select Student to Inspect:</label>
-                <select id="studentSelect" onchange="loadStudentAttendance(this.value)" style="min-width: 320px;">
-                    <option value="">Loading students...</option>
+        <!-- Filter Bar for Admin/Faculty to select student -->
+        <div class="student-picker-bar" id="studentSelectPanel">
+            <div class="student-picker-left">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 18px;">👤</span>
+                    <label style="font-weight: 700; font-size: 13.5px; margin: 0; color: var(--text-main);">Select Enrolled Student:</label>
+                </div>
+                <select id="studentSelect" onchange="loadStudentAttendance(this.value)" style="min-width: 340px; font-weight: 500;">
+                    <option value="">Loading enrolled students...</option>
                 </select>
             </div>
-        </section>
+            <div>
+                <span class="badge badge-primary" id="selectedStudentRoleBadge">Enrolled Candidate</span>
+            </div>
+        </div>
 
         <!-- KPI / Progress Overview Panel -->
         <section class="panel" style="margin-bottom: 24px;">
-            <div class="topbar" style="margin-bottom: 16px;">
-                <h3 style="margin: 0; font-size: 19px;" id="studentSummaryTitle">Attendance Record Overview</h3>
+            <div class="topbar" style="margin-bottom: 18px;">
+                <h3 style="margin: 0; font-size: 18px;" id="studentSummaryTitle">Attendance Record Overview</h3>
                 <span id="eligibilityBadge" class="badge badge-success">ELIGIBLE FOR EXAMS</span>
             </div>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
-                <div style="background: #f8fafc; padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-                    <small class="muted" style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Attendance Rate</small>
-                    <div style="font-size: 32px; font-weight: 800; color: var(--primary); font-family: 'Outfit', sans-serif;" id="percentVal">--%</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px;">
+                <div style="background: #ffffff; padding: 18px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--shadow-xs);">
+                    <small class="muted" style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px;">Overall Attendance Rate</small>
+                    <div style="font-size: 34px; font-weight: 800; color: var(--primary); font-family: 'Outfit', sans-serif; line-height: 1.1; margin: 6px 0;" id="percentVal">--%</div>
                     <div class="progress-bar-container">
                         <div class="progress-bar-fill" id="attFill" style="width: 0%;"></div>
                     </div>
-                    <small class="muted">Requirement: &ge; 75% for semester exams</small>
+                    <small class="muted" style="font-size: 12px;">Mandatory threshold: &ge; 75% for exam hall pass</small>
                 </div>
-                <div style="background: #f8fafc; padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-                    <small class="muted" style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Total Lectures Conducted</small>
-                    <div style="font-size: 32px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif;" id="totalClassesVal">--</div>
-                    <small class="muted">Classes scheduled to date</small>
+
+                <div style="background: #ffffff; padding: 18px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--shadow-xs);">
+                    <small class="muted" style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px;">Total Classes Conducted</small>
+                    <div style="font-size: 34px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif; line-height: 1.1; margin: 6px 0;" id="totalClassesVal">--</div>
+                    <small class="muted" style="font-size: 12px;">Academic lecture sessions</small>
                 </div>
-                <div style="background: #f0fdf4; padding: 18px; border-radius: var(--radius-sm); border: 1px solid #bbf7d0;">
-                    <small class="muted" style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #166534;">Lectures Attended</small>
-                    <div style="font-size: 32px; font-weight: 800; color: #10b981; font-family: 'Outfit', sans-serif;" id="presentClassesVal">--</div>
-                    <small class="muted">Marked Present</small>
+
+                <div style="background: #f0fdf4; padding: 18px; border-radius: var(--radius-lg); border: 1px solid #bbf7d0; box-shadow: var(--shadow-xs);">
+                    <small style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; color: #166534;">Lectures Attended</small>
+                    <div style="font-size: 34px; font-weight: 800; color: #10b981; font-family: 'Outfit', sans-serif; line-height: 1.1; margin: 6px 0;" id="presentClassesVal">--</div>
+                    <small style="color: #166534; font-size: 12px;">Marked Present in roster</small>
                 </div>
-                <div style="background: #fef2f2; padding: 18px; border-radius: var(--radius-sm); border: 1px solid #fecaca;">
-                    <small class="muted" style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #991b1b;">Lectures Missed</small>
-                    <div style="font-size: 32px; font-weight: 800; color: #ef4444; font-family: 'Outfit', sans-serif;" id="absentClassesVal">--</div>
-                    <small class="muted">Absence / Unexcused</small>
+
+                <div style="background: #fef2f2; padding: 18px; border-radius: var(--radius-lg); border: 1px solid #fecaca; box-shadow: var(--shadow-xs);">
+                    <small style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; color: #991b1b;">Lectures Missed</small>
+                    <div style="font-size: 34px; font-weight: 800; color: #ef4444; font-family: 'Outfit', sans-serif; line-height: 1.1; margin: 6px 0;" id="absentClassesVal">--</div>
+                    <small style="color: #991b1b; font-size: 12px;">Unexcused / Absent log</small>
                 </div>
             </div>
         </section>
 
         <!-- Attendance Logs Table -->
         <section class="panel" style="overflow-x: auto; padding: 0;">
-            <div style="padding: 18px 22px 14px 22px; border-bottom: 1px solid var(--border-color);">
-                <h3 style="margin: 0; font-size: 18px;">Detailed Session Logs</h3>
+            <div class="filter-bar" style="border: none; border-bottom: 1px solid var(--border-color); border-radius: var(--radius-lg) var(--radius-lg) 0 0; margin-bottom: 0;">
+                <div>
+                    <h3 style="margin: 0; font-size: 17px;">Detailed Session Logs</h3>
+                    <small class="muted">Complete chronological record of verified classroom attendances</small>
+                </div>
+                <span class="badge badge-primary" id="logCountBadge">0 Sessions Logged</span>
             </div>
-            <table>
+
+            <table style="border: none; border-radius: 0; box-shadow: none;">
                 <thead>
                     <tr>
-                        <th>Class Date</th>
-                        <th>Subject ID / Code</th>
+                        <th style="width: 140px;">Class Date</th>
+                        <th>Subject &amp; Curriculum Track</th>
                         <th>Faculty In-Charge</th>
-                        <th>Status</th>
-                        <th>Remarks</th>
+                        <th style="width: 130px;">Presence Status</th>
+                        <th>Session Remarks</th>
                     </tr>
                 </thead>
                 <tbody id="attRows">
-                    <tr><td colspan="5" style="padding: 28px; text-align: center; color: var(--text-muted);">Loading attendance logs...</td></tr>
+                    <tr><td colspan="5" style="padding: 32px; text-align: center; color: var(--text-muted);">Loading attendance logs...</td></tr>
                 </tbody>
             </table>
         </section>
@@ -137,12 +203,15 @@
     <!-- SECTION 2: Mark Class Attendance (Faculty & Admin) -->
     <div id="markAttendanceSection" style="display: none;">
         <section class="panel">
-            <h3 style="margin-top: 0; margin-bottom: 18px; font-size: 19px;">Mark Daily Class Attendance</h3>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 18px;">
+                <span style="font-size: 20px;">📝</span>
+                <h3 style="margin: 0; font-size: 18px;">Mark Daily Class Attendance</h3>
+            </div>
             <div class="form-grid">
                 <label>
                     Select Subject *
                     <select id="markSubjectSelect" required>
-                        <option value="">Loading subjects...</option>
+                        <option value="">Loading curriculum subjects...</option>
                     </select>
                 </label>
                 <label>
@@ -152,34 +221,49 @@
             </div>
         </section>
 
-        <section class="panel" style="margin-top: 20px; overflow-x: auto; padding: 0;">
+        <section class="panel" style="margin-top: 22px; overflow-x: auto; padding: 0;">
             <div class="topbar" style="padding: 18px 22px 14px 22px; margin: 0; border-bottom: 1px solid var(--border-color);">
-                <h4 style="margin: 0; font-size: 17px;">Enrolled Students Roster</h4>
+                <div>
+                    <h4 style="margin: 0; font-size: 17px;">Enrolled Students Roster</h4>
+                    <small class="muted">Check Present or Absent for each registered student in this lecture</small>
+                </div>
                 <div style="display: flex; gap: 8px;">
-                    <button class="button button-outline button-small" type="button" onclick="setAllAttendance('PRESENT')">Mark All Present</button>
-                    <button class="button button-outline button-small" type="button" onclick="setAllAttendance('ABSENT')">Mark All Absent</button>
+                    <button class="button button-outline button-small" type="button" onclick="setAllAttendance('PRESENT')">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span>Mark All Present</span>
+                    </button>
+                    <button class="button button-outline button-small" type="button" onclick="setAllAttendance('ABSENT')">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        <span>Mark All Absent</span>
+                    </button>
                 </div>
             </div>
 
-            <table>
+            <table style="border: none; border-radius: 0; box-shadow: none;">
                 <thead>
                     <tr>
-                        <th>Roll Number</th>
-                        <th>Student Name</th>
-                        <th>Attendance Status</th>
+                        <th style="width: 160px;">Roll Number</th>
+                        <th>Student Full Name</th>
+                        <th style="width: 220px;">Attendance Status</th>
                         <th>Session Remarks</th>
                     </tr>
                 </thead>
                 <tbody id="studentRosterRows">
-                    <tr><td colspan="4" style="padding: 28px; text-align: center; color: var(--text-muted);">Loading student roster...</td></tr>
+                    <tr><td colspan="4" style="padding: 32px; text-align: center; color: var(--text-muted);">Loading student roster...</td></tr>
                 </tbody>
             </table>
 
-            <div style="padding: 20px 24px;">
-                <button type="button" class="button button-primary" id="btnSubmitAttendance" onclick="submitAttendance()">Submit Class Attendance &rarr;</button>
+            <div style="padding: 20px 24px; border-top: 1px solid var(--border-color); background: #fafafa; display: flex; justify-content: flex-end;">
+                <button type="button" class="button button-primary" id="btnSubmitAttendance" onclick="submitAttendance()">
+                    <span>Submit Class Attendance</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
             </div>
         </section>
     </div>
+
+    <!-- Enterprise Floating Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 </main>
 
 <script>
@@ -190,15 +274,55 @@
     let currentUser = null;
     let studentList = [];
     let subjectList = [];
+    let facultyList = [];
 
     // Set today's date
     document.getElementById('markDate').valueAsDate = new Date();
 
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-    // Check auth
-    fetch(root + 'api/auth/me').then(r => r.json()).then(data => {
-        if (!data.authenticated) {
+    // Toast Notification System
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = `toast-item ${type}`;
+        
+        let iconSvg = '';
+        if (type === 'success') {
+            iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+        } else if (type === 'error') {
+            iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+        } else {
+            iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+        }
+
+        toast.innerHTML = `<span class="toast-icon">${iconSvg}</span><span>${escapeHtml(message)}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'toastSlideOut 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+            setTimeout(() => toast.remove(), 250);
+        }, 3200);
+    }
+
+    // Load Metadata (Subjects & Faculty) first
+    Promise.all([
+        fetch(root + 'api/subjects').then(r => r.json()).catch(() => []),
+        fetch(root + 'api/faculty').then(r => r.json()).catch(() => [])
+    ]).then(([subs, facs]) => {
+        subjectList = subs || [];
+        facultyList = facs || [];
+
+        const selSub = document.getElementById('markSubjectSelect');
+        if (selSub) {
+            selSub.innerHTML = subjectList.map(s => `<option value="${s.subjectId}">${s.subjectCode} - ${s.subjectName}</option>`).join('');
+        }
+
+        // Check auth and load students
+        return fetch(root + 'api/auth/me').then(r => r.json());
+    }).then(data => {
+        if (!data || !data.authenticated) {
             window.location.href = root + 'login.html';
             return;
         }
@@ -213,20 +337,9 @@
 
             document.getElementById('tabMarkBtn').style.display = 'none';
             document.getElementById('studentSelectPanel').style.display = 'none';
-            // Find student's own ID
             loadOwnStudentAttendance();
         } else {
-            // Load students list for dropdown
             loadStudentsDropdown();
-        }
-    }).catch(() => {});
-
-    // Load subjects for marking
-    fetch(root + 'api/subjects').then(r => r.json()).then(subjects => {
-        subjectList = subjects || [];
-        const sel = document.getElementById('markSubjectSelect');
-        if (sel) {
-            sel.innerHTML = subjectList.map(s => `<option value="${s.subjectId}">${s.subjectCode} - ${s.subjectName}</option>`).join('');
         }
     }).catch(() => {});
 
@@ -288,26 +401,47 @@
 
                 // Render table
                 const rows = document.getElementById('attRows');
+                document.getElementById('logCountBadge').textContent = `${records.length} Sessions Logged`;
+
                 if (records.length === 0) {
-                    rows.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 28px; color: var(--text-muted);">No attendance records logged for this student yet.</td></tr>';
+                    rows.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 36px 20px; color: var(--text-muted);">No attendance records logged for this student yet.</td></tr>';
                     return;
                 }
-                rows.innerHTML = records.map(r => `
-                    <tr>
-                        <td><strong>${escapeHtml(r.attendanceDate)}</strong></td>
-                        <td>Subject #${r.subjectId}</td>
-                        <td>Faculty #${r.facultyId}</td>
-                        <td>
-                            <span class="badge ${r.status === 'PRESENT' ? 'badge-success' : (r.status === 'LATE' ? 'badge-warning' : 'badge-danger')}">
-                                ${escapeHtml(r.status)}
-                            </span>
-                        </td>
-                        <td style="color: var(--text-muted);">${escapeHtml(r.remarks || '—')}</td>
-                    </tr>
-                `).join('');
+
+                rows.innerHTML = records.map(r => {
+                    const subj = subjectList.find(s => String(s.subjectId) === String(r.subjectId));
+                    const fac = facultyList.find(f => String(f.facultyId) === String(r.facultyId));
+                    const facInitials = fac ? `${fac.firstName ? fac.firstName[0] : ''}${fac.lastName ? fac.lastName[0] : ''}` : 'FC';
+
+                    return `
+                        <tr>
+                            <td>
+                                <strong style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-main);">${escapeHtml(r.attendanceDate)}</strong>
+                            </td>
+                            <td>
+                                <div style="display: flex; flex-direction: column;">
+                                    <strong style="color: var(--text-main); font-weight: 600; font-size: 13.5px;">${escapeHtml(subj ? subj.subjectName : 'Subject #' + r.subjectId)}</strong>
+                                    <span class="muted" style="font-size: 12px; margin-top: 2px;">${subj ? escapeHtml(subj.subjectCode) + ' &bull; Curriculum Track' : 'Academic Class'}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: inline-flex; align-items: center; gap: 8px;">
+                                    <span class="faculty-avatar-mini">${facInitials}</span>
+                                    <span style="font-weight: 600; font-size: 13px; color: var(--text-main);">${escapeHtml(fac ? (fac.firstName + ' ' + (fac.lastName || '')) : 'Faculty #' + r.facultyId)}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge ${r.status === 'PRESENT' ? 'badge-success' : 'badge-danger'}">
+                                    ${r.status === 'PRESENT' ? '&#10003; PRESENT' : '&#10007; ABSENT'}
+                                </span>
+                            </td>
+                            <td style="color: var(--text-muted); font-size: 13px;">${escapeHtml(r.remarks || '—')}</td>
+                        </tr>
+                    `;
+                }).join('');
             })
             .catch(() => {
-                document.getElementById('attRows').innerHTML = '<tr><td colspan="5" style="padding: 24px; text-align: center;">Unable to load attendance.</td></tr>';
+                document.getElementById('attRows').innerHTML = '<tr><td colspan="5" style="padding: 24px; text-align: center; color: var(--error);">Unable to load attendance records.</td></tr>';
             });
     }
 
@@ -315,20 +449,20 @@
         const tbody = document.getElementById('studentRosterRows');
         tbody.innerHTML = students.map((s, idx) => `
             <tr>
-                <td><span class="pass-cell">${escapeHtml(s.rollNumber || s.admissionNumber)}</span></td>
+                <td><span class="code-chip">${escapeHtml(s.rollNumber || s.admissionNumber)}</span></td>
                 <td><strong style="color: var(--text-main); font-weight: 600;">${escapeHtml(s.firstName)} ${escapeHtml(s.lastName || '')}</strong></td>
                 <td>
-                    <div style="display: inline-flex; gap: 14px; align-items: center;">
-                        <label class="checkbox-label" style="color: #10b981; font-weight: 700;">
+                    <div style="display: inline-flex; gap: 16px; align-items: center;">
+                        <label class="checkbox-label" style="color: #059669; font-weight: 700;">
                             <input type="radio" name="status_${s.studentId}" value="PRESENT" checked> Present
                         </label>
-                        <label class="checkbox-label" style="color: #ef4444; font-weight: 700;">
+                        <label class="checkbox-label" style="color: #dc2626; font-weight: 700;">
                             <input type="radio" name="status_${s.studentId}" value="ABSENT"> Absent
                         </label>
                     </div>
                 </td>
                 <td>
-                    <input type="text" id="remark_${s.studentId}" placeholder="Optional note" style="padding: 6px 10px; font-size: 13px; max-width: 220px;">
+                    <input type="text" id="remark_${s.studentId}" placeholder="Optional note" style="padding: 6px 10px; font-size: 13px; max-width: 260px;">
                 </td>
             </tr>
         `).join('');
@@ -339,13 +473,14 @@
             const rad = document.querySelector(`input[name="status_${s.studentId}"][value="${val}"]`);
             if (rad) rad.checked = true;
         });
+        showToast(`Marked all students as ${val}`, 'info');
     }
 
     function submitAttendance() {
         const subjectId = document.getElementById('markSubjectSelect').value;
         const date = document.getElementById('markDate').value;
         if (!subjectId || !date) {
-            alert('Please select both a subject and class date.');
+            showToast('Please select both a subject and class date.', 'error');
             return;
         }
 
@@ -381,13 +516,7 @@
                 if (completed + errors === studentList.length) {
                     btn.disabled = false;
                     btn.textContent = 'Submit Class Attendance';
-                    const sMsg = document.getElementById('success-message');
-                    sMsg.textContent = 'Attendance submitted successfully for ' + completed + ' students!';
-                    sMsg.style.display = 'flex';
-                    setTimeout(() => {
-                        sMsg.style.display = 'none';
-                        sMsg.textContent = '';
-                    }, 4000);
+                    showToast(`Attendance recorded successfully for ${completed} students!`, 'success');
                     switchTab('view');
                 }
             });
@@ -401,7 +530,7 @@
             document.getElementById('tabViewBtn').className = 'button button-primary button-small';
             document.getElementById('tabMarkBtn').className = 'button button-outline button-small';
             const sel = document.getElementById('studentSelect');
-            if (sel.value) loadStudentAttendance(sel.value);
+            if (sel && sel.value) loadStudentAttendance(sel.value);
         } else {
             document.getElementById('viewAttendanceSection').style.display = 'none';
             document.getElementById('markAttendanceSection').style.display = 'block';

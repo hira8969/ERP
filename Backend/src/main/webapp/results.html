@@ -222,30 +222,56 @@
         }
     }).catch(() => {});
 
-    // Load subjects for modal
-    fetch(root + 'api/subjects').then(r => r.json()).then(subjects => {
-        subjectList = subjects || [];
-        const sel = document.getElementById('modalSubjectSelect');
-        if (sel) {
-            sel.innerHTML = subjectList.map(s => `<option value="${s.subjectId}">${s.subjectCode} - ${s.subjectName}</option>`).join('');
+    // Load subjects and students with Promise.all
+    Promise.all([
+        fetch(root + 'api/subjects').then(r => r.json()).catch(() => []),
+        fetch(root + 'api/students').then(r => r.json()).catch(() => [])
+    ]).then(([subs, studs]) => {
+        subjectList = subs || [];
+        studentList = studs || [];
+
+        const modalSubSel = document.getElementById('modalSubjectSelect');
+        if (modalSubSel) {
+            modalSubSel.innerHTML = subjectList.map(s => `<option value="${s.subjectId}">${s.subjectCode} - ${s.subjectName}</option>`).join('');
+        }
+
+        const sel = document.getElementById('studentSelect');
+        const modalSel = document.getElementById('modalStudentSelect');
+        if (studentList.length > 0) {
+            const options = studentList.map(s => `<option value="${s.studentId}">${s.rollNumber || s.admissionNumber} - ${s.firstName} ${s.lastName || ''}</option>`).join('');
+            if (sel) sel.innerHTML = options;
+            if (modalSel) modalSel.innerHTML = options;
+        }
+
+        // Check user session
+        return fetch(root + 'api/auth/me').then(r => r.json());
+    }).then(data => {
+        if (!data || !data.authenticated) {
+            window.location.href = root + 'login.html';
+            return;
+        }
+        currentUser = data.user;
+
+        if (currentUser.role !== 'ADMIN' && currentUser.role !== 'SUPER_ADMIN' && currentUser.role !== 'FACULTY') {
+            const btn = document.getElementById('btnUploadMarks');
+            if (btn) btn.style.display = 'none';
+        }
+
+        if (currentUser.role === 'STUDENT') {
+            const navS = document.getElementById('navStudentsText');
+            if (navS) navS.textContent = 'My Profile';
+            const navF = document.getElementById('navFacultyText');
+            if (navF) navF.textContent = 'Course Faculty';
+
+            const selP = document.getElementById('studentSelectPanel');
+            if (selP) selP.style.display = 'none';
+            loadOwnStudentResult();
+        } else {
+            if (studentList.length > 0) {
+                loadStudentResults(studentList[0].studentId);
+            }
         }
     }).catch(() => {});
-
-    function loadStudentsList() {
-        fetch(root + 'api/students').then(r => r.json()).then(students => {
-            studentList = students || [];
-            const sel = document.getElementById('studentSelect');
-            const modalSel = document.getElementById('modalStudentSelect');
-            if (students && students.length > 0) {
-                const options = students.map(s => `<option value="${s.studentId}">${s.rollNumber || s.admissionNumber} - ${s.firstName} ${s.lastName || ''}</option>`).join('');
-                sel.innerHTML = options;
-                modalSel.innerHTML = options;
-                loadStudentResults(students[0].studentId);
-            } else {
-                sel.innerHTML = '<option value="">No students found</option>';
-            }
-        }).catch(() => {});
-    }
 
     function loadOwnStudentResult() {
         fetch(root + 'api/dashboard/stats').then(r => r.ok ? r.json() : null).then(data => {
@@ -256,13 +282,10 @@
                 loadStudentResults(data.stats.studentId);
                 return;
             }
-            fetch(root + 'api/students').then(r => r.json()).then(students => {
-                studentList = students || [];
-                const me = students.find(s => s.email === currentUser.email || s.admissionNumber === currentUser.username || s.rollNumber === currentUser.username) || students[0];
-                if (me) {
-                    loadStudentResults(me.studentId);
-                }
-            }).catch(() => {});
+            const me = studentList.find(s => s.email === currentUser.email || s.admissionNumber === currentUser.username || s.rollNumber === currentUser.username) || studentList[0];
+            if (me) {
+                loadStudentResults(me.studentId);
+            }
         }).catch(() => {});
     }
 
@@ -302,23 +325,26 @@
                 }
 
                 tbody.innerHTML = results.map(r => {
-                    const subj = subjectList.find(s => s.subjectId === r.subjectId);
+                    const subj = subjectList.find(s => String(s.subjectId) === String(r.subjectId));
                     const subjTitle = subj ? `${subj.subjectCode} - ${subj.subjectName}` : `Subject #${r.subjectId}`;
+                    const examName = r.examinationId === 1 ? 'Mid-Semester Examination 2026' : (r.examinationId === 2 ? 'End-Semester Final 2026' : 'Continuous Evaluation');
                     return `
                         <tr>
-                            <td><strong style="color: var(--text-main); font-weight: 600;">${escapeHtml(subjTitle)}</strong></td>
-                            <td>Exam #${r.examinationId}</td>
+                            <td>
+                                <strong style="color: var(--text-main); font-weight: 600;">${escapeHtml(subjTitle)}</strong>
+                            </td>
+                            <td><span class="badge badge-info">${escapeHtml(examName)}</span></td>
                             <td>100</td>
-                            <td><strong style="font-family: 'JetBrains Mono', monospace;">${r.marksObtained}</strong></td>
+                            <td><strong style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary);">${r.marksObtained}</strong></td>
                             <td><span class="badge ${r.grade === 'F' ? 'badge-danger' : 'badge-primary'}">${escapeHtml(r.grade)}</span></td>
-                            <td style="font-weight: 600;">${r.gradePoint}</td>
-                            <td><span class="badge ${r.resultStatus === 'PASS' ? 'badge-success' : 'badge-danger'}">${escapeHtml(r.resultStatus)}</span></td>
+                            <td style="font-weight: 700; font-family: 'Outfit', sans-serif;">${r.gradePoint}</td>
+                            <td><span class="badge ${r.resultStatus === 'PASS' ? 'badge-success' : 'badge-danger'}">&#9679; ${escapeHtml(r.resultStatus)}</span></td>
                         </tr>
                     `;
                 }).join('');
             })
             .catch(() => {
-                document.getElementById('resultRows').innerHTML = '<tr><td colspan="7" style="padding: 24px; text-align: center;">Unable to load grade sheet.</td></tr>';
+                document.getElementById('resultRows').innerHTML = '<tr><td colspan="7" style="padding: 24px; text-align: center; color: var(--error);">Unable to load grade sheet.</td></tr>';
             });
     }
 

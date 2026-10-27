@@ -62,39 +62,42 @@
     <p id="error-message" class="alert error" style="display: none;"></p>
 
     <!-- Search & Filter Controls -->
-    <section class="panel filter-bar" style="margin-bottom: 20px;">
-        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 260px;">
-                <input type="text" id="searchInput" placeholder="Search by name, admission no, roll no, or email..." oninput="filterStudents()">
+    <section class="panel filter-bar" style="margin-bottom: 22px;">
+        <div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap; flex: 1;">
+            <div class="search-box">
+                <span class="search-box-icon">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </span>
+                <input type="text" id="searchInput" placeholder="Search by student name, roll no, admission no..." oninput="filterStudents()">
             </div>
             <div>
-                <select id="departmentFilter" onchange="filterStudents()" style="min-width: 200px;">
-                    <option value="">All Departments</option>
+                <select id="departmentFilter" onchange="filterStudents()" style="min-width: 220px;">
+                    <option value="">All Academic Departments</option>
                 </select>
             </div>
-            <div>
-                <span class="badge badge-primary" id="studentCount">0 Students</span>
-            </div>
+        </div>
+        <div>
+            <span class="badge badge-primary" id="studentCount">0 Students</span>
         </div>
     </section>
 
     <!-- Students Table -->
     <section class="panel" style="overflow-x: auto; padding: 0;">
-        <table>
+        <table style="border: none; border-radius: var(--radius-lg); box-shadow: none;">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Admission No.</th>
-                    <th>Roll No.</th>
-                    <th>Student Name</th>
+                    <th style="width: 70px;">ID</th>
+                    <th style="width: 140px;">Admission No.</th>
+                    <th style="width: 140px;">Roll No.</th>
+                    <th>Student Full Name</th>
                     <th>Email Address</th>
-                    <th>Department / Course</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>Department &amp; Track</th>
+                    <th style="width: 110px;">Status</th>
+                    <th style="width: 150px; text-align: center;">Actions</th>
                 </tr>
             </thead>
             <tbody id="student-rows">
-                <tr><td colspan="8" style="padding: 28px; text-align: center; color: var(--text-muted);">Loading enrolled students...</td></tr>
+                <tr><td colspan="8" style="padding: 32px; text-align: center; color: var(--text-muted);">Loading enrolled students...</td></tr>
             </tbody>
         </table>
     </section>
@@ -190,24 +193,35 @@ function renderTable(students) {
     const isAdmin = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'SUPER_ADMIN');
     rows.innerHTML = students.map(student => {
         const name = [student.firstName, student.lastName].filter(Boolean).join(' ');
+        const initials = `${student.firstName ? student.firstName[0] : ''}${student.lastName ? student.lastName[0] : ''}`;
         const statusClass = (student.status || 'ACTIVE').toLowerCase() === 'active' ? 'badge-success' : 'badge-info';
         return `<tr>
-            <td style="font-weight: 700; color: var(--text-muted);">#${student.studentId}</td>
-            <td><strong style="color: var(--primary); font-family: 'JetBrains Mono', monospace;">${escapeHtml(student.admissionNumber)}</strong></td>
+            <td style="font-weight: 700; color: var(--text-muted); font-size: 13px;">#${student.studentId}</td>
+            <td><strong style="color: var(--primary); font-family: 'JetBrains Mono', monospace; font-size: 13px;">${escapeHtml(student.admissionNumber)}</strong></td>
             <td><span class="pass-cell">${escapeHtml(student.rollNumber || '-')}</span></td>
-            <td style="font-weight: 600; color: var(--text-main);">${escapeHtml(name)}</td>
-            <td style="color: var(--text-secondary);">${escapeHtml(student.email || '-')}</td>
-            <td>Dept ${student.departmentId} &bull; Course ${student.courseId} (Sem ${student.semesterId})</td>
-            <td><span class="badge ${statusClass}">${escapeHtml(student.status || 'ACTIVE')}</span></td>
-            <td class="actions">
-                <a class="button button-small button-outline" href="${root}students/details?id=${student.studentId}">View</a>
-                ${isAdmin ? `
-                    <a class="button button-small button-outline" href="${root}students/edit?id=${student.studentId}">Edit</a>
-                    <form method="post" action="${root}students/delete" onsubmit="return confirm('Are you sure you want to delete student ${escapeHtml(student.admissionNumber)}?');" style="margin:0; display:inline-block;">
-                        <input type="hidden" name="id" value="${student.studentId}">
-                        <button class="button button-small button-danger" type="submit">Delete</button>
-                    </form>
-                ` : ''}
+            <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="width: 30px; height: 30px; border-radius: 50%; background: var(--primary-tint); color: var(--primary); font-weight: 700; font-size: 11.5px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--primary-border); flex-shrink: 0;">${escapeHtml(initials)}</span>
+                    <strong style="font-weight: 600; color: var(--text-main); font-size: 13.5px;">${escapeHtml(name)}</strong>
+                </div>
+            </td>
+            <td style="color: var(--text-secondary); font-size: 13px;">${escapeHtml(student.email || '-')}</td>
+            <td>
+                <span class="badge badge-primary">Dept ${student.departmentId}</span>
+                <span class="muted" style="font-size: 12px; margin-left: 4px;">Sem ${student.semesterId}</span>
+            </td>
+            <td><span class="badge ${statusClass}">&#9679; ${escapeHtml(student.status || 'ACTIVE')}</span></td>
+            <td style="text-align: center;">
+                <div style="display: inline-flex; gap: 6px;">
+                    <a class="button button-small button-outline" style="padding: 4px 10px; font-size: 12px;" href="${root}students/details?id=${student.studentId}">View</a>
+                    ${isAdmin ? `
+                        <a class="button button-small button-outline" style="padding: 4px 10px; font-size: 12px;" href="${root}students/edit?id=${student.studentId}">Edit</a>
+                        <form method="post" action="${root}students/delete" onsubmit="return confirm('Are you sure you want to delete student ${escapeHtml(student.admissionNumber)}?');" style="margin:0; display:inline-block;">
+                            <input type="hidden" name="id" value="${student.studentId}">
+                            <button class="button button-small button-danger" style="padding: 4px 8px; font-size: 12px;" type="submit">Delete</button>
+                        </form>
+                    ` : ''}
+                </div>
             </td>
         </tr>`;
     }).join('');
