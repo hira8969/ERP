@@ -74,7 +74,6 @@
         </div>
         <div class="session-meta">
             <span id="roleBadge" class="badge badge-primary">ADMIN</span>
-            <span class="badge badge-success">&#10003; Authenticated Session</span>
         </div>
     </section>
 
@@ -122,8 +121,7 @@
     <!-- Student Summary Card (Shown for STUDENT) -->
     <section class="panel" id="studentSummaryPanel" style="display: none; margin-bottom: 24px;">
         <div class="topbar" style="margin-bottom: 14px;">
-            <h3 style="margin: 0; font-size: 16px;">Academic Standing &amp; Exam Eligibility</h3>
-            <span id="examEligibilityBadge" class="badge badge-success">ELIGIBLE FOR EXAMS</span>
+            <h3 style="margin: 0; font-size: 16px;">Academic Standing</h3>
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; align-items: center;">
             <div>
@@ -134,7 +132,7 @@
                 <div class="progress-bar-container">
                     <div class="progress-bar-fill" id="attProgressBar" style="width: 0%;"></div>
                 </div>
-                <small class="muted">Minimum mandatory requirement: 75% for university semester exams.</small>
+                <small class="muted">Recorded semester class attendance.</small>
             </div>
             <div>
                 <div style="font-size: 12.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Current SGPA:</div>
@@ -407,12 +405,8 @@
                     fill.style.width = Math.min(pct, 100) + '%';
                     if (pct < 75.0) {
                         fill.className = 'progress-bar-fill danger';
-                        document.getElementById('examEligibilityBadge').textContent = 'ATTENDANCE SHORTAGE (< 75%)';
-                        document.getElementById('examEligibilityBadge').className = 'badge badge-danger';
                     } else {
                         fill.className = 'progress-bar-fill';
-                        document.getElementById('examEligibilityBadge').textContent = 'ELIGIBLE FOR EXAMS (>= 75%)';
-                        document.getElementById('examEligibilityBadge').className = 'badge badge-success';
                     }
 
                     document.getElementById('sgpaText').textContent = s.sgpa ?? '0.00';

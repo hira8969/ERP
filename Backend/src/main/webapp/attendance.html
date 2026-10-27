@@ -150,12 +150,8 @@
     <!-- Topbar Header -->
     <div class="topbar" style="margin-top: 24px;">
         <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                <span class="badge badge-primary">Semester Academic Attendance</span>
-                <span class="badge badge-success">&#9679; 75% Requirement Active</span>
-            </div>
             <h1 style="margin: 0;">Attendance Management</h1>
-            <p class="muted" style="margin: 4px 0 0 0;">Monitor student class presence, calculate examination eligibility, and log daily lecture sessions</p>
+            <p class="muted" style="margin: 4px 0 0 0;">Monitor student class presence and log daily lecture sessions</p>
         </div>
         <div style="display: flex; gap: 10px;">
             <button class="button button-primary button-small" id="tabViewBtn" onclick="switchTab('view')">
@@ -186,16 +182,12 @@
                     <option value="">Loading enrolled students...</option>
                 </select>
             </div>
-            <div>
-                <span class="badge badge-primary" id="selectedStudentRoleBadge">Enrolled Candidate</span>
-            </div>
         </div>
 
         <!-- KPI / Progress Overview Panel -->
         <section class="panel" style="margin-bottom: 24px;">
             <div class="topbar" style="margin-bottom: 18px;">
                 <h3 style="margin: 0; font-size: 18px;" id="studentSummaryTitle">Attendance Record Overview</h3>
-                <span id="eligibilityBadge" class="badge badge-success">ELIGIBLE FOR EXAMS</span>
             </div>
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px;">
@@ -205,7 +197,7 @@
                     <div class="progress-bar-container">
                         <div class="progress-bar-fill" id="attFill" style="width: 0%;"></div>
                     </div>
-                    <small class="muted" style="font-size: 12px;">Mandatory threshold: &ge; 75% for exam hall pass</small>
+                    <small class="muted" style="font-size: 12px;">Overall semester class presence</small>
                 </div>
 
                 <div style="background: #ffffff; padding: 18px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--shadow-xs);">
@@ -264,9 +256,7 @@
                     <span style="font-size: 20px;">📝</span>
                     <h3 style="margin: 0; font-size: 18px;">Mark Daily Class Attendance</h3>
                 </div>
-                <div id="rosterStatusNotice">
-                    <span class="badge badge-primary">🔒 Present Date Only</span>
-                </div>
+                <div id="rosterStatusNotice"></div>
             </div>
             <div class="form-grid">
                 <label>
@@ -276,10 +266,7 @@
                     </select>
                 </label>
                 <label>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <span style="font-weight: 700;">Attendance Date *</span>
-                        <span class="badge badge-primary" style="font-size: 11px; padding: 2px 7px;">🔒 Today's Date Locked</span>
-                    </div>
+                    <span style="font-weight: 700; display: block; margin-bottom: 4px;">Attendance Date *</span>
                     <input type="date" id="markDate" required readonly style="background-color: var(--bg-subtle, #f8fafc); cursor: not-allowed; font-weight: 700; font-family: 'JetBrains Mono', monospace;">
                     <small class="muted" style="display: block; font-size: 11.5px; margin-top: 4px;">Attendance can strictly only be recorded for today's active session. Past and future dates are not allowed.</small>
                 </label>
@@ -525,17 +512,14 @@
                 fill.style.width = Math.min(pct, 100) + '%';
                 if (pct < 75.0) {
                     fill.className = 'progress-bar-fill danger';
-                    document.getElementById('eligibilityBadge').textContent = 'ATTENDANCE SHORTAGE (< 75%)';
-                    document.getElementById('eligibilityBadge').className = 'badge badge-danger';
                 } else {
                     fill.className = 'progress-bar-fill';
-                    document.getElementById('eligibilityBadge').textContent = 'ELIGIBLE FOR EXAMS (>= 75%)';
-                    document.getElementById('eligibilityBadge').className = 'badge badge-success';
                 }
 
                 // Render table
                 const rows = document.getElementById('attRows');
-                document.getElementById('logCountBadge').textContent = `${records.length} Sessions Logged`;
+                const logBadge = document.getElementById('logCountBadge');
+                if (logBadge) logBadge.textContent = `${records.length} Sessions Logged`;
 
                 if (records.length === 0) {
                     rows.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 36px 20px; color: var(--text-muted);">No attendance records logged for this student yet.</td></tr>';
@@ -635,7 +619,7 @@
 
                 if (count > 0) {
                     if (statusNotice) {
-                        statusNotice.innerHTML = `<span class="badge badge-warning" style="display: inline-flex; align-items: center; gap: 5px;">⚠️ Already recorded for ${count} students today (${today}) &bull; Submitting will UPDATE</span>`;
+                        statusNotice.innerHTML = `<span class="muted" style="font-size: 13px; font-weight: 600;">Recorded for ${count} students today &bull; Submitting will update</span>`;
                     }
                     if (submitBtn) {
                         submitBtn.innerHTML = `
@@ -645,7 +629,7 @@
                     }
                 } else {
                     if (statusNotice) {
-                        statusNotice.innerHTML = `<span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 5px;">✓ New Session for Today (${today})</span>`;
+                        statusNotice.innerHTML = '';
                     }
                     if (submitBtn) {
                         submitBtn.innerHTML = `

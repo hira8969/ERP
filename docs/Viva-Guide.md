@@ -9,10 +9,10 @@ Yeh guide specially aapke college viva, internal evaluation, aur final BCA/B.Tec
 Jab teacher bole: *"Explain your project in brief"* toh aap yeh bolna:
 
 > **English Answer:**  
-> *"Respected Sir/Ma'am, my project is a Web-based College Enterprise Resource Planning (ERP) System developed using Core Java (Jakarta EE 6.1 Servlets & Filters), pure JDBC database connectivity, and MySQL database, with a responsive HTML5/CSS3/JavaScript frontend. It follows a clean 3-tier MVC architecture. The system automates complete campus workflows with Role-Based Access Control (RBAC) for Super Admin, Admin, Faculty, and Students. Key features include student admission lifecycle, faculty personnel directory, daily attendance tracking with automated 75% minimum exam eligibility checking, UGC 10-point scale grading and SGPA computation, weekly class timetables, and campus announcements. For security, passwords are encrypted using standard SHA-256 hashing, session management uses secure HTTP cookies with cryptographic signatures, and all database queries use parameterized PreparedStatements to completely prevent SQL injection."*
+> *"Respected Sir/Ma'am, my project is a Web-based College Enterprise Resource Planning (ERP) System developed using Core Java (Jakarta EE 6.1 Servlets & Filters), pure JDBC database connectivity, and MySQL database, with a responsive HTML5/CSS3/JavaScript frontend. It follows a clean 3-tier MVC architecture. The system automates complete campus workflows with Role-Based Access Control (RBAC) for Super Admin, Admin, Faculty, and Students. Key features include student admission lifecycle, faculty personnel directory, daily attendance tracking with lecture session logs, UGC 10-point scale grading and SGPA computation, weekly class timetables, and campus announcements. For security, passwords are encrypted using standard SHA-256 hashing, session management uses secure HTTP cookies with cryptographic signatures, and all database queries use parameterized PreparedStatements to completely prevent SQL injection."*
 
 > **Hinglish me Samajh Lo:**  
-> *"Sir, yeh Centurion University ka complete ERP system hai jisme Admin, Faculty, aur Student roles hain. Backend pure Java Servlets aur JDBC (Java Database Connectivity) par bana hai. Admin students aur faculty ke accounts create karta hai, unka login credentials provision karta hai. Passwords SHA-256 cryptographic hashing se secure store hote hain. System me Session Auth aur HTTP Basic Auth dono supported hain. Faculty daily attendance aur marks upload karti hai. System automatically 75% attendance criteria check karta hai aur UGC ke 10-point scale ke according letter grades aur SGPA calculate karta hai. Har database query me humne PreparedStatement aur try-with-resources use kiya hai taaki SQL Injection prevent ho sake aur database connections leak na hon."*
+> *"Sir, yeh Centurion University ka complete ERP system hai jisme Admin, Faculty, aur Student roles hain. Backend pure Java Servlets aur JDBC (Java Database Connectivity) par bana hai. Admin students aur faculty ke accounts create karta hai, unka login credentials provision karta hai. Passwords SHA-256 cryptographic hashing se secure store hote hain. System me Session Auth aur HTTP Basic Auth dono supported hain. Faculty daily attendance aur marks upload karti hai. System automatically attendance percentage compute karta hai aur UGC ke 10-point scale ke according letter grades aur SGPA calculate karta hai. Har database query me humne PreparedStatement aur try-with-resources use kiya hai taaki SQL Injection prevent ho sake aur database connections leak na hon."*
 
 ---
 
@@ -34,7 +34,7 @@ Jab teacher bole: *"Explain your project in brief"* toh aap yeh bolna:
           │  Calls
           ▼
 [ Service & Business Logic Layer ]
-   - AttendanceServiceImpl (75% minimum exam eligibility calculation)
+   - AttendanceServiceImpl (Attendance summary & percentage computation)
    - ResultServiceImpl (UGC 10-point scale grade & SGPA formula)
           │  Calls
           ▼
@@ -78,10 +78,9 @@ Humne apne saare DAOs me `try (Connection conn = DBUtil.getConnection(); Prepare
 
 ---
 
-### Q5: *"Attendance eligibility criteria kaise calculate hoti hai?"*
+### Q5: *"Attendance statistics kaise calculate hoti hai?"*
 **Answer:**  
-*"Sir, `AttendanceServiceImpl.java` me `getStudentAttendanceSummary(studentId)` method hai. Yeh student ke sare attendance records fetch karta hai. Fir total classes aur present classes count karke percentage nikalta hai: `(presentClasses / totalClasses) * 100`.  
-Agar percentage `>= 75.0%` hai toh student ko `ELIGIBLE FOR EXAMS` mark karta hai, agar 75% se kam hai toh system use `ATTENDANCE SHORTAGE` badge display karta hai."*
+*"Sir, `AttendanceServiceImpl.java` me `getStudentAttendanceSummary(studentId)` method hai. Yeh student ke saare attendance records fetch karta hai. Phir total classes, present lectures, aur missed classes count karke percentage compute karta hai: `(presentClasses / totalClasses) * 100`, jisse faculty aur student portal par verified attendance rate display hota hai."*
 
 ---
 
